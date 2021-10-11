@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view" >
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_qlsp"
+            android:icon="@drawable/ic_baseline_laptop_24"
+            android:title="@string/title1" />
+        <item
+            android:id="@+id/nav_qlkm"
+            android:icon="@drawable/baseline_view_list_black_24"
+            android:title="@string/title2" />
+        <item
+            android:id="@+id/nav_dph"
+            android:icon="@drawable/ic_baseline_local_shipping_24"
+            android:title="@string/title3" />
+        <item
+            android:id="@+id/nav_qllsp"
+            android:icon="@drawable/catagory"
+            android:title="@string/title4" />
+        <item
+            android:id="@+id/nav_qlh"
+            android:icon="@drawable/ic_baseline_category_24"
+            android:title="@string/title5" />
+        <item
+            android:id="@+id/nav_qlmgg"
+            android:icon="@drawable/baseline_menu_18"
+            android:title="@string/title6" />
+
+        <item android:title="@string/title7">
+            <menu>
+                <item
+                    android:id="@+id/nav_dx"
+                    android:icon="@drawable/baseline_login_black_24"
+                    android:title="@string/logout" />
+                <item
+                    android:id="@+id/nav_dmk"
+                    android:icon="@drawable/baseline_key_black_24"
+                    android:title="@string/changePass" />
+            </menu>
+        </item>
+    </group>
+</menu>

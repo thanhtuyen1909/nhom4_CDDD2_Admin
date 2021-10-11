@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">CDDD2</string>
+    <string name="subtitleSP">Danh sách sản phẩm:</string>
+    <string name="subtitleLSP">Danh sách loại sản phẩm:</string>
+    <string name="amountSP">5 sản phẩm từ 15</string>
+    <string name="titleLayout">Danh sách sản phẩm</string>
+    <string name="buttonBack">Trở lại</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
+    <string name="subtitleUS">qlk-1</string>
+    <string name="contentUS">Quản lý kho</string>
+    <string name="title1">Quản lý sản phẩm</string>
+    <string name="title2">Quản lý khuyến mãi</string>
+    <string name="title3">Điều phối hàng</string>
+    <string name="title4">Quản lý loại sản phẩm</string>
+    <string name="title5">Quản lý hãng</string>
+    <string name="title6">Quản lý mã giảm giá</string>
+    <string name="title7">Đăng nhập</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="changePass">Đổi mật khẩu</string>
+</resources>
