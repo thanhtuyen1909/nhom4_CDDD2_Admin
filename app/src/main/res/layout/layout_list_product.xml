@@ -19,13 +19,12 @@
 
         <Spinner
             android:id="@+id/spinner_cata"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            style="@style/CustomSpinner"
             android:entries="@android:array/emailAddressTypes"
+            app:layout_constraintTop_toBottomOf="@+id/include"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include" />
+             />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -36,9 +35,7 @@
 
         <Spinner
             android:id="@+id/spinner_manu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            style="@style/CustomSpinner"
             android:entries="@android:array/imProtocols"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -46,24 +43,15 @@
 
         <SearchView
             android:id="@+id/editSearch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:iconifiedByDefault="false"
+            style="@style/CustomSearchView"
             android:queryHint="Tên sản phẩm hoặc mã sản phẩm"
-            android:background="@color/white"
-            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_cata" />
 
         <TextView
             android:id="@+id/textView2"
-            android:textColor="@color/black"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
+            style="@style/CustomTextViewQuantity"
             android:layout_marginTop="10dp"
             android:text="@string/subtitleSP"
             app:layout_constraintEnd_toEndOf="parent"
@@ -86,26 +74,15 @@
 
         <TextView
             android:id="@+id/totalProduct"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
+            style="@style/CustomTextViewQuantity"
             android:text="@string/amountSP"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textColor="@color/black"/>
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
-            android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/custom_button_1"
-            android:text="+"
-            android:textSize="23sp"
+            android:id="@+id/btnAdd"
+            style="@style/CustomButtonAdd"
             app:backgroundTint="#2962FF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

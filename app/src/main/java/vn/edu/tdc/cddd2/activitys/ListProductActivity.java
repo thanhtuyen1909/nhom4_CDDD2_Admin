@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,13 +43,24 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_product);
-        // Khởi tạo biến
+        //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+
+        // Khởi tạo biến
+        btnBack = findViewById(R.id.txtBack);
+
+        // Xử lý sự kiện click button "Trở lại":
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
@@ -109,6 +121,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListProductActivity.this, ListCataActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
@@ -123,6 +136,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListProductActivity.this, ListManuActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             default:

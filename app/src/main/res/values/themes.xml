@@ -13,4 +13,46 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <!-- Custom button main screen -->
+    <style name="CustomButtonMain">
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_marginTop">40dp</item>
+        <item name="android:background">@color/blue</item>
+    </style>
+    <!-- Custom spinner -->
+    <style name="CustomSpinner">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+    <!-- Custom SearchView -->
+    <style name="CustomSearchView">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:iconifiedByDefault">false</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <!-- Custom button add -->
+    <style name="CustomButtonAdd">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:textSize">23sp</item>
+        <item name="android:background">@drawable/custom_button_1</item>
+        <item name="android:text">+</item>
+    </style>
+    <!-- Custom text quantity -->
+    <style name="CustomTextViewQuantity">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">15dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>

@@ -32,11 +32,7 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:textColor="@color/black"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
+            style="@style/CustomTextViewQuantity"
             android:layout_marginTop="10dp"
             android:text="@string/subtitleH"
             app:layout_constraintEnd_toEndOf="parent"
@@ -59,26 +55,15 @@
 
         <TextView
             android:id="@+id/totalManu"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
+            style="@style/CustomTextViewQuantity"
             android:text="@string/amountSP"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textColor="@color/black"/>
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
-            android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/custom_button_1"
-            android:text="+"
-            android:textSize="23sp"
+            android:id="@+id/btnAdd"
+            style="@style/CustomButtonAdd"
             app:backgroundTint="#2962FF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

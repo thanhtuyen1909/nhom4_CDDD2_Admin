@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">CDDD2</string>
+
+    <string name="titleMain">Quản lý kho</string>
     <string name="subtitleSP">Danh sách sản phẩm:</string>
     <string name="subtitleLSP">Danh sách loại sản phẩm:</string>
     <string name="subtitleH">Danh sách hãng:</string>

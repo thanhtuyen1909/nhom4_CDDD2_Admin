@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/titleMain"
+        android:textColor="@color/blue"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/subtitleUS"
+        android:textColor="@color/gray"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/btnQLSP"
+        style="@style/CustomButtonMain"
+        android:layout_marginLeft="30dp"
+        android:backgroundTint="@color/blue"
+        android:drawableTop="@drawable/ic_baseline_laptop_24"
+        android:text="@string/title1"
+        app:backgroundTint="#00B5cc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <Button
+        android:id="@+id/btnQLKM"
+        style="@style/CustomButtonMain"
+        android:layout_marginRight="30dp"
+        android:drawableTop="@drawable/baseline_view_list_24"
+        android:text="@string/title2"
+        app:backgroundTint="#00B5cc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <Button
+        android:id="@+id/btnDPH"
+        style="@style/CustomButtonMain"
+        android:layout_marginLeft="30dp"
+        android:drawableTop="@drawable/ic_baseline_local_shipping_24"
+        android:text="@string/title3"
+        app:backgroundTint="#00B5cc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnQLSP" />
+
+    <Button
+        android:id="@+id/btnQLLSP"
+        style="@style/CustomButtonMain"
+        android:layout_marginRight="30dp"
+        android:drawableTop="@drawable/ic_baseline_laptop_24"
+        android:text="@string/title4"
+        app:backgroundTint="#00B5cc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnQLKM" />
+
+    <Button
+        android:id="@+id/btnQLH"
+        style="@style/CustomButtonMain"
+        android:layout_marginLeft="30dp"
+        android:drawableTop="@drawable/ic_baseline_local_shipping_24"
+        android:text="@string/title5"
+        app:backgroundTint="#00B5cc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDPH" />
+
+    <Button
+        android:id="@+id/btnQLMGG"
+        style="@style/CustomButtonMain"
+        android:layout_marginRight="30dp"
+        android:drawableTop="@drawable/ic_baseline_laptop_24"
+        android:text="@string/title6"
+        app:backgroundTint="#00B5cc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnQLLSP" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/baseline_logout_black_24"
+        android:text="@string/logout"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnChangePass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/baseline_key_black_24"
+        android:text="@string/changePass"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

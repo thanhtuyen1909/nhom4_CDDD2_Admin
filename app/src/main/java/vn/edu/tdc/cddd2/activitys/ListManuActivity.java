@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_manu);
-        // Khởi tạo biến
+        // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
@@ -52,6 +53,17 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+
+        // Khởi tạo biến
+        btnBack = findViewById(R.id.txtBack);
+
+        // Xử lý sự kiện click button "Trở lại":
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         //RecycleView
         recyclerView = findViewById(R.id.listManu);
@@ -101,6 +113,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListManuActivity.this, ListProductActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
@@ -120,6 +133,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListManuActivity.this, ListCataActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
