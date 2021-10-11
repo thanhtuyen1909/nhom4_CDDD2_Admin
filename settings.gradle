@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name = "CDDD2"
+rootProject.name = "Zuke-Admin"
