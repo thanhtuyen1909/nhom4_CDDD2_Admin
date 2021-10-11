@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListManuActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListCataActivity"> </activity>
     </application>
 
 </manifest>

@@ -49,13 +49,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:iconifiedByDefault="false"
+            android:queryHint="Tên sản phẩm hoặc mã sản phẩm"
             android:background="@color/white"
-            android:queryHint="Tên sản phẩm"
-            android:textColor="@color/black"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_manu" />
+            app:layout_constraintTop_toBottomOf="@+id/include" />
 
         <TextView
             android:id="@+id/textView2"
