@@ -3,7 +3,6 @@ package vn.edu.tdc.cddd2.activitys;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,20 +21,20 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.adapters.CataAdapter;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
-import vn.edu.tdc.cddd2.adapters.ProductAdapter;
+import vn.edu.tdc.cddd2.data_models.Catagory;
 import vn.edu.tdc.cddd2.data_models.Manufacturer;
-import vn.edu.tdc.cddd2.data_models.Product;
 
-public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ListCataActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     private Toolbar toolbar;
     private TextView btnBack, subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Manufacturer> listManu;
-    private ManuAdapter manuAdapter;
+    private ArrayList<Catagory> lisCata;
+    private CataAdapter cataAdapter;
     private NavigationView navigationView;
     private Intent intent;
 
@@ -47,7 +46,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Danh sách hãng");
+        subtitleAppbar.setText("Danh sách loại sản phẩm");
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -56,11 +55,11 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         //RecycleView
         recyclerView = findViewById(R.id.listManu);
         recyclerView.setHasFixedSize(true);
-        listManu = new ArrayList<>();
+        lisCata = new ArrayList<>();
         data();
-        manuAdapter = new ManuAdapter(listManu,this);
-        manuAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(manuAdapter);
+        cataAdapter = new CataAdapter(lisCata,this);
+        cataAdapter.setItemClickListener(itemClickListener);
+        recyclerView.setAdapter(cataAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -75,17 +74,17 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void data(){
-        listManu.add(new Manufacturer("Asus"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Apple"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Asus"));
+        lisCata.add(new Catagory("Tivi"));
+        lisCata.add(new Catagory("Tủ lạnh"));
+        lisCata.add(new Catagory("Laptop"));
+        lisCata.add(new Catagory("Máy tính bảng"));
+        lisCata.add(new Catagory("Điện thoại"));
     }
 
-    private ManuAdapter.ItemClickListener itemClickListener = new ManuAdapter.ItemClickListener() {
+    private CataAdapter.ItemClickListener itemClickListener = new CataAdapter.ItemClickListener() {
         @Override
-        public void getInfor(Manufacturer item) {
-            Toast.makeText(ListManuActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+        public void getInfor(Catagory item) {
+            Toast.makeText(ListCataActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -100,42 +99,42 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_qlsp:
-                intent = new Intent(ListManuActivity.this, ListProductActivity.class);
+                intent = new Intent(ListCataActivity.this, ListProductActivity.class);
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
 //                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
 //                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Quản lý khuyến mãi", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListCataActivity.this, "Quản lý khuyến mãi", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_dph:
 //                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
 //                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListCataActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qlmgg:
 //                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
 //                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Quản lý mã giảm giá", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListCataActivity.this, "Quản lý mã giảm giá", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(ListManuActivity.this, ListCataActivity.class);
-                startActivity(intent);
                 break;
             case R.id.nav_dmk:
 //                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
 //                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListCataActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_dx:
 //                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
 //                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListCataActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qlh:
+                intent = new Intent(ListCataActivity.this, ListManuActivity.class);
+                startActivity(intent);
                 break;
             default:
-                Toast.makeText(ListManuActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListCataActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);

@@ -11,51 +11,24 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activitys.ListProductActivity">
+        tools:context=".activitys.List">
 
         <include
             android:id="@+id/include"
             layout="@layout/appbar" />
-
-        <Spinner
-            android:id="@+id/spinner_cata"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:entries="@android:array/emailAddressTypes"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
-
-        <Spinner
-            android:id="@+id/spinner_manu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:entries="@android:array/imProtocols"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/include" />
 
         <SearchView
             android:id="@+id/editSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:iconifiedByDefault="false"
+            android:queryHint="Tên loại"
             android:background="@color/white"
-            android:queryHint="Tên sản phẩm"
-            android:textColor="@color/black"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_manu" />
+            app:layout_constraintTop_toBottomOf="@+id/include" />
 
         <TextView
             android:id="@+id/textView2"
@@ -65,17 +38,17 @@
             android:layout_marginStart="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
-            android:text="@string/subtitleSP"
+            android:text="@string/subtitleLSP"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editSearch" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listProduct"
+            android:id="@+id/listCata"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/totalProduct"
+            app:layout_constraintBottom_toTopOf="@+id/totalManu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2"
@@ -85,7 +58,7 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
-            android:id="@+id/totalProduct"
+            android:id="@+id/totalCata"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"

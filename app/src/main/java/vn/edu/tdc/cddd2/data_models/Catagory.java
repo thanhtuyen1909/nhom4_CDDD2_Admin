@@ -1,6 +1,6 @@
 package vn.edu.tdc.cddd2.data_models;
 
-public class Manufacturer {
+public class Catagory {
     //Khai báo biến
     private String name;
 
@@ -13,13 +13,13 @@ public class Manufacturer {
     }
 
     //Contructor
-    public Manufacturer(String name) {
+    public Catagory(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return "Manufacturer{" +
+        return "Catagory{" +
                 "name='" + name + '\'' +
                 '}';
     }

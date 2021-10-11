@@ -34,7 +34,9 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
     private ArrayList<Product> listitem;
+    private NavigationView navigationView;
     private ProductAdapter proAdapter;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,10 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         proAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //NavigationView
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -83,7 +89,6 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        Toast.makeText(ListProductActivity.this, id, Toast.LENGTH_SHORT).show();
         switch (id) {
             case R.id.nav_qlsp:
                 break;
@@ -103,9 +108,8 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 Toast.makeText(ListProductActivity.this, "Quản lý mã giảm giá", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qllsp:
-//                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListProductActivity.this, "Quản lý loại sản phẩm", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListProductActivity.this, ListCataActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_dmk:
 //                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
@@ -118,7 +122,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 Toast.makeText(ListProductActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qlh:
-                Intent intent = new Intent(ListProductActivity.this, ListManuActivity.class);
+                intent = new Intent(ListProductActivity.this, ListManuActivity.class);
                 startActivity(intent);
                 break;
             default:

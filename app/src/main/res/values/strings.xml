@@ -2,6 +2,7 @@
     <string name="app_name">CDDD2</string>
     <string name="subtitleSP">Danh sách sản phẩm:</string>
     <string name="subtitleLSP">Danh sách loại sản phẩm:</string>
+    <string name="subtitleH">Danh sách hãng:</string>
     <string name="amountSP">5 sản phẩm từ 15</string>
     <string name="titleLayout">Danh sách sản phẩm</string>
     <string name="buttonBack">Trở lại</string>
