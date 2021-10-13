@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.CDDD2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.CDDD2" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -16,14 +16,15 @@
     <!-- Custom button main screen -->
     <style name="CustomButtonMain">
         <item name="android:layout_width">150dp</item>
-        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_height">80dp</item>
         <item name="android:layout_marginTop">40dp</item>
-        <item name="android:background">@color/blue</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:background">@drawable/button_login</item>
     </style>
     <!-- Custom spinner -->
     <style name="CustomSpinner">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:layout_marginTop">10dp</item>
     </style>
     <!-- Custom SearchView -->
@@ -45,6 +46,7 @@
         <item name="android:textSize">23sp</item>
         <item name="android:background">@drawable/custom_button_1</item>
         <item name="android:text">+</item>
+        <item name="android:textColor">#FFF</item>
     </style>
     <!-- Custom text quantity -->
     <style name="CustomTextViewQuantity">
@@ -54,5 +56,4 @@
         <item name="android:layout_marginLeft">15dp</item>
         <item name="android:textColor">@color/black</item>
     </style>
-
 </resources>

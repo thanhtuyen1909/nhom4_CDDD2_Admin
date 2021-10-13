@@ -1,13 +1,22 @@
 <resources>
     <string name="app_name">Zuke-Quản trị</string>
-
+    <string name="login_text">Đăng nhập</string>
+    <string name="changpass_text">Đổi mật khẩu</string>
+    <string name="username_text">Tên đăng nhập</string>
+    <string name="password_text">Mật khẩu</string>
+    <string name="passwordNew_text">Mật khẩu mới</string>
+    <string name="passwordConfirm_text">Xác nhận mật khẩu</string>
     <string name="titleMain">Quản lý kho</string>
     <string name="subtitleSP">Danh sách sản phẩm:</string>
+    <string name="subtitleMGG">Danh sách mã giảm giá:</string>
+    <string name="subtitleMKM">Danh sách mã khuyến mãi:</string>
     <string name="subtitleLSP">Danh sách loại sản phẩm:</string>
     <string name="subtitleH">Danh sách hãng:</string>
     <string name="amountSP">5 sản phẩm từ 15</string>
     <string name="titleLayout">Danh sách sản phẩm</string>
     <string name="buttonBack">Trở lại</string>
+    <string name="buttonSave">Lưu</string>
+    <string name="buttonCancel">Huỷ</string>
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="subtitleUS">qlk-1</string>
@@ -21,4 +30,10 @@
     <string name="title7">Đăng nhập</string>
     <string name="logout">Đăng xuất</string>
     <string name="changePass">Đổi mật khẩu</string>
+    <string name="masp">Mã sản phẩm</string>
+    <string name="tensp">Tên sản phẩm</string>
+    <string name="motasp">Thêm mô tả cho sản phẩm</string>
+    <string name="gianhap">Giá nhập</string>
+    <string name="giaban">Giá bán</string>
+
 </resources>

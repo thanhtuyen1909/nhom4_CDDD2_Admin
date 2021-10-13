@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +24,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CataAdapter;
-import vn.edu.tdc.cddd2.adapters.ManuAdapter;
 import vn.edu.tdc.cddd2.data_models.Catagory;
-import vn.edu.tdc.cddd2.data_models.Manufacturer;
 
 public class ListCataActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -38,6 +37,7 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
     private CataAdapter cataAdapter;
     private NavigationView navigationView;
     private Intent intent;
+    private Button btnAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +55,22 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
+        btnAdd = findViewById(R.id.btnAdd);
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        // Xử lý sự kiện click button "+":
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(ListCataActivity.this, DetailInformationActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -116,9 +126,9 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListCataActivity.this, "Quản lý khuyến mãi", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListCataActivity.this, ListPromoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_dph:
 //                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
@@ -126,21 +136,20 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
                 Toast.makeText(ListCataActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qlmgg:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListCataActivity.this, "Quản lý mã giảm giá", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListCataActivity.this, ListDiscountCodeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 break;
             case R.id.nav_dmk:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListCataActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListCataActivity.this, ChangePasswordActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_dx:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListCataActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListCataActivity.this, LoginActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListCataActivity.this, ListManuActivity.class);

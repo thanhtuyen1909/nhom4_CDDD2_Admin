@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/titleMain"
-        android:textColor="@color/blue"
+        android:textColor="@color/pink"
         android:textSize="35dp"
         android:textStyle="bold"
         android:layout_marginTop="30dp"
@@ -35,10 +35,8 @@
         android:id="@+id/btnQLSP"
         style="@style/CustomButtonMain"
         android:layout_marginLeft="30dp"
-        android:backgroundTint="@color/blue"
         android:drawableTop="@drawable/ic_baseline_laptop_24"
         android:text="@string/title1"
-        app:backgroundTint="#00B5cc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
@@ -48,7 +46,6 @@
         android:layout_marginRight="30dp"
         android:drawableTop="@drawable/baseline_view_list_24"
         android:text="@string/title2"
-        app:backgroundTint="#00B5cc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
@@ -58,7 +55,6 @@
         android:layout_marginLeft="30dp"
         android:drawableTop="@drawable/ic_baseline_local_shipping_24"
         android:text="@string/title3"
-        app:backgroundTint="#00B5cc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnQLSP" />
 
@@ -68,7 +64,6 @@
         android:layout_marginRight="30dp"
         android:drawableTop="@drawable/ic_baseline_laptop_24"
         android:text="@string/title4"
-        app:backgroundTint="#00B5cc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnQLKM" />
 
@@ -78,7 +73,6 @@
         android:layout_marginLeft="30dp"
         android:drawableTop="@drawable/ic_baseline_local_shipping_24"
         android:text="@string/title5"
-        app:backgroundTint="#00B5cc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnDPH" />
 
@@ -88,7 +82,6 @@
         android:layout_marginRight="30dp"
         android:drawableTop="@drawable/ic_baseline_laptop_24"
         android:text="@string/title6"
-        app:backgroundTint="#00B5cc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnQLLSP" />
 
@@ -97,11 +90,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@color/white"
+        android:background="@null"
         android:drawableLeft="@drawable/baseline_logout_black_24"
         android:text="@string/logout"
         android:textColor="@color/black"
-        app:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -110,11 +102,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@color/white"
+        android:background="@null"
         android:drawableLeft="@drawable/baseline_key_black_24"
         android:text="@string/changePass"
         android:textColor="@color/black"
-        app:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

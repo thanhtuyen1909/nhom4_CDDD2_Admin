@@ -3,9 +3,9 @@ package vn.edu.tdc.cddd2.activitys;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,9 +24,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
-import vn.edu.tdc.cddd2.adapters.ProductAdapter;
 import vn.edu.tdc.cddd2.data_models.Manufacturer;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -39,6 +37,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     private ManuAdapter manuAdapter;
     private NavigationView navigationView;
     private Intent intent;
+    private Button btnAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +55,22 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
+        btnAdd = findViewById(R.id.btnAdd);
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        // Xử lý sự kiện click button "+":
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -117,9 +126,9 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Quản lý khuyến mãi", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListManuActivity.this, ListPromoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_dph:
 //                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
@@ -127,9 +136,9 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
                 Toast.makeText(ListManuActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qlmgg:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Quản lý mã giảm giá", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListManuActivity.this, ListDiscountCodeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListManuActivity.this, ListCataActivity.class);
@@ -137,14 +146,13 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListManuActivity.this, ChangePasswordActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_dx:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListManuActivity.this, LoginActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_qlh:
                 break;

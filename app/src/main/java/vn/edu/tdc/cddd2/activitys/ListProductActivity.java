@@ -14,6 +14,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,11 +31,12 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     // Khai báo biến
     private Toolbar toolbar;
     private TextView btnBack;
+    private Button btnAdd;
     private Spinner spinCata, spinManu;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listitem;
+    private ArrayList<Product> listProduct;
     private NavigationView navigationView;
     private ProductAdapter proAdapter;
     private Intent intent;
@@ -53,6 +55,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
+        btnAdd = findViewById(R.id.btnAdd);
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -62,12 +65,21 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             }
         });
 
+        // Xử lý sự kiện click button "+":
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(ListProductActivity.this, DetailProductActivity.class);
+                startActivity(intent);
+            }
+        });
+
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        listitem = new ArrayList<>();
+        listProduct = new ArrayList<>();
         data();
-        proAdapter = new ProductAdapter(listitem,this);
+        proAdapter = new ProductAdapter(listProduct,this);
         proAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -84,11 +96,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     }
 
     private void data(){
-        listitem.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listitem.add(new Product("Laptop 2", 14000000, "Acer", 11));
-        listitem.add(new Product("Laptop 3", 12000000, "Apple", 12));
-        listitem.add(new Product("Laptop 4", 16000000, "Acer", 11));
-        listitem.add(new Product("Laptop 5", 12000000, "Asus", 10));
+        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
+        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
+        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
+        listProduct.add(new Product("Laptop 4", 16000000, "Acer", 11));
+        listProduct.add(new Product("Laptop 5", 12000000, "Asus", 10));
     }
 
     private ProductAdapter.ItemClickListener itemClickListener = new ProductAdapter.ItemClickListener() {
@@ -105,9 +117,9 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             case R.id.nav_qlsp:
                 break;
             case R.id.nav_qlkm:
-//                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListProductActivity.this, "Quản lý khuyến mãi", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListProductActivity.this, ListPromoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_dph:
 //                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
@@ -115,9 +127,9 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 Toast.makeText(ListProductActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qlmgg:
-//                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListProductActivity.this, "Quản lý mã giảm giá", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListProductActivity.this, ListDiscountCodeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListProductActivity.this, ListCataActivity.class);
@@ -125,14 +137,13 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
-//                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListProductActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListProductActivity.this, ChangePasswordActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_dx:
-//                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListProductActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListProductActivity.this, LoginActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListProductActivity.this, ListManuActivity.class);
