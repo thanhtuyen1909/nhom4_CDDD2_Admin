@@ -66,13 +66,6 @@
             android:textSize="16sp"
             android:textStyle="italic" />
 
-        <vn.edu.tdc.cddd2.controls.InDecreaseViewControl
-            android:id="@+id/indecrease"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
-
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

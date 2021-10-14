@@ -22,15 +22,16 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.fragments.FragmentWaitShipWHM;
-import vn.edu.tdc.cddd2.fragments.FragmentWillOrderWHM;
+import vn.edu.tdc.cddd2.fragments.FragmentCancelOrderOH;
+import vn.edu.tdc.cddd2.fragments.FragmentListOrderOH;
+import vn.edu.tdc.cddd2.fragments.FragmentWillOrderOH;
 
-public class OrderCoordinationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class OrderProcessActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến:
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
     private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar, btnCancel;
+    private TextView btnSave, subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
@@ -39,13 +40,13 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_ordercoor);
+        setContentView(R.layout.layout_orderprocess_oh);
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Điều phối hàng");
+        subtitleAppbar.setText("Xử lý đơn hàng");
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -56,36 +57,30 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         navigationView.setNavigationItemSelectedListener(this);
 
         // Khởi tạo biến
-        btnSave = findViewById(R.id.txtSave);
-        btnCancel = findViewById(R.id.txtCancel);
+        btnSave = findViewById(R.id.txtBack);
+        btnSave.setText("Lưu");
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Toast.makeText(OrderProcessActivity.this, "Lưu", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Xử lý sự kiện click button "Huỷ":
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentWillOrderWHM()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentListOrderOH()).commit();
 
         // Xử lý sự kiện cho thanh bottomnavigationview
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getItemId() == R.id.willorder) {
-                    selectedFragment = new FragmentWillOrderWHM();
+                if (item.getItemId() == R.id.odering) {
+                    selectedFragment = new FragmentListOrderOH();
+                } else if(item.getItemId() == R.id.willorder){
+                    selectedFragment = new FragmentWillOrderOH();
                 } else {
-                    selectedFragment = new FragmentWaitShipWHM();
+                    selectedFragment = new FragmentCancelOrderOH();
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
                 return true;
@@ -109,44 +104,17 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.nav_qlsp:
-                intent = new Intent(OrderCoordinationActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlkm:
-                intent = new Intent(OrderCoordinationActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dph:
-                break;
-            case R.id.nav_qlmgg:
-                intent = new Intent(OrderCoordinationActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qllsp:
-                intent = new Intent(OrderCoordinationActivity.this, ListCataActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
             case R.id.nav_dmk:
-                intent = new Intent(OrderCoordinationActivity.this, ChangePasswordActivity.class);
+                intent = new Intent(OrderProcessActivity.this, ChangePasswordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
-                intent = new Intent(OrderCoordinationActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(OrderCoordinationActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent = new Intent(OrderProcessActivity.this, LoginActivity.class);
                 startActivity(intent);
                 break;
             default:
-                Toast.makeText(OrderCoordinationActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
+                Toast.makeText(OrderProcessActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);

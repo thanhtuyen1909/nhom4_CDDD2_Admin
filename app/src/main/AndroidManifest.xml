@@ -9,13 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CDDD2">
-        <activity android:name=".activitys.MainQLKActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+    <!-- Warehouse Management -->
+        <activity android:name=".activitys.MainQLKActivity"/>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListProductActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListManuActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListCataActivity"> </activity>
@@ -29,11 +24,35 @@
         <activity android:screenOrientation="portrait" android:name=".activitys.DetailPromoCodeActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.InformationPromoCodeActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.OrderCoordinationActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListProductSMActivity">
-
-        </activity>
+    <!-- Salesman -->
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListProductSMActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListCartActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.CreateOrderActivity"> </activity>
+    <!-- Order Handler -->
+        <activity android:screenOrientation="portrait" android:name=".activitys.OrderProcessActivity"> </activity>
+    <!-- Shipper -->
+        <activity android:screenOrientation="portrait" android:name=".activitys.ShipProcessActivity"> </activity>
+    <!-- Administrators -->
+        <activity android:screenOrientation="portrait" android:name=".activitys.MainADMActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListAccountActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListHistoryActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.OrderHistoryActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailOrderActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListInvoiceActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailInvoiceActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.RevenueStatisticActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListRatingActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailRatingActivity"> </activity>
+    <!-- Administrators -->
+        <activity android:screenOrientation="portrait" android:name=".activitys.AttendanceActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListEmployeeActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailEmployeeActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailSalaryActivity"> </activity>
     </application>
 
 </manifest>

@@ -22,7 +22,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="3dp"
             android:layout_marginStart="20dp"
             android:text="Title"
             android:textSize="18sp"
@@ -39,20 +38,10 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/txt_diachi"
+            android:id="@+id/txt_ngaydat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_tongtien"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="20dp"
-            android:text="Title"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/txt_nguoigiao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_diachi"
             android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
             android:text="Title"
@@ -63,47 +52,28 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/checkhoanthanh"
+            android:layout_toStartOf="@+id/checkdanhanhang"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/baseline_info_24"
             android:text="" />
 
         <CheckBox
-            android:id="@+id/checkgiao"
+            android:id="@+id/checkdanhanhang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:text="Giao hàng" />
-
-        <CheckBox
-            android:id="@+id/checkhoanthanh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/checkgiao"
             android:layout_alignParentEnd="true"
-            android:text="Hoàn thành" />
+            android:text="Đã nhận hàng" />
 
-        <RadioGroup
-            android:layout_below="@+id/checkhoanthanh"
-            android:background="@drawable/rounded_border_edittext"
-            android:layout_alignParentEnd="true"
-            android:gravity="center"
-            android:orientation="horizontal"
+        <Button
+            android:id="@+id/buttonXacNhan"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Huỷ giao"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Huỷ nhận"/>
-        </RadioGroup>
+            android:layout_height="35dp"
+            android:layout_below="@+id/checkdanhanhang"
+            android:background="@drawable/button_login"
+            android:layout_alignParentEnd="true"
+            android:text="Xác nhận" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

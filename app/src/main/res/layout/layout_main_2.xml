@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activitys.MainADMActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quản trị viên"
+        android:textColor="@color/pink"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="qtv-1"
+        android:textColor="@color/gray"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/btnQLTK"
+        style="@style/CustomButtonMain"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="80dp"
+        android:drawableTop="@drawable/baseline_person_24"
+        android:text="Quản lý tài khoản"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <Button
+        android:id="@+id/btnLSDH"
+        style="@style/CustomButtonMain"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="80dp"
+        android:drawableTop="@drawable/baseline_view_list_24"
+        android:text="Lịch sử đơn hàng"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <Button
+        android:id="@+id/btnQLHD"
+        style="@style/CustomButtonMain"
+        android:layout_marginLeft="30dp"
+        android:drawableTop="@drawable/baseline_checklist_24"
+        android:text="Quản lý hoá đơn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnQLTK" />
+
+    <Button
+        android:id="@+id/btnTK"
+        style="@style/CustomButtonMain"
+        android:layout_marginRight="30dp"
+        android:drawableTop="@drawable/ic_baseline_bar_chart_24"
+        android:text="Thống kê"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLSDH" />
+
+    <Button
+        android:id="@+id/btnQLBL"
+        style="@style/CustomButtonMain"
+        android:drawableTop="@drawable/ic_baseline_chat_24"
+        android:text="Quản lý bình luận"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnQLHD" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@null"
+        android:drawableLeft="@drawable/baseline_logout_black_24"
+        android:text="@string/logout"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnChangePass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@null"
+        android:drawableLeft="@drawable/baseline_key_black_24"
+        android:text="@string/changePass"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

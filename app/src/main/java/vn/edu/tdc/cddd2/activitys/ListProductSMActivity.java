@@ -62,7 +62,9 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
         btnCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ListProductSMActivity.this, "Giỏ hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListProductSMActivity.this, ListCartActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
             }
         });
 

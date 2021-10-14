@@ -38,6 +38,11 @@
     <string name="giaban">Giá bán</string>
     <string name="btnAll">Chọn tất cả</string>
 
+    <string-array name="ngay">
+        <item>Hôm nay</item>
+        <item>13/10/2021</item>
+    </string-array>
+
     <string-array name="loaikhachhang">
         <item>Khách hàng 1 năm</item>
         <item>Khách hàng > 2 năm</item>
@@ -84,6 +89,12 @@
         <item>N.V.An - KV1</item>
         <item>N.V.Bình - KV2</item>
         <item>N.V.Tiến - KV3</item>
+    </string-array>
+
+    <string-array name="quyen">
+        <item>Nhân viên bán hàng</item>
+        <item>Nhân viên giao hàng</item>
+        <item>Quản lý kho</item>
     </string-array>
 
 </resources>

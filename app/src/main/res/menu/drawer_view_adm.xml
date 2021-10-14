@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_qltk"
+            android:icon="@drawable/baseline_person_24"
+            android:title="Quản lý tài khoản" />
+        <item
+            android:id="@+id/nav_lsdh"
+            android:icon="@drawable/baseline_view_list_24"
+            android:title="Lịch sử đơn hàng" />
+        <item
+            android:id="@+id/nav_qlhd"
+            android:icon="@drawable/ic_baseline_bar_chart_24"
+            android:title="Quản lý hoá đơn" />
+        <item
+            android:id="@+id/nav_tk"
+            android:icon="@drawable/catagory"
+            android:title="Thống kê" />
+        <item
+            android:id="@+id/nav_qlbl"
+            android:icon="@drawable/ic_baseline_chat_24"
+            android:title="Quản lý bình luận" />
+
+        <item android:title="@string/title7">
+            <menu>
+                <item
+                    android:id="@+id/nav_dx"
+                    android:icon="@drawable/baseline_login_black_24"
+                    android:title="@string/logout" />
+                <item
+                    android:id="@+id/nav_dmk"
+                    android:icon="@drawable/baseline_key_black_24"
+                    android:title="@string/changePass" />
+            </menu>
+        </item>
+    </group>
+</menu>
