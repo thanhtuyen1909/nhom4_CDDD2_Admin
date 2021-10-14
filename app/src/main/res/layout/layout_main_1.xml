@@ -65,7 +65,7 @@
         android:id="@+id/btnQLLSP"
         style="@style/CustomButtonMain"
         android:layout_marginRight="30dp"
-        android:drawableTop="@drawable/ic_baseline_laptop_24"
+        android:drawableTop="@drawable/baseline_inventory_2_24"
         android:text="@string/title4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnQLKM" />
@@ -74,7 +74,7 @@
         android:id="@+id/btnQLH"
         style="@style/CustomButtonMain"
         android:layout_marginLeft="30dp"
-        android:drawableTop="@drawable/ic_baseline_local_shipping_24"
+        android:drawableTop="@drawable/ic_baseline_category_24"
         android:text="@string/title5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnDPH" />
@@ -83,7 +83,7 @@
         android:id="@+id/btnQLMGG"
         style="@style/CustomButtonMain"
         android:layout_marginRight="30dp"
-        android:drawableTop="@drawable/ic_baseline_laptop_24"
+        android:drawableTop="@drawable/baseline_menu_24"
         android:text="@string/title6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnQLLSP" />

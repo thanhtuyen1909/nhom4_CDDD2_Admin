@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CustomerAdapter;
+import vn.edu.tdc.cddd2.adapters.Product1Adapter;
 import vn.edu.tdc.cddd2.adapters.ProductAdapter;
 import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.Product;
@@ -41,7 +42,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
     private RecyclerView recyclerView;
     private ArrayList<Product> listProduct;
     private Spinner spinProduct, spinGiamGia;
-    private ProductAdapter productAdapter;
+    private Product1Adapter productAdapter;
     private Button btnAdd;
 
     @Override
@@ -53,7 +54,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Chi tiết mã giảm giá");
+        subtitleAppbar.setText("Chi tiết khuyến mãi");
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -97,13 +98,13 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        productAdapter = new ProductAdapter(listProduct,this);
+        productAdapter = new Product1Adapter(listProduct,this);
         productAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(productAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private ProductAdapter.ItemClickListener itemClickListener = new ProductAdapter.ItemClickListener() {
+    private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
         @Override
         public void getInfor(Product item) {
             Toast.makeText(DetailPromoCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();

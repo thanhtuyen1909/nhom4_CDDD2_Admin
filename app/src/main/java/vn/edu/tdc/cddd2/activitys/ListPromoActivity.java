@@ -29,7 +29,7 @@ import vn.edu.tdc.cddd2.data_models.PromoCode;
 public class ListPromoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến
     private Toolbar toolbar;
-    private TextView btnBack;
+    private TextView btnBack, subtitleAppbar;
     private Button btnAdd;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -43,9 +43,12 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_promocode);
+
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        subtitleAppbar = findViewById(R.id.subtitleAppbar);
+        subtitleAppbar.setText("Danh sách khuyến mãi");
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
