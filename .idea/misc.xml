@@ -10,6 +10,7 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/custom_button_1.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/custom_color_button_bar.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.11510416666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_baseline_print_24.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_baseline_shopping_cart_24.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/rounded_border_edittext.xml" value="0.21614583333333334" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout-v21/appbar_sm.xml" value="0.20416666666666666" />
@@ -20,15 +21,22 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar1.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_1.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_2.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_adm.xml" value="0.1" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_adm_detail_invoice.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_sm.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/fragment_waitship_whm.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/fragment_willorder_whm.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_account_adm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_customer_1.xml" value="0.33" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_detail_order_invoice.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_discount_1.xml" value="0.1" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_employee.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_historyactivity.xml" value="0.2" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_indecrease_button.xml" value="0.5" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_invoice.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_manu_1.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_order_1.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_order_historyorder.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_order_oh.xml" value="0.1925925925925926" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_order_sp.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_product_1.xml" value="0.25" />
@@ -44,15 +52,21 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_changepassword.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_discountcode.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_infomation.xml" value="0.33" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_invoice.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_order.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_product.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_promocode.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_historyactivity.xml" value="0.1925925925925926" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_info_promocode.xml" value="0.19927536231884058" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_account.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_cart_sm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_catagory.xml" value="0.18" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_discode.xml" value="0.1526268115942029" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_discountcode.xml" value="0.1" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_employee.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_invoice.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_manu.xml" value="0.1503623188405797" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_order_adm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_product.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_product_sm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_promocode.xml" value="0.1" />
@@ -60,6 +74,7 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_main_1.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_main_2.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_ordercoor.xml" value="0.16" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_orderhistory.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_orderprocess_oh.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_payment_sm.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_shipprocess.xml" value="0.20416666666666666" />
@@ -71,6 +86,7 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view_adm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view_oh.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view_pm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view_sm.xml" value="0.20416666666666666" />
       </map>
     </option>

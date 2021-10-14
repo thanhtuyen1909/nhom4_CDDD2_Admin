@@ -46,12 +46,12 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
         int id = v.getId();
         switch (id) {
             case R.id.btnQLTK:
-                intent = new Intent(MainADMActivity.this, AccountAdapter.class);
+                intent = new Intent(MainADMActivity.this, ListAccountActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.btnLSDH:
-                intent = new Intent(MainADMActivity.this, ListHistoryActivity.class);
+                intent = new Intent(MainADMActivity.this, OrderHistoryActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

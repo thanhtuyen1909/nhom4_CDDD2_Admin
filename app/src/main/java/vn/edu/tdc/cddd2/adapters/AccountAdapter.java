@@ -49,7 +49,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 if(itemClickListener != null) {
-                    itemClickListener.getInfor(item);
+                    if(v.getId() == R.id.btnHistory) {
+                        itemClickListener.getLayoutHistory();
+                    }
+                    else itemClickListener.getInfor(item);
                 } else {
                     return;
                 }
@@ -70,8 +73,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             im_item = itemView.findViewById(R.id.img);
-            tv_username = itemView.findViewById(R.id.txt_name);
-            tv_role = itemView.findViewById(R.id.txt_price);
+            tv_username = itemView.findViewById(R.id.txt_username);
+            tv_role = itemView.findViewById(R.id.txt_quyen);
             im_lock = itemView.findViewById(R.id.btnLock);
             im_history = itemView.findViewById(R.id.btnHistory);
             im_lock.setOnClickListener(this);
@@ -88,5 +91,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     public interface ItemClickListener {
         void getInfor(Account item);
+        void getLayoutHistory();
     }
 }

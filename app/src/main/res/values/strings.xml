@@ -92,6 +92,7 @@
     </string-array>
 
     <string-array name="quyen">
+        <item>Tất cả</item>
         <item>Nhân viên bán hàng</item>
         <item>Nhân viên giao hàng</item>
         <item>Quản lý kho</item>

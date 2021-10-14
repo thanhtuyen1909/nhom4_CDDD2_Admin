@@ -23,7 +23,7 @@
             android:contentDescription="TODO" />
 
         <TextView
-            android:id="@+id/txt_name"
+            android:id="@+id/txt_madonhang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -34,23 +34,11 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txt_price"
+            android:id="@+id/txt_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_name"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/txt_madonhang"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/img"
-            android:text="Title"
-            android:textSize="16sp"
-            android:textStyle="italic" />
-
-        <TextView
-            android:id="@+id/txt_manu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_price"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/img"
@@ -59,34 +47,34 @@
             android:textStyle="italic" />
 
         <TextView
-            android:id="@+id/txt_amount"
-            android:textSize="16sp"
-            android:text="Title"
+            android:id="@+id/txt_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:layout_toRightOf="@+id/txt_manu"
-            android:layout_below="@+id/txt_price"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="20dp" />
+            android:layout_below="@+id/txt_total"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/img"
+            android:text="Title"
+            android:textSize="16sp"
+            android:textStyle="italic" />
 
         <ImageView
-            android:id="@+id/btnEdit"
+            android:id="@+id/btnDetail"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/btnDelete"
-            android:src="@drawable/baseline_edit_24"
+            android:layout_toLeftOf="@+id/btnPrint"
+            android:src="@drawable/baseline_info_24"
             android:text="" />
 
         <ImageView
-            android:id="@+id/btnDelete"
+            android:id="@+id/btnPrint"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_delete_24"
+            android:src="@drawable/ic_baseline_print_24"
             android:text="" />
 
     </RelativeLayout>

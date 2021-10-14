@@ -17,16 +17,15 @@
             layout="@layout/appbar" />
 
         <Spinner
-            android:id="@+id/spinner_cata"
+            android:id="@+id/spinner_status"
             style="@style/CustomSpinner"
             android:layout_width="0dp"
             android:layout_margin="4dp"
             android:background="@drawable/bg_spinner"
             android:entries="@array/quyen"
-            app:layout_constraintTop_toBottomOf="@+id/include"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/include" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -37,24 +36,83 @@
 
         <SearchView
             android:id="@+id/editSearch"
+            android:layout_marginTop="5dp"
             style="@style/CustomSearchView"
             android:background="@drawable/rounded_border_edittext"
-            android:queryHint="Tên tài khoản"
+            android:queryHint="Mã đơn hàng"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_cata" />
+            app:layout_constraintTop_toBottomOf="@+id/edtNgayBD" />
+
+        <EditText
+            android:id="@+id/edtNgayBD"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:clickable="true"
+            android:focusable="false"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_border_edittext"
+            android:ems="10"
+            android:hint="01/10/2021"
+            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt1" />
+
+        <TextView
+            android:id="@+id/txt1"
+            style="@style/CustomTextViewQuantity"
+            android:text="Khoảng thời gian tạo:"
+            android:textColor="@color/gray3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_status" />
+
+        <EditText
+            android:id="@+id/edtNgayKT"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="false"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_border_edittext"
+            android:ems="10"
+            android:hint="01/10/2021"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/txt1" />
 
         <TextView
             android:id="@+id/textView2"
+            android:layout_width="0dp"
             style="@style/CustomTextViewQuantity"
             android:layout_marginTop="10dp"
-            android:text="Danh sách tài khoản"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Danh sách đơn hàng"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editSearch" />
 
+        <TextView
+            android:id="@+id/txt_xuatthongke"
+            style="@style/CustomTextViewQuantity"
+            android:layout_marginEnd="15dp"
+            android:layout_width="0dp"
+            android:layout_marginTop="10dp"
+            android:text="Xuất thống kê"
+            android:textAlignment="textEnd"
+            android:textColor="@color/pink"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/editSearch" />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listAccount"
+            android:id="@+id/listOrder"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
@@ -74,12 +132,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
-
-        <Button
-            android:id="@+id/btnAdd"
-            style="@style/CustomButtonAdd"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Left Menu -->
     <com.google.android.material.navigation.NavigationView

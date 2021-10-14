@@ -34,13 +34,10 @@
         <activity android:screenOrientation="portrait" android:name=".activitys.ShipProcessActivity"> </activity>
     <!-- Administrators -->
         <activity android:screenOrientation="portrait" android:name=".activitys.MainADMActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListAccountActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListHistoryActivity"> </activity>
+        <activity android:screenOrientation="landscape" android:name=".activitys.ListHistoryActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.OrderHistoryActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.DetailOrderActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListInvoiceActivity"> </activity>
@@ -49,7 +46,12 @@
         <activity android:screenOrientation="portrait" android:name=".activitys.ListRatingActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.DetailRatingActivity"> </activity>
     <!-- Administrators -->
-        <activity android:screenOrientation="portrait" android:name=".activitys.AttendanceActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.AttendanceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListEmployeeActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.DetailEmployeeActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.DetailSalaryActivity"> </activity>
