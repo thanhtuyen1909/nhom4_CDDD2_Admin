@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_drawer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/gray2">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,10 +28,11 @@
             app:srcCompat="@mipmap/ic_launcher_round" />
 
         <EditText
-            android:id="@+id/edtTSP"
+            android:id="@+id/edtTen"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_margin="5dp"
+            android:padding="5dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_border_edittext"
             android:ems="10"

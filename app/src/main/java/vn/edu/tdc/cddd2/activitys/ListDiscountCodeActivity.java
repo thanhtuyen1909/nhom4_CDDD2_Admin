@@ -74,7 +74,9 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                intent = new Intent(ListDiscountCodeActivity.this, DetailDiscountCodeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
             }
         });
 

@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".activitys.MainQLKActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -35,6 +36,7 @@
         android:id="@+id/btnQLSP"
         style="@style/CustomButtonMain"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="80dp"
         android:drawableTop="@drawable/ic_baseline_laptop_24"
         android:text="@string/title1"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,6 +46,7 @@
         android:id="@+id/btnQLKM"
         style="@style/CustomButtonMain"
         android:layout_marginRight="30dp"
+        android:layout_marginTop="80dp"
         android:drawableTop="@drawable/baseline_view_list_24"
         android:text="@string/title2"
         app:layout_constraintEnd_toEndOf="parent"

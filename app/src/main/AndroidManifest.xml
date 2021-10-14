@@ -9,13 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CDDD2">
-        <activity android:name=".activitys.MainQLKActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".activitys.MainQLKActivity" />
         <activity android:screenOrientation="portrait" android:name=".activitys.ListProductActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListManuActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListCataActivity"> </activity>
@@ -25,6 +19,19 @@
         <activity android:screenOrientation="portrait" android:name=".activitys.ListDiscountCodeActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListPromoActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ChangePasswordActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailDiscountCodeActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailPromoCodeActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.InformationPromoCodeActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.OrderCoordinationActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListProductSMActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListCartActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.CreateOrderActivity"> </activity>
     </application>
 
 </manifest>

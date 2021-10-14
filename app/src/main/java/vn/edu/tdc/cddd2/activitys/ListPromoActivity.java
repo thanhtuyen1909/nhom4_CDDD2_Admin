@@ -67,7 +67,8 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(ListPromoActivity.this, DetailProductActivity.class);
+                intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
         });
@@ -109,7 +110,9 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
 
         @Override
         public void getLayoutAddDetailPromoCode() {
-            Toast.makeText(ListPromoActivity.this, "Add detail", Toast.LENGTH_SHORT).show();
+            intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         }
     };
 

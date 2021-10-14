@@ -4,6 +4,7 @@ public class DiscountCode {
     // Khai báo biến
     private String name;
 
+    // Get - set:
     public String getName() {
         return name;
     }

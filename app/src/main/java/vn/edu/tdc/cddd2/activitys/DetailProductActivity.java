@@ -92,12 +92,11 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
 
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
-        recyclerView.setHasFixedSize(true);
         proAdapter = new Product1Adapter(listProduct,this);
         proAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(false);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
     }
 

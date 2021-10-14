@@ -66,7 +66,9 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 break;
             case R.id.btnDPH:
-                Toast.makeText(MainQLKActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(MainQLKActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.btnQLLSP:
                 intent = new Intent(MainQLKActivity.this, ListCataActivity.class);

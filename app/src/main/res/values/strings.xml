@@ -10,6 +10,7 @@
     <string name="subtitleSP">Danh sách sản phẩm:</string>
     <string name="subtitleMGG">Danh sách mã giảm giá:</string>
     <string name="subtitleMKM">Danh sách mã khuyến mãi:</string>
+    <string name="subtitleKH">Danh sách khách hàng:</string>
     <string name="subtitleLSP">Danh sách loại sản phẩm:</string>
     <string name="subtitleH">Danh sách hãng:</string>
     <string name="amountSP">5 sản phẩm từ 15</string>
@@ -35,5 +36,54 @@
     <string name="motasp">Thêm mô tả cho sản phẩm</string>
     <string name="gianhap">Giá nhập</string>
     <string name="giaban">Giá bán</string>
+    <string name="btnAll">Chọn tất cả</string>
+
+    <string-array name="loaikhachhang">
+        <item>Khách hàng 1 năm</item>
+        <item>Khách hàng > 2 năm</item>
+        <item>Khách hàng thân thiết</item>
+    </string-array>
+
+    <string-array name="loaisp">
+        <item>Laptop</item>
+        <item>Máy tính</item>
+        <item>Điện thoại</item>
+    </string-array>
+
+    <string-array name="hang">
+        <item>Asus</item>
+        <item>Samsung</item>
+        <item>Apple</item>
+    </string-array>
+
+    <string-array name="mau">
+        <item>Đen</item>
+        <item>Đỏ</item>
+        <item>Xám</item>
+    </string-array>
+
+    <string-array name="dungluong">
+        <item>8GB</item>
+        <item>16GB</item>
+        <item>128GB</item>
+    </string-array>
+
+    <string-array name="giamgia">
+        <item>10%</item>
+        <item>20%</item>
+        <item>30%</item>
+    </string-array>
+
+    <string-array name="sanpham">
+        <item>Asus Nitro N5</item>
+        <item>Iphone 13</item>
+        <item>Iphone X</item>
+    </string-array>
+
+    <string-array name="shipper">
+        <item>N.V.An - KV1</item>
+        <item>N.V.Bình - KV2</item>
+        <item>N.V.Tiến - KV3</item>
+    </string-array>
 
 </resources>
