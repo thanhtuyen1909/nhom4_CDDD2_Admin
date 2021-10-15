@@ -43,10 +43,22 @@
         <item>13/10/2021</item>
     </string-array>
 
+    <string-array name="thang">
+        <item>Tháng 8</item>
+        <item>Tháng 9</item>
+    </string-array>
+
     <string-array name="loaikhachhang">
         <item>Khách hàng 1 năm</item>
         <item>Khách hàng > 2 năm</item>
         <item>Khách hàng thân thiết</item>
+    </string-array>
+
+    <string-array name="ngay1">
+        <item>Mới nhất</item>
+        <item>Cũ nhất</item>
+        <item>Cao nhất</item>
+        <item>Thấp nhất</item>
     </string-array>
 
     <string-array name="loaisp">

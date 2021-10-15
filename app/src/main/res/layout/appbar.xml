@@ -24,7 +24,7 @@
                 android:layout_marginLeft="15dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/titleLayout"
+                android:text="Thông kê"
                 android:textColor="#fff"
                 android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="parent"

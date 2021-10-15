@@ -109,6 +109,9 @@ public class ListInvoiceActivity extends AppCompatActivity implements Navigation
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_qltk:
+                intent = new Intent(ListInvoiceActivity.this, ListAccountActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_lsdh:
                 intent = new Intent(ListInvoiceActivity.this, OrderHistoryActivity.class);
@@ -116,16 +119,13 @@ public class ListInvoiceActivity extends AppCompatActivity implements Navigation
                 startActivity(intent);
                 break;
             case R.id.nav_qlhd:
-                intent = new Intent(ListInvoiceActivity.this, ListInvoiceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
                 break;
-            case R.id.nav_qlmgg:
+            case R.id.nav_tk:
                 intent = new Intent(ListInvoiceActivity.this, RevenueStatisticActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
-            case R.id.nav_qllsp:
+            case R.id.nav_qlbl:
                 intent = new Intent(ListInvoiceActivity.this, ListRatingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
@@ -137,11 +137,6 @@ public class ListInvoiceActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ListInvoiceActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(ListInvoiceActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             default:

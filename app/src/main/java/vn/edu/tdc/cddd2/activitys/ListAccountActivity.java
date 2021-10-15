@@ -155,11 +155,6 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                 intent = new Intent(ListAccountActivity.this, LoginActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_qlh:
-                intent = new Intent(ListAccountActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
             default:
                 Toast.makeText(ListAccountActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
                 break;

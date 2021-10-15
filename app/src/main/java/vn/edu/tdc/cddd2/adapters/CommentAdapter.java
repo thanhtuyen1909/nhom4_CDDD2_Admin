@@ -13,41 +13,43 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.Comment;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHolder> {
-    ArrayList<Product> listProducts;
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
+    ArrayList<Comment> listProducts;
     private Context context;
-    Product5Adapter.ItemClickListener itemClickListener;
+    CommentAdapter.ItemClickListener itemClickListener;
 
-    public void setItemClickListener(Product5Adapter.ItemClickListener itemClickListener) {
+    public void setItemClickListener(CommentAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public Product5Adapter(ArrayList<Product> listProducts, Context context) {
+    public CommentAdapter(ArrayList<Comment> listProducts, Context context) {
         this.listProducts = listProducts;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public Product5Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CommentAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.item_detail_order_invoice,parent,false);
-        Product5Adapter.ViewHolder viewHolder = new Product5Adapter.ViewHolder(itemView);
+        View itemView = inflater.inflate(R.layout.item_comment, parent, false);
+        CommentAdapter.ViewHolder viewHolder = new CommentAdapter.ViewHolder(itemView);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Product5Adapter.ViewHolder holder, int position) {
-        Product item = listProducts.get(position);
-        holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
+    public void onBindViewHolder(@NonNull CommentAdapter.ViewHolder holder, int position) {
+        Comment item = listProducts.get(position);
+        holder.im_item.setImageResource(R.drawable.ic_baseline_account_circle_24);
         holder.tv_name.setText(item.getName());
-        holder.tv_amount.setText(String.valueOf(item.getPrice()) + " x " + String.valueOf(item.getQuantity()));
+        holder.tv_comment.setText(item.getComment());
+        holder.tv_time.setText(item.getDate());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(itemClickListener != null) {
+                if (itemClickListener != null) {
                     itemClickListener.getInfor(item);
                 } else {
                     return;
@@ -61,28 +63,29 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
         return listProducts.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        ImageView im_item ;
-        TextView tv_name, tv_amount ;
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        ImageView im_item, im_delete;
+        TextView tv_name, tv_comment, tv_time;
         View.OnClickListener onClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             im_item = itemView.findViewById(R.id.img);
             tv_name = itemView.findViewById(R.id.txt_name);
-            tv_amount = itemView.findViewById(R.id.txt_amount);
+            tv_comment = itemView.findViewById(R.id.txt_comment);
+            tv_time = itemView.findViewById(R.id.txt_time);
             im_item.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if(onClickListener != null) {
+            if (onClickListener != null) {
                 onClickListener.onClick(v);
             }
         }
     }
 
     public interface ItemClickListener {
-        void getInfor(Product item);
+        void getInfor(Comment item);
     }
 }

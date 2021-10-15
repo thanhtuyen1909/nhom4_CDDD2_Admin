@@ -17,54 +17,16 @@
             layout="@layout/appbar" />
 
         <TextView
-            android:id="@+id/txt_madonhang"
+            android:id="@+id/txt_manv"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="30dp"
             android:textStyle="bold"
             android:textSize="30sp"
             android:textAlignment="center"
             android:layout_width="match_parent"
-            android:text="DH001"
+            android:text="NV001"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include" />
-
-        <TextView
-            android:id="@+id/txt_ngaytao"
-            android:textSize="16sp"
-            style="@style/CustomTextViewQuantity"
-            android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:textAlignment="textEnd"
-            android:text="Ngày tạo: 13/10/2021"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_madonhang" />
-
-        <TextView
-            android:id="@+id/txt_trangthai"
-            android:textSize="16sp"
-            style="@style/CustomTextViewQuantity"
-            android:layout_width="match_parent"
-            android:textAlignment="textEnd"
-            android:text="Trạng thái: Đã hoàn thành"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_ngaytao" />
-
-        <TextView
-            android:id="@+id/txt_ghichu"
-            style="@style/CustomTextViewQuantity"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_width="match_parent"
-            android:textSize="16sp"
-            android:text="Ghi chú:"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_trangthai" />
 
         <View
             android:id="@+id/view2"
@@ -85,7 +47,7 @@
             android:layout_marginTop="5dp"
             style="@style/CustomTextViewQuantity"
             android:layout_width="match_parent"
-            android:text="Họ tên khách hàng: Nguyễn Văn A"
+            android:text="Họ tên nhân viên: Nguyễn Văn An"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -97,7 +59,7 @@
             android:layout_marginTop="5dp"
             style="@style/CustomTextViewQuantity"
             android:layout_width="match_parent"
-            android:text="Địa chỉ: 53 Võ Văn Ngân, p. Linh Chiểu, tp. Thủ Đức"
+            android:text="Chức vụ: Nhân viên bán hàng"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +71,7 @@
             android:layout_marginTop="5dp"
             style="@style/CustomTextViewQuantity"
             android:layout_width="match_parent"
-            android:text="Số điện thoại: 0123456789"
+            android:text="Ngày vào làm: 13/10/2019"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -117,44 +79,87 @@
 
         <TextView
             android:id="@+id/txt1"
+            android:layout_marginTop="30dp"
             style="@style/CustomTextViewQuantity"
             android:layout_width="match_parent"
-            android:text="Thông tin khách hàng"
+            android:text="Thông tin nhân viên"
             android:textColor="@color/gray3"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_ghichu" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_manv" />
 
-        <TextView
-            android:id="@+id/textView2"
-            style="@style/CustomTextViewQuantity"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/gray3"
-            android:layout_marginEnd="15dp"
-            android:layout_width="200dp"
-            android:text="@string/subtitleSP"
+        <Spinner
+            android:id="@+id/spinner_month"
+            style="@style/CustomSpinner"
+            android:layout_height="35dp"
+            android:layout_width="150dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_spinner"
+            android:entries="@array/thang"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txt_sdt" />
 
-        <View
-            android:id="@+id/view1"
+        <TextView
+            android:id="@+id/txt_songaylam"
+            style="@style/CustomTextViewQuantity"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
-            android:background="@android:color/darker_gray"
+            android:text="Số ngày làm trong tháng: 28"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_month" />
+
+        <TextView
+            android:id="@+id/txt_songaynghi"
+            style="@style/CustomTextViewQuantity"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:text="Số ngày nghỉ trong tháng: 0"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_songaylam" />
+
+        <TextView
+            android:id="@+id/txt_luongcb"
+            style="@style/CustomTextViewQuantity"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:text="Lương căn bản: 4.500.000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_songaynghi" />
+
+        <TextView
+            android:id="@+id/txt_chuyencan"
+            style="@style/CustomTextViewQuantity"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:text="Thưởng chuyên cần: 500.000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_luongcb" />
+
+        <TextView
+            android:id="@+id/txt_phucap"
+            style="@style/CustomTextViewQuantity"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:text="Phụ cấp: 500.000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_chuyencan" />
 
         <TextView
             android:id="@+id/txt_tongtien"
             android:layout_height="35dp"
             android:layout_width="match_parent"
-            android:text="Tổng tiền: 40000000 VND"
+            android:text="Tổng lương: 4000000 VND"
             android:paddingEnd="5dp"
             android:textAlignment="textEnd"
             android:textColor="@color/pink"
@@ -163,17 +168,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listProduct"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/txt_tongtien"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Left Menu -->
