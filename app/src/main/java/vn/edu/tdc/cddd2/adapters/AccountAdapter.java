@@ -10,11 +10,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Account;
 import vn.edu.tdc.cddd2.data_models.Product;
+import vn.edu.tdc.cddd2.data_models.Role;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
     ArrayList<Account> listAccounts;
@@ -41,10 +48,27 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull AccountAdapter.ViewHolder holder, int position) {
+        DatabaseReference ref = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Role");
         Account item = listAccounts.get(position);
         holder.im_item.setImageResource(R.drawable.baseline_person_24);
         holder.tv_username.setText(item.getUsername());
-        holder.tv_role.setText(item.getRole());
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Role role = node.getValue(Role.class);
+                    if(item.getRole_id() == role.getId()){
+                        holder.tv_role.setText(item.getRole_id());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

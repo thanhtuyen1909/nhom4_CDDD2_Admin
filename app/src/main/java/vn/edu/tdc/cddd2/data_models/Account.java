@@ -1,11 +1,21 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Account {
-    // Khai báo biến:
+    //Properties
+    private int id;
     private String username;
-    private String role;
+    private String password;
+    private int role_id;
+    private String status;
 
-    // Get - set:
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -14,25 +24,49 @@ public class Account {
         this.username = username;
     }
 
-    public String getRole() {
-        return role;
+    public String getPassword() {
+        return password;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    // Contructor
-    public Account(String username, String role) {
+    public int getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(int role_id) {
+        this.role_id = role_id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Account(int id, String username, String password, int role_id, String status) {
+        this.id = id;
         this.username = username;
-        this.role = role;
+        this.password = password;
+        this.role_id = role_id;
+        this.status = status;
+    }
+
+    public Account() {
     }
 
     @Override
     public String toString() {
         return "Account{" +
-                "username='" + username + '\'' +
-                ", role='" + role + '\'' +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role_id=" + role_id +
+                ", status='" + status + '\'' +
                 '}';
     }
 }
