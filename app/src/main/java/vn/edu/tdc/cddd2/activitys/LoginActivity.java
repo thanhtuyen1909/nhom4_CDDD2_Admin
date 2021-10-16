@@ -54,34 +54,41 @@ public class LoginActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for(DataSnapshot node : snapshot.getChildren()){
                             Account temp = node.getValue(Account.class);
+                            Log.d("username", temp.getUsername());
                             if(account.getUsername().compareTo(temp.getUsername()) == 0 && account.getPassword().compareTo(temp.getPassword()) == 0 &&
                                 temp.getStatus().compareTo("unlock") == 0){
 
                                 switch (temp.getRole_id()){
                                     case 0 :
                                       intent = new Intent(LoginActivity.this, MainADMActivity.class);
+                                      intent.putExtra("username",account.getUsername());
                                       startActivity(intent);
                                         break;
                                     case 1:
                                         break;
                                     case 2:
                                         intent = new Intent(LoginActivity.this, MainQLKActivity.class);
+                                        intent.putExtra("username",account.getUsername());
                                         startActivity(intent);
                                         break;
                                     case 3:
                                         intent = new Intent(LoginActivity.this,ListProductSMActivity.class );
+                                        intent.putExtra("username",account.getUsername());
                                         startActivity(intent);
                                         break;
                                     case 4:
                                         intent = new Intent(LoginActivity.this, OrderProcessActivity.class);
+                                        intent.putExtra("username",account.getUsername());
                                         startActivity(intent);
                                         break;
                                     case 5:
                                         intent = new Intent(LoginActivity.this, AttendanceActivity.class);
+                                        intent.putExtra("username",account.getUsername());
                                         startActivity(intent);
                                         break;
                                     case 6:
                                         intent = new Intent(LoginActivity.this, ShipProcessActivity.class);
+                                        intent.putExtra("username",account.getUsername());
                                         startActivity(intent);
                                         break;
                                     default:;

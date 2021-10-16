@@ -3,6 +3,7 @@ package vn.edu.tdc.cddd2.activitys;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import vn.edu.tdc.cddd2.adapters.AccountAdapter;
 
 public class MainADMActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
+    private String username;
     private Toolbar toolbar;
     private Button btnQLTK, btnLSDH, btnQLHD, btnTK, btnQLBL, btnDX, btnDMK;
     private Intent intent;
@@ -22,6 +24,9 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main_2);
+        if(getIntent().getExtras() != null) {
+            username = getIntent().getExtras().getString("username");
+        }
         // Khởi tạo biến
         btnQLTK = findViewById(R.id.btnQLTK);
         btnLSDH = findViewById(R.id.btnLSDH);
@@ -30,6 +35,7 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
         btnQLBL = findViewById(R.id.btnQLBL);
         btnDX = findViewById(R.id.btnLogout);
         btnDMK = findViewById(R.id.btnChangePass);
+        intent = getIntent();
 
         // Bắt sự kiện xử lý button
         btnQLTK.setOnClickListener(this);
@@ -72,6 +78,7 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.btnChangePass:
                 intent = new Intent(MainADMActivity.this, ChangePasswordActivity.class);
+                intent.putExtra("username",username);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

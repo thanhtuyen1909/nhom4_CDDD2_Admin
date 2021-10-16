@@ -7,6 +7,15 @@ public class Account {
     private String password;
     private int role_id;
     private String status;
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public int getId() {
         return id;
@@ -48,12 +57,13 @@ public class Account {
         this.status = status;
     }
 
-    public Account(int id, String username, String password, int role_id, String status) {
+    public Account(int id, String username, String password, int role_id, String status, String image) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role_id = role_id;
         this.status = status;
+        this.image = image;
     }
 
     public Account() {

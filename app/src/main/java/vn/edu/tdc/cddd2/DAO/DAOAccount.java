@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -11,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import vn.edu.tdc.cddd2.data_models.Account;
 
@@ -22,28 +25,16 @@ public class DAOAccount {
         ref = db.getReference("Account");
     }
 
-    public int Login(Account account){
-        int role_id = -1;
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot node : snapshot.getChildren()){
-                    Account account1 = node.getValue(Account.class);
-                    list.add(account1);
-                }
-            }
+    public Task<Void> update(String key,Account account){
+        HashMap<String,Object> map = new HashMap<String,Object>();
+        map.put("id",account.getId());
+        map.put("username",account.getUsername());
+        map.put("password",account.getPassword());
+        map.put("role_id",account.getRole_id());
+        map.put("status",account.getStatus());
+        map.put("image",account.getImage());
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        Log.d("size", ""+list.size());
-        for (Account account1 : list){
-            if(account1.getUsername() == account.getUsername() && account1.getPassword() == account.getPassword()){
-                return  account1.getRole_id();
-            }
-        }
-        return  role_id;
+        return ref.child(key).updateChildren(map);
     }
+
 }
