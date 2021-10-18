@@ -183,8 +183,8 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
                 break;
             case R.id.nav_dph:
                 intent = new Intent(DetailInformationActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
-                Toast.makeText(DetailInformationActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(DetailInformationActivity.this, ListDiscountCodeActivity.class);
