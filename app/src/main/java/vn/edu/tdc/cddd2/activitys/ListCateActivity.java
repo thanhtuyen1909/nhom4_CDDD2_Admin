@@ -94,7 +94,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         data();
-        cateAdapter = new CateAdapter(listCate,this);
+        cateAdapter = new CateAdapter(listCate, this);
         cateAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(cateAdapter);
 
@@ -109,7 +109,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public void data(){
+    public void data() {
         cateRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -139,12 +139,12 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         public void editCategory(Category item) {
             intent = new Intent(ListCateActivity.this, DetailInformationActivity.class);
             intent.putExtra("to", "ListCate");
-            intent.putExtra("item", (Parcelable) item);
+            intent.putExtra("itemCate", (Parcelable) item);
             startActivity(intent);
         }
     };
 
-    private void showWarningDialog(String key){
+    private void showWarningDialog(String key) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListCateActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListCateActivity.this).inflate(
                 R.layout.layout_error_dialog,
@@ -154,11 +154,11 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         title = (TextView) view.findViewById(R.id.textTitle);
         title.setText("THÔNG BÁO");
         mess = (TextView) view.findViewById(R.id.textMessage);
-        mess.setText("Xác nhận xoá sản phẩm?");
+        mess.setText("Xác nhận xoá loại sản phẩm?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
 
-        final  AlertDialog alertDialog = builder.create();
+        final AlertDialog alertDialog = builder.create();
 
         view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,13 +176,13 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-        if (alertDialog.getWindow()!= null){
+        if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
     }
 
-    private void showSuccesDialog(){
+    private void showSuccesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListCateActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListCateActivity.this).inflate(
                 R.layout.layout_succes_dialog,
@@ -192,10 +192,10 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         title = (TextView) view.findViewById(R.id.textTitle);
         title.setText("THÔNG BÁO");
         mess = (TextView) view.findViewById(R.id.textMessage);
-        mess.setText("Xoá sản phẩm thành công!");
+        mess.setText("Xoá loại sản phẩm thành công!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
-        final  AlertDialog alertDialog = builder.create();
+        final AlertDialog alertDialog = builder.create();
 
         view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +204,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-        if (alertDialog.getWindow()!= null){
+        if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
@@ -231,9 +231,9 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListCateActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListCateActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListCateActivity.this, ListDiscountCodeActivity.class);
@@ -266,7 +266,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();

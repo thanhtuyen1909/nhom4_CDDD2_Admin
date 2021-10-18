@@ -2,7 +2,10 @@ package vn.edu.tdc.cddd2.activitys;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -11,8 +14,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -65,6 +70,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
         manuRef = FirebaseDatabase.getInstance().getReference("Manufactures");
+        totalManu = findViewById(R.id.totalManu);
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +85,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
             @Override
             public void onClick(View v) {
                 intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
+                intent.putExtra("to", "ListManu");
                 startActivity(intent);
             }
         });
@@ -88,7 +95,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         recyclerView.setHasFixedSize(true);
         listManu = new ArrayList<>();
         data();
-        manuAdapter = new ManuAdapter(listManu,this);
+        manuAdapter = new ManuAdapter(listManu, this);
         manuAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(manuAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -104,7 +111,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
+    private void data() {
         manuRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -126,8 +133,16 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
 
     private ManuAdapter.ItemClickListener itemClickListener = new ManuAdapter.ItemClickListener() {
         @Override
-        public void getInfor(Manufacture item) {
-            Toast.makeText(ListManuActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+        public void deleteManufacture(String key) {
+            showWarningDialog(key);
+        }
+
+        @Override
+        public void editManufacture(Manufacture item) {
+            intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
+            intent.putExtra("to", "ListManu");
+            intent.putExtra("itemManu", (Parcelable) item);
+            startActivity(intent);
         }
     };
 
@@ -152,9 +167,9 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListManuActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListManuActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListManuActivity.this, ListDiscountCodeActivity.class);
@@ -187,10 +202,78 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
+    }
+
+    // Xử lý sự kiện xoá hãng:
+    private void showWarningDialog(String key) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListManuActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListManuActivity.this).inflate(
+                R.layout.layout_error_dialog,
+                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = (TextView) view.findViewById(R.id.textTitle);
+        title.setText("THÔNG BÁO");
+        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess.setText("Xác nhận xoá hãng?");
+        ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
+        ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                manuRef.child(key).removeValue();
+                showSuccesDialog();
+            }
+        });
+
+        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    // Xử lý sự kiện thông báo xoá thành công:
+    private void showSuccesDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListManuActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListManuActivity.this).inflate(
+                R.layout.layout_succes_dialog,
+                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = (TextView) view.findViewById(R.id.textTitle);
+        title.setText("THÔNG BÁO");
+        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess.setText("Xoá sản phẩm thành công!");
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
     }
 }

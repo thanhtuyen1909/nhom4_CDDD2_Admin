@@ -122,9 +122,9 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListProductActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListProductActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListProductActivity.this, ListDiscountCodeActivity.class);

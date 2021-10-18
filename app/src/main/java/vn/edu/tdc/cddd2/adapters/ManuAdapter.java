@@ -1,6 +1,8 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +12,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 
-public class ManuAdapter  extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
+public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
     ArrayList<Manufacture> listManus;
     private Context context;
     ManuAdapter.ItemClickListener itemClickListener;
@@ -41,13 +48,22 @@ public class ManuAdapter  extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ManuAdapter.ViewHolder holder, int position) {
         Manufacture item = listManus.get(position);
-        holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/manufactures/" + item.getImage());
+        imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.im_item.getWidth(), holder.im_item.getHeight(), false));
+            }
+        });
         holder.tv_name.setText(item.getName());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (itemClickListener != null) {
-                    itemClickListener.getInfor(item);
+                    if (v.getId() == R.id.btnEdit) {
+                        itemClickListener.editManufacture(item);
+                    } else itemClickListener.deleteManufacture(item.getKey());
                 } else {
                     return;
                 }
@@ -84,6 +100,8 @@ public class ManuAdapter  extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
     }
 
     public interface ItemClickListener {
-        void getInfor(Manufacture item);
+        void deleteManufacture(String key);
+
+        void editManufacture(Manufacture item);
     }
 }

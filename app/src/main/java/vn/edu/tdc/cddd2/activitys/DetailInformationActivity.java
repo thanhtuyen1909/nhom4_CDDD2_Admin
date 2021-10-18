@@ -44,6 +44,7 @@ import java.io.IOException;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Category;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class DetailInformationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     // Khai báo biến
@@ -56,10 +57,11 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
     NavigationView navigationView;
     Intent intent;
     Category itemCate = null;
-    String to, key = null, name = null, image = null;
+    Manufacture itemManu = null;
+    String to, key = null, name = null, image = null, location = "images/categories";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference cateRef = database.getReference("Categories");
-    DatabaseReference manuRef = database.getReference("Ma");
+    DatabaseReference manuRef = database.getReference("Manufactures");
     StorageReference imageRef = null;
     private final int PICK_IMAGE_REQUEST = 1;
     private Uri filePath = null;
@@ -69,7 +71,14 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_infomation);
         to = getIntent().getStringExtra("to");
-        itemCate = (Category) getIntent().getParcelableExtra("item");
+        itemCate = (Category) getIntent().getParcelableExtra("itemCate");
+        itemManu = (Manufacture) getIntent().getParcelableExtra("itemManu");
+
+        // Khởi tạo biến
+        btnSave = findViewById(R.id.txtSave);
+        btnCancel = findViewById(R.id.txtCancel);
+        edtName = findViewById(R.id.edtTen);
+        img = findViewById(R.id.imageView);
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -77,8 +86,11 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
         if (to.equals("ListCate")) {
             subtitleAppbar.setText(R.string.titleDetailLSP);
+            edtName.setHint("Tên loại sản phẩm");
         } else {
             subtitleAppbar.setText(R.string.titleDetailH);
+            edtName.setHint("Tên hãng");
+            location = "images/manufactures";
         }
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
@@ -89,18 +101,28 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Khởi tạo biến
-        btnSave = findViewById(R.id.txtSave);
-        btnCancel = findViewById(R.id.txtCancel);
-        edtName = findViewById(R.id.edtTen);
-        img = findViewById(R.id.imageView);
-        edtName.setHint("Tên loại sản phẩm");
+        // Kiểm tra dữ liệu:
         if (itemCate != null) {
             edtName.setText(itemCate.getName());
             name = itemCate.getName();
             key = itemCate.getKey();
             image = itemCate.getImage();
             imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + image);
+            imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
+                }
+            });
+        }
+
+        if (itemManu != null) {
+            edtName.setText(itemManu.getName());
+            name = itemManu.getName();
+            key = itemManu.getKey();
+            image = itemManu.getImage();
+            imageRef = FirebaseStorage.getInstance().getReference("images/manufactures/" + image);
             imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
@@ -211,7 +233,7 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         if (v == btnSave) {
             //upload ảnh
             if (filePath != null) {
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/categories")
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference(location)
                         .child(name + "." + getFileExtension(filePath));
                 storageRef.putFile(filePath);
                 image = name + "." + getFileExtension(filePath);
@@ -240,7 +262,24 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
                     }
                 }
                 else {
-                    Toast.makeText(DetailInformationActivity.this, "Hãng", Toast.LENGTH_SHORT).show();
+                    Manufacture manufacture = new Manufacture();
+                    manufacture.setName(name);
+                    manufacture.setImage(image);
+                    if (itemManu == null) {
+                        manuRef.push().setValue(manufacture).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                showSuccesDialog("Thêm hãng thành công!");
+                            }
+                        });
+                    } else {
+                        manuRef.child(key).setValue(manufacture).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                showSuccesDialog("Cập nhật hãng thành công!");
+                            }
+                        });
+                    }
                 }
             }
 
@@ -249,6 +288,12 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         } else {
             showErrorDialog();
         }
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
     }
 
     private void showWarningDialog() {
@@ -277,12 +322,6 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
-    }
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
     }
 
     private void showErrorDialog() {

@@ -48,8 +48,8 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull CateAdapter.ViewHolder holder, int position) {
         Category item = listCatas.get(position);
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/categories/"+item.getImage());
-        imageRef.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + item.getImage());
+        imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -61,7 +61,7 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 if (itemClickListener != null) {
-                    if(v.getId() == R.id.btnEdit) {
+                    if (v.getId() == R.id.btnEdit) {
                         itemClickListener.editCategory(item);
                     } else {
                         itemClickListener.deleteCategory(item.getKey());
@@ -103,6 +103,7 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
 
     public interface ItemClickListener {
         void deleteCategory(String key);
+
         void editCategory(Category item);
     }
 }
