@@ -127,7 +127,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(OrderCoordinationActivity.this, ListCataActivity.class);
+                intent = new Intent(OrderCoordinationActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

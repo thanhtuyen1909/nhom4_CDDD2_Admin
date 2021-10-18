@@ -1,12 +1,10 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,9 +24,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CustomerAdapter;
-import vn.edu.tdc.cddd2.adapters.Product1Adapter;
 import vn.edu.tdc.cddd2.data_models.Customer;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -151,7 +147,7 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(DetailDiscountCodeActivity.this, ListCataActivity.class);
+                intent = new Intent(DetailDiscountCodeActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

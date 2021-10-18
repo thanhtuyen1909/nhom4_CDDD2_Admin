@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -25,10 +24,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.CustomerAdapter;
 import vn.edu.tdc.cddd2.adapters.Product1Adapter;
-import vn.edu.tdc.cddd2.adapters.ProductAdapter;
-import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailPromoCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -156,7 +152,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(DetailPromoCodeActivity.this, ListCataActivity.class);
+                intent = new Intent(DetailPromoCodeActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

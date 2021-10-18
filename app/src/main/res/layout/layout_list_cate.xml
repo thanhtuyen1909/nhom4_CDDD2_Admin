@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activitys.ListCataActivity">
+        tools:context=".activitys.ListCateActivity">
 
         <include
             android:id="@+id/include"
@@ -39,11 +39,11 @@
             app:layout_constraintTop_toBottomOf="@+id/editSearch" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listCata"
+            android:id="@+id/listCate"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/totalCata"
+            app:layout_constraintBottom_toTopOf="@+id/totalCate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2"
@@ -53,7 +53,7 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
-            android:id="@+id/totalCata"
+            android:id="@+id/totalCate"
             style="@style/CustomTextViewQuantity"
             android:text="@string/amountSP"
             app:layout_constraintBottom_toBottomOf="parent"

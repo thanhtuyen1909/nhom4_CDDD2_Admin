@@ -15,6 +15,11 @@
     <string name="subtitleH">Danh sách hãng:</string>
     <string name="amountSP">5 từ 15</string>
     <string name="titleLayout">Danh sách sản phẩm</string>
+    <string name="titleLayoutLSP">Danh sách loại sản phẩm</string>
+    <string name="titleDetailLSP">Chi tiết loại sản phẩm</string>
+    <string name="titleLayoutH">Danh sách hãng</string>
+    <string name="titleDetailH">Chi tiết hãng</string>
+
     <string name="buttonBack">Trở lại</string>
     <string name="buttonSave">Lưu</string>
     <string name="buttonCancel">Huỷ</string>
@@ -38,6 +43,19 @@
     <string name="giaban">Giá bán</string>
     <string name="btnAll">Chọn tất cả</string>
 
+<!--  Dialog  -->
+    <string name="succes">succes</string>
+    <string name="warning">warning</string>
+    <string name="error">error</string>
+    <string name="succes_title">This is succes title</string>
+    <string name="warning_title">This is warning title</string>
+    <string name="error_title">This is error title</string>
+    <string name="dummy_text">Loren Ipsum is simple dummy of the printing and type setting industry</string>
+    <string name="okay">OK</string>
+    <string name="yes">XÁC NHẬN</string>
+    <string name="no">HUỶ</string>
+
+<!--  Array  -->
     <string-array name="ngay">
         <item>Hôm nay</item>
         <item>13/10/2021</item>

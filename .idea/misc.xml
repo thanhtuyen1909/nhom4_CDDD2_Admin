@@ -6,14 +6,23 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_green_circle.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_spinner.xml" value="0.21614583333333334" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_toolbar.xml" value="0.11510416666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/button_error_background.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/button_login.xml" value="0.11510416666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/button_neutral_background.xml" value="0.2203125" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/button_succes_background.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/custom_button_1.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/custom_color_button_bar.xml" value="0.11510416666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/dialog_background.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_baseline_print_24.xml" value="0.11510416666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_baseline_shopping_cart_24.xml" value="0.2203125" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_succes.xml" value="0.2203125" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/ic_warning.xml" value="0.2203125" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/layout_error_dialog.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/rounded_border_edittext.xml" value="0.21614583333333334" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/rounded_border_edittext_1.xml" value="0.2203125" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/title_error_background.xml" value="0.2203125" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/title_succes_background.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout-v21/appbar_sm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout-v21/item_promo_1.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout-v21/layout_login.xml" value="0.15806159420289856" />
@@ -63,11 +72,13 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_promocode.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_rating.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_detail_salary.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_error_dialog.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_historyactivity.xml" value="0.1925925925925926" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_info_promocode.xml" value="0.19927536231884058" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_account.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_cart_sm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_catagory.xml" value="0.18" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_cate.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_discode.xml" value="0.1526268115942029" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_discountcode.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_list_employee.xml" value="0.20416666666666666" />
@@ -87,6 +98,7 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_payment_sm.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_revenues.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_shipprocess.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_succes_dialog.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_willorder_whm.xml" value="0.19927536231884058" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/nav_header.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/bottom_menu_1.xml" value="0.20416666666666666" />

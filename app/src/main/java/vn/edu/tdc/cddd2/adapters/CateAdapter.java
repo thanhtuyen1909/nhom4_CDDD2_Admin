@@ -13,41 +13,45 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Catagory;
+import vn.edu.tdc.cddd2.data_models.Category;
 
-public class CataAdapter extends RecyclerView.Adapter<CataAdapter.ViewHolder> {
-    ArrayList<Catagory> listCatas;
-    private Context context;
-    CataAdapter.ItemClickListener itemClickListener;
+public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
+    ArrayList<Category> listCatas;
+    Context context;
+    CateAdapter.ItemClickListener itemClickListener;
 
-    public void setItemClickListener(CataAdapter.ItemClickListener itemClickListener) {
+    public void setItemClickListener(CateAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public CataAdapter(ArrayList<Catagory> listCatas, Context context) {
+    public CateAdapter(ArrayList<Category> listCatas, Context context) {
         this.listCatas = listCatas;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public CataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_manu_1, parent, false);
-        CataAdapter.ViewHolder viewHolder = new CataAdapter.ViewHolder(itemView);
+        CateAdapter.ViewHolder viewHolder = new CateAdapter.ViewHolder(itemView);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CataAdapter.ViewHolder holder, int position) {
-        Catagory item = listCatas.get(position);
+    public void onBindViewHolder(@NonNull CateAdapter.ViewHolder holder, int position) {
+        Category item = listCatas.get(position);
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (itemClickListener != null) {
-                    itemClickListener.getInfor(item);
+                    if(v.getId() == R.id.btnEdit) {
+                        itemClickListener.editCategory(item);
+                    } else {
+                        itemClickListener.deleteCategory(item.getKey());
+                    }
                 } else {
                     return;
                 }
@@ -84,6 +88,7 @@ public class CataAdapter extends RecyclerView.Adapter<CataAdapter.ViewHolder> {
     }
 
     public interface ItemClickListener {
-        void getInfor(Catagory item);
+        void deleteCategory(String key);
+        void editCategory(Category item);
     }
 }

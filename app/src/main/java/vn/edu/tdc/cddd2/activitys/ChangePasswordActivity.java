@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -108,7 +107,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(ChangePasswordActivity.this, ListCataActivity.class);
+                intent = new Intent(ChangePasswordActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

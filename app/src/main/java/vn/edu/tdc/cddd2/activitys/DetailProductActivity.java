@@ -149,7 +149,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(DetailProductActivity.this, ListCataActivity.class);
+                intent = new Intent(DetailProductActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

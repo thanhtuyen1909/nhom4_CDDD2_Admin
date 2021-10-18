@@ -156,7 +156,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(InformationPromoCodeActivity.this, ListCataActivity.class);
+                intent = new Intent(InformationPromoCodeActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

@@ -139,7 +139,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             case R.id.nav_qlmgg:
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(ListDiscountCodeActivity.this, ListCataActivity.class);
+                intent = new Intent(ListDiscountCodeActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
