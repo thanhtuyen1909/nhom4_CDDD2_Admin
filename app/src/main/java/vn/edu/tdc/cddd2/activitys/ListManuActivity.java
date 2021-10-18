@@ -259,7 +259,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         title = (TextView) view.findViewById(R.id.textTitle);
         title.setText("THÔNG BÁO");
         mess = (TextView) view.findViewById(R.id.textMessage);
-        mess.setText("Xoá sản phẩm thành công!");
+        mess.setText("Xoá hãng thành công!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
