@@ -1,6 +1,8 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,7 +48,14 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull CateAdapter.ViewHolder holder, int position) {
         Category item = listCatas.get(position);
-        holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/categories/"+item.getImage());
+        imageRef.getBytes(1024*1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.im_item.getWidth(), holder.im_item.getHeight(), false));
+            }
+        });
         holder.tv_name.setText(item.getName());
         holder.onClickListener = new View.OnClickListener() {
             @Override

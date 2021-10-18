@@ -19,25 +19,33 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
-import vn.edu.tdc.cddd2.data_models.Manufacturer;
+import vn.edu.tdc.cddd2.data_models.Category;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
+    private TextView btnBack, subtitleAppbar, totalManu;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Manufacturer> listManu;
+    private ArrayList<Manufacture> listManu;
     private ManuAdapter manuAdapter;
     private NavigationView navigationView;
     private Intent intent;
     private Button btnAdd;
+    DatabaseReference manuRef;
+    TextView title, mess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
+        manuRef = FirebaseDatabase.getInstance().getReference("Manufactures");
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -96,16 +105,28 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void data(){
-        listManu.add(new Manufacturer("Asus"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Apple"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Asus"));
+        manuRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listManu.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Manufacture manufacture = new Manufacture(snapshot.getKey(), snapshot.child("name").getValue(String.class), snapshot.child("image").getValue(String.class));
+                    listManu.add(manufacture);
+                }
+                manuAdapter.notifyDataSetChanged();
+                totalManu.setText(recyclerView.getAdapter().getItemCount() + " hãng từ " + listManu.size());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private ManuAdapter.ItemClickListener itemClickListener = new ManuAdapter.ItemClickListener() {
         @Override
-        public void getInfor(Manufacturer item) {
+        public void getInfor(Manufacture item) {
             Toast.makeText(ListManuActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
         }
     };

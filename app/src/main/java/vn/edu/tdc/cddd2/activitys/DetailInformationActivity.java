@@ -1,8 +1,10 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +38,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -56,6 +60,7 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference cateRef = database.getReference("Categories");
     DatabaseReference manuRef = database.getReference("Ma");
+    StorageReference imageRef = null;
     private final int PICK_IMAGE_REQUEST = 1;
     private Uri filePath = null;
 
@@ -90,11 +95,19 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         edtName = findViewById(R.id.edtTen);
         img = findViewById(R.id.imageView);
         edtName.setHint("Tên loại sản phẩm");
-        if(itemCate != null) {
+        if (itemCate != null) {
             edtName.setText(itemCate.getName());
             name = itemCate.getName();
             key = itemCate.getKey();
             image = itemCate.getImage();
+            imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + image);
+            imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
+                }
+            });
         }
 
         // Sự kiện click:
@@ -113,18 +126,10 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
-        {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
             filePath = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                img.setImageBitmap(bitmap);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            Picasso.get().load(filePath).into(img);
         }
     }
 
@@ -202,55 +207,85 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
 
     @Override
     public void onClick(View v) {
-        String nameEDT = edtName.getText().toString();
-        if(v == btnSave) {
+        name = edtName.getText().toString();
+        if (v == btnSave) {
             //upload ảnh
-            if(filePath != null) {
-                StorageReference storageRef = FirebaseStorage.getInstance("gs://cddd2-f1bcd.appspot.com/").getReference("images/products");
-                StorageReference productRef = storageRef.child(nameEDT).child(nameEDT+".png");
-                StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
-                productRef.putFile(filePath, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.d("image",taskSnapshot.getMetadata().getName()+"."+taskSnapshot.getMetadata().getContentType());
-                    }
-                });
+            if (filePath != null) {
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/categories")
+                        .child(name + "." + getFileExtension(filePath));
+                storageRef.putFile(filePath);
+                image = name + "." + getFileExtension(filePath);
             }
-
-            if (to.equals("ListCate")) {
-                if(itemCate == null) {
+            if (name == null) {
+                showWarningDialog();
+            } else {
+                if (to.equals("ListCate")) {
                     Category category = new Category();
-                    category.setName(nameEDT);
-                    category.setImage(nameEDT);
-                    cateRef.push()
-                            .setValue(category)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    showSuccesDialog();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(DetailInformationActivity.this, "Lỗi: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(DetailInformationActivity.this, "Sửa", Toast.LENGTH_SHORT).show();
+                    category.setName(name);
+                    category.setImage(image);
+                    if (itemCate == null) {
+                        cateRef.push().setValue(category).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                showSuccesDialog("Thêm loại sản phẩm thành công!");
+                            }
+                        });
+                    } else {
+                        cateRef.child(key).setValue(category).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                showSuccesDialog("Cập nhật loại sản phẩm thành công!");
+                            }
+                        });
+                    }
+                }
+                else {
+                    Toast.makeText(DetailInformationActivity.this, "Hãng", Toast.LENGTH_SHORT).show();
                 }
             }
-            else{
-                Toast.makeText(DetailInformationActivity.this, "Hãng", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else if (v == img) {
+
+        } else if (v == img) {
             chooseImage();
         } else {
-            showWarningDialog();
+            showErrorDialog();
         }
     }
 
-    private void showWarningDialog(){
+    private void showWarningDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailInformationActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(DetailInformationActivity.this).inflate(
+                R.layout.layout_warning_dialog,
+                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = (TextView) view.findViewById(R.id.textTitle);
+        title.setText("THÔNG BÁO");
+        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess.setText("Tên không được để trống!");
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    private void showErrorDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailInformationActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailInformationActivity.this).inflate(
                 R.layout.layout_error_dialog,
@@ -264,7 +299,7 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
 
-        final  AlertDialog alertDialog = builder.create();
+        final AlertDialog alertDialog = builder.create();
 
         view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,13 +316,13 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
             }
         });
 
-        if (alertDialog.getWindow()!= null){
+        if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
     }
 
-    private void showSuccesDialog(){
+    private void showSuccesDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailInformationActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailInformationActivity.this).inflate(
                 R.layout.layout_succes_dialog,
@@ -297,14 +332,10 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         title = (TextView) view.findViewById(R.id.textTitle);
         title.setText("THÔNG BÁO");
         mess = (TextView) view.findViewById(R.id.textMessage);
-        if(to.equals("ListCate")) {
-            mess.setText("Thêm loại sản phẩm thành công!");
-        } else {
-            mess.setText("Thêm hãng thành công!");
-        }
+        mess.setText(message);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
-        final  AlertDialog alertDialog = builder.create();
+        final AlertDialog alertDialog = builder.create();
 
         view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,9 +345,11 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
             }
         });
 
-        if (alertDialog.getWindow()!= null){
+        if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
     }
+
+
 }

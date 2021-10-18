@@ -13,11 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Manufacturer;
-import vn.edu.tdc.cddd2.data_models.Product;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class ManuAdapter  extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
-    ArrayList<Manufacturer> listManus;
+    ArrayList<Manufacture> listManus;
     private Context context;
     ManuAdapter.ItemClickListener itemClickListener;
 
@@ -25,7 +24,7 @@ public class ManuAdapter  extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
         this.itemClickListener = itemClickListener;
     }
 
-    public ManuAdapter(ArrayList<Manufacturer> listManus, Context context) {
+    public ManuAdapter(ArrayList<Manufacture> listManus, Context context) {
         this.listManus = listManus;
         this.context = context;
     }
@@ -41,7 +40,7 @@ public class ManuAdapter  extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ManuAdapter.ViewHolder holder, int position) {
-        Manufacturer item = listManus.get(position);
+        Manufacture item = listManus.get(position);
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
         holder.onClickListener = new View.OnClickListener() {
@@ -85,6 +84,6 @@ public class ManuAdapter  extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
     }
 
     public interface ItemClickListener {
-        void getInfor(Manufacturer item);
+        void getInfor(Manufacture item);
     }
 }

@@ -67,16 +67,6 @@ public class Category implements Parcelable {
     public Category() {
     }
 
-    // toString:
-    @Override
-    public String toString() {
-        return "Category{" +
-                "key='" + key + '\'' +
-                ", name='" + name + '\'' +
-                ", image='" + image + '\'' +
-                '}';
-    }
-
     @Override
     public int describeContents() {
         return 0;
