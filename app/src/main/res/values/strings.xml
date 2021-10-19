@@ -18,8 +18,8 @@
     <string name="titleLayoutLSP">Danh sách loại sản phẩm</string>
     <string name="titleDetailLSP">Chi tiết loại sản phẩm</string>
     <string name="titleLayoutH">Danh sách hãng</string>
+    <string name="titleLayoutCTKM">Chi tiết khuyến mãi</string>
     <string name="titleDetailH">Chi tiết hãng</string>
-
     <string name="buttonBack">Trở lại</string>
     <string name="buttonSave">Lưu</string>
     <string name="buttonCancel">Huỷ</string>

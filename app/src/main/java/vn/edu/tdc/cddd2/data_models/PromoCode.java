@@ -1,10 +1,49 @@
 package vn.edu.tdc.cddd2.data_models;
 
-public class PromoCode {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class PromoCode implements Parcelable {
     // Khai báo biến
+    private String key;
     private String name;
-    private String dateStart;
-    private String dateEnd;
+    private String startDate;
+    private String endDate;
+    private String image;
+
+    protected PromoCode(Parcel in) {
+        key = in.readString();
+        name = in.readString();
+        startDate = in.readString();
+        endDate = in.readString();
+        image = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(key);
+        dest.writeString(name);
+        dest.writeString(startDate);
+        dest.writeString(endDate);
+        dest.writeString(image);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<PromoCode> CREATOR = new Creator<PromoCode>() {
+        @Override
+        public PromoCode createFromParcel(Parcel in) {
+            return new PromoCode(in);
+        }
+
+        @Override
+        public PromoCode[] newArray(int size) {
+            return new PromoCode[size];
+        }
+    };
 
     // Get - set
     public String getName() {
@@ -15,36 +54,47 @@ public class PromoCode {
         this.name = name;
     }
 
-    public String getDateStart() {
-        return dateStart;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setDateStart(String dateStart) {
-        this.dateStart = dateStart;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public String getDateEnd() {
-        return dateEnd;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setDateEnd(String dateEnd) {
-        this.dateEnd = dateEnd;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     // Contructor
-    public PromoCode(String name, String dateStart, String dateEnd) {
+    public PromoCode(String key, String name, String startDate, String endDate, String image) {
+        this.key = key;
         this.name = name;
-        this.dateStart = dateStart;
-        this.dateEnd = dateEnd;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.image = image;
     }
 
-    // toString
-    @Override
-    public String toString() {
-        return "PromoCode{" +
-                "name='" + name + '\'' +
-                ", dateStart='" + dateStart + '\'' +
-                ", dateEnd='" + dateEnd + '\'' +
-                '}';
+    public PromoCode() {
     }
 }

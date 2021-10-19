@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -29,17 +30,17 @@ import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailPromoCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar, btnCancel;
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar, btnCancel;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
-    private Intent intent;
-    private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
+    NavigationView navigationView;
+    Intent intent;
+    RecyclerView recyclerView;
+    ArrayList<Product> listProduct;
     private Spinner spinProduct, spinGiamGia;
     private Product1Adapter productAdapter;
-    private Button btnAdd;
+    Button btnAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Chi tiết khuyến mãi");
+        subtitleAppbar.setText(R.string.titleLayoutCTKM);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -76,6 +77,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
 
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
                 data();
@@ -100,7 +102,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
+    private final Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
         @Override
         public void getInfor(Product item) {
             Toast.makeText(DetailPromoCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
@@ -108,15 +110,11 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
     };
 
     private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
-        listProduct.add(new Product("Laptop 4", 16000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 5", 12000000, "Asus", 10));
+
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
@@ -126,7 +124,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -142,9 +140,9 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(DetailPromoCodeActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(DetailPromoCodeActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(DetailPromoCodeActivity.this, ListDiscountCodeActivity.class);

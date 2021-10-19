@@ -59,11 +59,6 @@ public class Category implements Parcelable {
         this.image = image;
     }
 
-    public Category(String name, String image) {
-        this.name = name;
-        this.image = image;
-    }
-
     public Category() {
     }
 

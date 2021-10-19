@@ -39,18 +39,17 @@ import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar, totalManu;
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar, totalManu, title, mess;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
     private ArrayList<Manufacture> listManu;
     private ManuAdapter manuAdapter;
-    private NavigationView navigationView;
+    NavigationView navigationView;
     private Intent intent;
-    private Button btnAdd;
+    Button btnAdd;
     DatabaseReference manuRef;
-    TextView title, mess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,7 +208,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         }
     }
 
-    // Xử lý sự kiện xoá hãng:
+    // Xử lý sự kiện xoá:
     private void showWarningDialog(String key) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListManuActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListManuActivity.this).inflate(

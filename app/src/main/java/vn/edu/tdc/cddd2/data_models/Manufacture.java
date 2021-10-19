@@ -69,11 +69,6 @@ public class Manufacture implements Parcelable {
         this.image = image;
     }
 
-    public Manufacture(String name, String image) {
-        this.name = name;
-        this.image = image;
-    }
-
     public Manufacture() {
     }
 

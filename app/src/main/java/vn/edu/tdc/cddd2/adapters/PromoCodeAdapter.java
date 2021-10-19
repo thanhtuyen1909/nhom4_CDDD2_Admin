@@ -1,6 +1,9 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -42,19 +49,27 @@ public class PromoCodeAdapter extends RecyclerView.Adapter<PromoCodeAdapter.View
     @Override
     public void onBindViewHolder(@NonNull PromoCodeAdapter.ViewHolder holder, int position) {
         PromoCode item = listPromoCode.get(position);
-        holder.im_item.setImageResource(R.drawable.custom_button_1);
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/promocodes/" + item.getImage());
+        imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Log.d("TAG", "onSuccess: " + imageRef);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.im_item.getWidth(), holder.im_item.getHeight(), false));
+            }
+        });
         holder.tv_name.setText(item.getName());
-        holder.tv_startDate.setText("Ngày bắt đầu: " + item.getDateStart());
-        holder.tv_endDate.setText("Ngày kết thúc: " + item.getDateEnd());
+        holder.tv_startDate.setText("Ngày bắt đầu: " + item.getStartDate());
+        holder.tv_endDate.setText("Ngày kết thúc: " + item.getEndDate());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (itemClickListener != null) {
                     if(v.getId() == R.id.btnAddDetail) {
-                        itemClickListener.getLayoutAddDetailPromoCode();
-                    } else {
-                        itemClickListener.getInfor(item);
-                    }
+                        itemClickListener.addDetailPromoCode(item.getKey());
+                    } else if (v.getId() == R.id.btnEdit){
+                        itemClickListener.editPromoCode(item);
+                    } else itemClickListener.deletePromoCode(item.getKey());
                 } else {
                     return;
                 }
@@ -95,8 +110,9 @@ public class PromoCodeAdapter extends RecyclerView.Adapter<PromoCodeAdapter.View
     }
 
     public interface ItemClickListener {
-        void getInfor(PromoCode item);
-        void getLayoutAddDetailPromoCode();
+        void editPromoCode(PromoCode item);
+        void addDetailPromoCode(String key);
+        void deletePromoCode(String key);
     }
 }
 

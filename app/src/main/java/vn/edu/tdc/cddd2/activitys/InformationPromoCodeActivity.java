@@ -1,46 +1,72 @@
 package vn.edu.tdc.cddd2.activitys;
 
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class InformationPromoCodeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar, btnCancel, btnBrowser;
+    Toolbar toolbar;
+    ImageView img;
+    TextView btnSave, subtitleAppbar, btnCancel, btnBrowser, title, mess;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private Intent intent;
-    private EditText edtStartDate, edtEndDate;
+    private EditText edtStartDate, edtEndDate, edtName;
     private String date;
+    private final int PICK_IMAGE_REQUEST = 1;
+    private Uri filePath = null;
+    PromoCode item = null;
+    DatabaseReference promoRef;
+    StorageReference imageRef = null;
+    String key = null, name = null, image = null, startDate = null, endDate = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_info_promocode);
+        item = (PromoCode) getIntent().getParcelableExtra("item");
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,55 +85,47 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         btnSave = findViewById(R.id.txtSave);
         btnCancel = findViewById(R.id.txtCancel);
         btnBrowser = findViewById(R.id.txtChonAnh);
+        edtName = findViewById(R.id.edtTen);
         edtStartDate = findViewById(R.id.edtNgayBD);
         edtEndDate = findViewById(R.id.edtNgayKT);
+        promoRef = FirebaseDatabase.getInstance().getReference("Offers");
+        img = findViewById(R.id.imageView);
 
-        // Xử lý sự kiện click button "Lưu":
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        if (item != null) {
+            key = item.getKey();
+            name = item.getName();
+            startDate = item.getStartDate();
+            endDate = item.getEndDate();
+            image = item.getImage();
+            edtName.setText(name);
+            edtStartDate.setText(startDate);
+            edtEndDate.setText(endDate);
+            imageRef = FirebaseStorage.getInstance().getReference("images/promocodes/" + image);
+            Log.d("TAG", "onCreate: " + imageRef);
+            imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
+                }
+            });
+        }
 
-        // Xử lý sự kiện click button "Huỷ":
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        // Xử lý sự kiện click button :
+        btnSave.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
+        btnBrowser.setOnClickListener(this);
 
-        // Xử lý sự kiện click button "Chọn ảnh":
-        btnBrowser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(InformationPromoCodeActivity.this, "Chọn ảnh", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Xử lý dự kiện hiện DatepickerDialog cho edittext "Ngày bắt đầu":
-        edtStartDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(v);
-            }
-        });
-
-        // Xử lý dự kiện hiện DatepickerDialog cho edittext "Ngày kết thúc":
-        edtEndDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(v);
-            }
-        });
+        // Xử lý dự kiện hiện DatepickerDialog cho edittext:
+        edtStartDate.setOnClickListener(this);
+        edtEndDate.setOnClickListener(this);
     }
 
     private void showDatePickerDialog(View v) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                date = dayOfMonth + "/" + month + "/" + year;
+                date = dayOfMonth + "/" + (month + 1) + "/" + year;
                 if (v.getId() == R.id.edtNgayBD) {
                     edtStartDate.setText(date);
                 } else edtEndDate.setText(date);
@@ -128,6 +146,16 @@ public class InformationPromoCodeActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            filePath = data.getData();
+            Picasso.get().load(filePath).into(img);
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -189,6 +217,157 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == btnSave) {
+            name = edtName.getText().toString();
+            startDate = edtStartDate.getText().toString();
+            endDate = edtEndDate.getText().toString();
+            //upload ảnh
+            if (filePath != null) {
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
+                        .child(name + "." + getFileExtension(filePath));
+                storageRef.putFile(filePath);
+                image = name + "." + getFileExtension(filePath);
+            }
+            if (name == null) {
+                showWarningDialog();
+            } else {
+                PromoCode promoCode = new PromoCode();
+                promoCode.setName(name);
+                promoCode.setStartDate(startDate);
+                promoCode.setEndDate(endDate);
+                promoCode.setImage(image);
+                if (item == null) {
+                    promoRef.push().setValue(promoCode).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            showSuccesDialog("Thêm khuyến mãi thành công!");
+                        }
+                    });
+                } else {
+                    promoRef.child(key).setValue(promoCode).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            showSuccesDialog("Cập nhật khuyến mãi thành công!");
+                        }
+                    });
+                }
+            }
+        } else if (v == btnCancel) {
+            showErrorDialog();
+        } else if (v == btnBrowser) {
+            chooseImage();
+        } else showDatePickerDialog(v);
+    }
+
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    private void showWarningDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(InformationPromoCodeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(InformationPromoCodeActivity.this).inflate(
+                R.layout.layout_warning_dialog,
+                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = (TextView) view.findViewById(R.id.textTitle);
+        title.setText("THÔNG BÁO");
+        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess.setText("Tên không được để trống!");
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    private void showErrorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(InformationPromoCodeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(InformationPromoCodeActivity.this).inflate(
+                R.layout.layout_error_dialog,
+                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = (TextView) view.findViewById(R.id.textTitle);
+        title.setText("THÔNG BÁO");
+        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess.setText("Xác nhận huỷ?");
+        ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
+        ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                finish();
+            }
+        });
+
+        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    private void showSuccesDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(InformationPromoCodeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(InformationPromoCodeActivity.this).inflate(
+                R.layout.layout_succes_dialog,
+                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = (TextView) view.findViewById(R.id.textTitle);
+        title.setText("THÔNG BÁO");
+        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess.setText(message);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                finish();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
     }
 }
 
