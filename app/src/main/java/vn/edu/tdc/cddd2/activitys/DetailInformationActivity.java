@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -8,8 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,19 +27,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Category;
@@ -71,8 +64,8 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_infomation);
         to = getIntent().getStringExtra("to");
-        itemCate = (Category) getIntent().getParcelableExtra("itemCate");
-        itemManu = (Manufacture) getIntent().getParcelableExtra("itemManu");
+        itemCate = getIntent().getParcelableExtra("itemCate");
+        itemManu = getIntent().getParcelableExtra("itemManu");
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -108,12 +101,9 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
             key = itemCate.getKey();
             image = itemCate.getImage();
             imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + image);
-            imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
-                }
+            imageRef.getBytes(1024 * 1024).addOnSuccessListener(bytes -> {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
             });
         }
 
@@ -123,12 +113,9 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
             key = itemManu.getKey();
             image = itemManu.getImage();
             imageRef = FirebaseStorage.getInstance().getReference("images/manufactures/" + image);
-            imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
-                }
+            imageRef.getBytes(1024 * 1024).addOnSuccessListener(bytes -> {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
             });
         }
 
@@ -156,7 +143,7 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
@@ -166,7 +153,7 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -246,19 +233,9 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
                     category.setName(name);
                     category.setImage(image);
                     if (itemCate == null) {
-                        cateRef.push().setValue(category).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                showSuccesDialog("Thêm loại sản phẩm thành công!");
-                            }
-                        });
+                        cateRef.push().setValue(category).addOnSuccessListener(unused -> showSuccesDialog("Thêm loại sản phẩm thành công!"));
                     } else {
-                        cateRef.child(key).setValue(category).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                showSuccesDialog("Cập nhật loại sản phẩm thành công!");
-                            }
-                        });
+                        cateRef.child(key).setValue(category).addOnSuccessListener(unused -> showSuccesDialog("Cập nhật loại sản phẩm thành công!"));
                     }
                 }
                 else {
@@ -266,19 +243,9 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
                     manufacture.setName(name);
                     manufacture.setImage(image);
                     if (itemManu == null) {
-                        manuRef.push().setValue(manufacture).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                showSuccesDialog("Thêm hãng thành công!");
-                            }
-                        });
+                        manuRef.push().setValue(manufacture).addOnSuccessListener(unused -> showSuccesDialog("Thêm hãng thành công!"));
                     } else {
-                        manuRef.child(key).setValue(manufacture).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                showSuccesDialog("Cập nhật hãng thành công!");
-                            }
-                        });
+                        manuRef.child(key).setValue(manufacture).addOnSuccessListener(unused -> showSuccesDialog("Cập nhật hãng thành công!"));
                     }
                 }
             }
@@ -304,7 +271,7 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         );
         builder.setView(view);
         title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
+        title.setText(R.string.title);
         mess = (TextView) view.findViewById(R.id.textMessage);
         mess.setText("Tên không được để trống!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
@@ -328,32 +295,24 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailInformationActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailInformationActivity.this).inflate(
                 R.layout.layout_error_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận huỷ?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                finish();
-            }
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
         });
 
-        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -365,23 +324,20 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailInformationActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailInformationActivity.this).inflate(
                 R.layout.layout_succes_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText(message);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                finish();
-            }
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
         });
 
         if (alertDialog.getWindow() != null) {

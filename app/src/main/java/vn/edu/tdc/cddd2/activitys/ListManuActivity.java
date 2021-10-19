@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +19,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,12 +35,12 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
-import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
+    SearchView searchView;
     TextView btnBack, subtitleAppbar, totalManu, title, mess;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -59,7 +60,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Danh sách hãng");
+        subtitleAppbar.setText(R.string.titleLayoutH);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -70,23 +71,16 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         btnAdd = findViewById(R.id.btnAdd);
         manuRef = FirebaseDatabase.getInstance().getReference("Manufactures");
         totalManu = findViewById(R.id.totalManu);
+        searchView = findViewById(R.id.editSearch);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
-                intent.putExtra("to", "ListManu");
-                startActivity(intent);
-            }
+        btnAdd.setOnClickListener(v -> {
+            intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
+            intent.putExtra("to", "ListManu");
+            startActivity(intent);
         });
 
         //RecycleView
@@ -102,16 +96,31 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Xử lý sự kiện thay đổi dữ liệu searchview:
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                manuAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void data() {
         manuRef.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listManu.clear();
@@ -130,7 +139,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         });
     }
 
-    private ManuAdapter.ItemClickListener itemClickListener = new ManuAdapter.ItemClickListener() {
+    private final ManuAdapter.ItemClickListener itemClickListener = new ManuAdapter.ItemClickListener() {
         @Override
         public void deleteManufacture(String key) {
             showWarningDialog(key);
@@ -150,7 +159,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -213,33 +222,25 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         AlertDialog.Builder builder = new AlertDialog.Builder(ListManuActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListManuActivity.this).inflate(
                 R.layout.layout_error_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận xoá hãng?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                manuRef.child(key).removeValue();
-                showSuccesDialog();
-            }
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            manuRef.child(key).removeValue();
+            showSuccesDialog();
         });
 
-        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -252,23 +253,18 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         AlertDialog.Builder builder = new AlertDialog.Builder(ListManuActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListManuActivity.this).inflate(
                 R.layout.layout_succes_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xoá hãng thành công!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));

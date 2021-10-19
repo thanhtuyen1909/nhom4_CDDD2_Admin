@@ -1,15 +1,16 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +19,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,20 +29,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.PromoCodeAdapter;
-import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class ListPromoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar;
+    SearchView searchView;
     Button btnAdd;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -63,7 +62,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Danh sách khuyến mãi");
+        subtitleAppbar.setText(R.string.titleLayoutKM);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -75,23 +74,16 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         promoRef = FirebaseDatabase.getInstance().getReference("Offers");
         promoDetailRef = FirebaseDatabase.getInstance().getReference("Offer_Details");
         totalPromo = findViewById(R.id.totalPromoCode);
+        searchView = findViewById(R.id.editSearch);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-            }
+        btnAdd.setOnClickListener(v -> {
+            intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         });
 
         //RecycleView
@@ -107,16 +99,31 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Xử lý sự kiện thay đổi dữ liệu searchview:
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                promoCodeAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void data(){
         promoRef.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listPromoCode.clear();
@@ -140,7 +147,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         });
     }
 
-    private PromoCodeAdapter.ItemClickListener itemClickListener = new PromoCodeAdapter.ItemClickListener() {
+    private final PromoCodeAdapter.ItemClickListener itemClickListener = new PromoCodeAdapter.ItemClickListener() {
         @Override
         public void editPromoCode(PromoCode item) {
             intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
@@ -163,6 +170,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
 
     };
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -225,41 +233,38 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         AlertDialog.Builder builder = new AlertDialog.Builder(ListPromoActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListPromoActivity.this).inflate(
                 R.layout.layout_error_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận xoá khuyến mãi?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                promoRef.child(key).removeValue();
-                // Xoá cả những chi tiết khuyến mãi
-                promoDetailRef.addValueEventListener(new ValueEventListener(){
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            if (snapshot.child("offerID").getValue(String.class).equals(key)) {
-                                promoDetailRef.child(snapshot.getKey()).removeValue();
-                            }
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            promoRef.child(key).removeValue();
+            // Xoá cả những chi tiết khuyến mãi
+            promoDetailRef.addValueEventListener(new ValueEventListener(){
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (snapshot.child("offerID").getValue(String.class).equals(key)) {
+                            promoDetailRef.child(snapshot.getKey()).removeValue();
                         }
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
-                showSuccesDialog();
-            }
+                }
+            });
+            showSuccesDialog();
         });
 
         view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
@@ -280,23 +285,18 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         AlertDialog.Builder builder = new AlertDialog.Builder(ListPromoActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListPromoActivity.this).inflate(
                 R.layout.layout_succes_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xoá khuyến mãi thành công!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));

@@ -1,20 +1,19 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -22,9 +21,9 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 
-public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
-    ArrayList<Manufacture> listManus;
-    private Context context;
+public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> implements Filterable {
+    ArrayList<Manufacture> listManus, listManuFilter, list;
+    Context context;
     ManuAdapter.ItemClickListener itemClickListener;
 
     public void setItemClickListener(ManuAdapter.ItemClickListener itemClickListener) {
@@ -34,6 +33,7 @@ public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
     public ManuAdapter(ArrayList<Manufacture> listManus, Context context) {
         this.listManus = listManus;
         this.context = context;
+        this.list = listManus;
     }
 
     @NonNull
@@ -49,24 +49,15 @@ public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ManuAdapter.ViewHolder holder, int position) {
         Manufacture item = listManus.get(position);
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/manufactures/" + item.getImage());
-        imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.im_item.getWidth(), holder.im_item.getHeight(), false));
-            }
-        });
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
         holder.tv_name.setText(item.getName());
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    if (v.getId() == R.id.btnEdit) {
-                        itemClickListener.editManufacture(item);
-                    } else itemClickListener.deleteManufacture(item.getKey());
-                } else {
-                    return;
-                }
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                if (v.getId() == R.id.btnEdit) {
+                    itemClickListener.editManufacture(item);
+                } else itemClickListener.deleteManufacture(item.getKey());
+            } else {
+                return;
             }
         };
     }
@@ -74,6 +65,36 @@ public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return listManus.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                FilterResults filterResults = new FilterResults();
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    listManuFilter = list;
+                } else {
+                    ArrayList<Manufacture> filters = new ArrayList<>();
+                    for (Manufacture row : listManus) {
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
+                            filters.add(row);
+                        }
+                    }
+                    listManuFilter = filters;
+                }
+                filterResults.values = listManuFilter;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                listManus = (ArrayList<Manufacture>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

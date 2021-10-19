@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
     // Khai báo biến
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar, totalCate;
+    SearchView searchView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     RecyclerView recyclerView;
@@ -70,23 +73,16 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         btnAdd = findViewById(R.id.btnAdd);
         totalCate = findViewById(R.id.totalCate);
         cateRef = FirebaseDatabase.getInstance().getReference("Categories");
+        searchView = findViewById(R.id.editSearch);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListCateActivity.this, DetailInformationActivity.class);
-                intent.putExtra("to", "ListCate");
-                startActivity(intent);
-            }
+        btnAdd.setOnClickListener(v -> {
+            intent = new Intent(ListCateActivity.this, DetailInformationActivity.class);
+            intent.putExtra("to", "ListCate");
+            startActivity(intent);
         });
 
         //RecycleView
@@ -101,16 +97,31 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Xử lý sự kiện thay đổi dữ liệu searchview:
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                cateAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
     public void data() {
         cateRef.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listCate.clear();
@@ -151,30 +162,22 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
                 (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận xoá loại sản phẩm?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                cateRef.child(key).removeValue();
-                showSuccesDialog();
-            }
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            cateRef.child(key).removeValue();
+            showSuccesDialog();
         });
 
-        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -186,23 +189,18 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         AlertDialog.Builder builder = new AlertDialog.Builder(ListCateActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListCateActivity.this).inflate(
                 R.layout.layout_succes_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xoá loại sản phẩm thành công!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -215,7 +213,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

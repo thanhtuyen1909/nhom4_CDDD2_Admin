@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,8 +24,8 @@ import java.util.ArrayList;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Category;
 
-public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
-    ArrayList<Category> listCatas;
+public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> implements Filterable {
+    ArrayList<Category> listCatas, listCataFilter, list;
     Context context;
     CateAdapter.ItemClickListener itemClickListener;
 
@@ -34,6 +36,7 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
     public CateAdapter(ArrayList<Category> listCatas, Context context) {
         this.listCatas = listCatas;
         this.context = context;
+        this.list = listCatas;
     }
 
     @NonNull
@@ -49,13 +52,7 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull CateAdapter.ViewHolder holder, int position) {
         Category item = listCatas.get(position);
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + item.getImage());
-        imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.im_item.getWidth(), holder.im_item.getHeight(), false));
-            }
-        });
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
         holder.tv_name.setText(item.getName());
         holder.onClickListener = new View.OnClickListener() {
             @Override
@@ -76,6 +73,36 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return listCatas.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                FilterResults filterResults = new FilterResults();
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    listCataFilter = list;
+                } else {
+                    ArrayList<Category> filters = new ArrayList<>();
+                    for (Category row : listCatas) {
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
+                            filters.add(row);
+                        }
+                    }
+                    listCataFilter = filters;
+                }
+                filterResults.values = listCataFilter;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                listCatas = (ArrayList<Category>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
