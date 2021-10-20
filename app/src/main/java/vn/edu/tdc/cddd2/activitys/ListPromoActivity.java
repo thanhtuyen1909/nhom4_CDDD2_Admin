@@ -160,6 +160,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         public void addDetailPromoCode(String key) {
             intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("key", key);
             startActivity(intent);
         }
 

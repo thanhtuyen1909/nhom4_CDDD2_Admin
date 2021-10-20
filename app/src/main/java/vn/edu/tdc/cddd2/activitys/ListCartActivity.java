@@ -103,8 +103,8 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
+//        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
+//        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
     }
 
     private Product3Adapter.ItemClickListener itemClickListener = new Product3Adapter.ItemClickListener() {

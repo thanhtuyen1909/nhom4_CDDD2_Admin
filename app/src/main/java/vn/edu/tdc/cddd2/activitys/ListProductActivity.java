@@ -96,11 +96,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     }
 
     private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
-        listProduct.add(new Product("Laptop 4", 16000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 5", 12000000, "Asus", 10));
+//        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
+//        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
+//        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
+//        listProduct.add(new Product("Laptop 4", 16000000, "Acer", 11));
+//        listProduct.add(new Product("Laptop 5", 12000000, "Asus", 10));
     }
 
     private ProductAdapter.ItemClickListener itemClickListener = new ProductAdapter.ItemClickListener() {

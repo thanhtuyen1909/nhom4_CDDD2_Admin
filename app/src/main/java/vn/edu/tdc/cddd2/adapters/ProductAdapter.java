@@ -44,7 +44,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
         holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        holder.tv_manu.setText("Hãng: " + item.getManu());
+        //holder.tv_manu.setText("Hãng: " + item.getManu());
         holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
         holder.onClickListener = new View.OnClickListener() {
             @Override

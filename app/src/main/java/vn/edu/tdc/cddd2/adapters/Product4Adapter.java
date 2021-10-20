@@ -40,7 +40,7 @@ public class Product4Adapter extends RecyclerView.Adapter<Product4Adapter.ViewHo
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
         holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        holder.tv_manu.setText("Hãng: " + item.getManu());
+        //holder.tv_manu.setText("Hãng: " + item.getManu());
         holder.tv_manu.setText("Số lượng: " + item.getQuantity());
     }
 

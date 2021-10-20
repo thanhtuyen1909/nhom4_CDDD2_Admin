@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,8 +51,8 @@ public class InformationPromoCodeActivity extends AppCompatActivity
     TextView btnSave, subtitleAppbar, btnCancel, btnBrowser, title, mess;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
-    private Intent intent;
+    NavigationView navigationView;
+    Intent intent;
     private EditText edtStartDate, edtEndDate, edtName;
     private String date;
     private final int PICK_IMAGE_REQUEST = 1;
@@ -71,7 +71,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Thông tin khuyến mãi");
+        subtitleAppbar.setText(R.string.titleLayoutTTKM);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -102,12 +102,9 @@ public class InformationPromoCodeActivity extends AppCompatActivity
             edtEndDate.setText(endDate);
             imageRef = FirebaseStorage.getInstance().getReference("images/promocodes/" + image);
             Log.d("TAG", "onCreate: " + imageRef);
-            imageRef.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
-                }
+            imageRef.getBytes(1024 * 1024).addOnSuccessListener(bytes -> {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
             });
         }
 
@@ -122,14 +119,11 @@ public class InformationPromoCodeActivity extends AppCompatActivity
     }
 
     private void showDatePickerDialog(View v) {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                date = dayOfMonth + "/" + (month + 1) + "/" + year;
-                if (v.getId() == R.id.edtNgayBD) {
-                    edtStartDate.setText(date);
-                } else edtEndDate.setText(date);
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
+            date = dayOfMonth + "/" + (month + 1) + "/" + year;
+            if (v.getId() == R.id.edtNgayBD) {
+                edtStartDate.setText(date);
+            } else edtEndDate.setText(date);
         },
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
@@ -138,7 +132,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
@@ -158,7 +152,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -174,9 +168,9 @@ public class InformationPromoCodeActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(InformationPromoCodeActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(InformationPromoCodeActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(InformationPromoCodeActivity.this, ListDiscountCodeActivity.class);
@@ -241,19 +235,9 @@ public class InformationPromoCodeActivity extends AppCompatActivity
                 promoCode.setEndDate(endDate);
                 promoCode.setImage(image);
                 if (item == null) {
-                    promoRef.push().setValue(promoCode).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            showSuccesDialog("Thêm khuyến mãi thành công!");
-                        }
-                    });
+                    promoRef.push().setValue(promoCode).addOnSuccessListener(unused -> showSuccesDialog("Thêm khuyến mãi thành công!"));
                 } else {
-                    promoRef.child(key).setValue(promoCode).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            showSuccesDialog("Cập nhật khuyến mãi thành công!");
-                        }
-                    });
+                    promoRef.child(key).setValue(promoCode).addOnSuccessListener(unused -> showSuccesDialog("Cập nhật khuyến mãi thành công!"));
                 }
             }
         } else if (v == btnCancel) {
@@ -284,19 +268,14 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         );
         builder.setView(view);
         title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
+        title.setText(R.string.title);
         mess = (TextView) view.findViewById(R.id.textMessage);
         mess.setText("Tên không được để trống!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -312,7 +291,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         );
         builder.setView(view);
         title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
+        title.setText(R.string.title);
         mess = (TextView) view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận huỷ?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
@@ -320,20 +299,12 @@ public class InformationPromoCodeActivity extends AppCompatActivity
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                finish();
-            }
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
         });
 
-        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -349,19 +320,16 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         );
         builder.setView(view);
         title = (TextView) view.findViewById(R.id.textTitle);
-        title.setText("THÔNG BÁO");
+        title.setText(R.string.title);
         mess = (TextView) view.findViewById(R.id.textMessage);
         mess.setText(message);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                finish();
-            }
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
         });
 
         if (alertDialog.getWindow() != null) {

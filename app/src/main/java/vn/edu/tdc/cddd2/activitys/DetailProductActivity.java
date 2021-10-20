@@ -92,24 +92,24 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
 
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
-        proAdapter = new Product1Adapter(listProduct,this);
-        proAdapter.setItemClickListener(itemClickListener);
+        //proAdapter = new Product1Adapter(listProduct,this);
+        //proAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
     }
 
-    private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
-        @Override
-        public void getInfor(Product item) {
-            Toast.makeText(DetailProductActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
+//    private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
+//        @Override
+//        public void getInfor(Product item) {
+//            Toast.makeText(DetailProductActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+//        }
+//    };
 
     private void data(){
-        listProduct.add(new Product("Laptop 1 - Đen - 16GB ram", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2 - Đen - 8GB ram", 14000000, "Acer", 11));
+//        listProduct.add(new Product("Laptop 1 - Đen - 16GB ram", 15000000, "Asus", 10));
+//        listProduct.add(new Product("Laptop 2 - Đen - 8GB ram", 14000000, "Acer", 11));
     }
 
     @Override

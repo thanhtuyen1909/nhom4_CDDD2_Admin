@@ -16,6 +16,7 @@
     <string name="amountSP">5 từ 15</string>
     <string name="titleLayout">Danh sách sản phẩm</string>
     <string name="titleLayoutKM">Danh sách khuyến mãi</string>
+    <string name="titleLayoutTTKM">Thông tin khuyến mãi</string>
     <string name="titleLayoutLSP">Danh sách loại sản phẩm</string>
     <string name="titleDetailLSP">Chi tiết loại sản phẩm</string>
     <string name="titleLayoutH">Danh sách hãng</string>

@@ -43,14 +43,13 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
         Product item = listProducts.get(position);
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
-        holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        holder.tv_manu.setText("Hãng: " + item.getManu());
-        holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(itemClickListener != null) {
-                    itemClickListener.getInfor(item);
+                    if(v == holder.im_delete) {
+                        itemClickListener.deleteProductInPromo(item.getKey());
+                    } else itemClickListener.editProductInPromo(item.getKey());
                 } else {
                     return;
                 }
@@ -65,16 +64,14 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView im_item, im_delete;
-        TextView tv_name, tv_price, tv_amount, tv_manu;
+        TextView tv_name, tv_percent, tv_amount, tv_manu;
         View.OnClickListener onClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             im_item = itemView.findViewById(R.id.img);
             tv_name = itemView.findViewById(R.id.txt_name);
-            tv_price = itemView.findViewById(R.id.txt_price);
-            tv_amount = itemView.findViewById(R.id.txt_amount);
-            tv_manu = itemView.findViewById(R.id.txt_manu);
+            tv_percent = itemView.findViewById(R.id.txt_percentSale);
             im_delete = itemView.findViewById(R.id.btnDelete);
             im_delete.setOnClickListener(this);
         }
@@ -88,6 +85,7 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
     }
 
     public interface ItemClickListener {
-        void getInfor(Product item);
+        void deleteProductInPromo(String key);
+        void editProductInPromo(String key);
     }
 }
