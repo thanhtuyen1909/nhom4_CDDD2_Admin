@@ -28,6 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ProductPromoAdapter;
+import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Product;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
@@ -53,12 +55,12 @@ public class DetailPromoCodeActivity extends AppCompatActivity
     NavigationView navigationView;
     Intent intent;
     RecyclerView recyclerView;
-    ArrayList<Product> listProduct, listP;
+    ArrayList<DetailPromoCode> listProduct;
+    ArrayList<Product> listP;
     private Spinner spinProduct, spinGiamGia;
     ProductPromoAdapter productAdapter;
     Button btnAdd;
-    String key = "-MmLuVjl6Gg64YK9FEft";
-    String keyPD = null;
+    String key = "-MmLuVjl6Gg64YK9FEft", keyPD = null, remove;
     boolean check = true;
     ArrayAdapter<Product> spinAdapter;
     DatabaseReference promoDetailRef = FirebaseDatabase.getInstance().getReference("Offer_Details");
@@ -104,7 +106,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        productAdapter = new ProductPromoAdapter(listProduct, this, key);
+        productAdapter = new ProductPromoAdapter(listProduct, this);
         productAdapter.setItemClickListener(itemClickListener);
         spinAdapter = new ArrayAdapter<Product>(this, android.R.layout.simple_spinner_item, listP);
         spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -115,13 +117,10 @@ public class DetailPromoCodeActivity extends AppCompatActivity
     }
 
     private final ProductPromoAdapter.ItemClickListener itemClickListener = new ProductPromoAdapter.ItemClickListener() {
+        @SuppressLint("NewApi")
         @Override
-        public void deleteProductInPromo(String key) {
-            for (Product p : listProduct) {
-                if(p.getKey().equals(key)) {
-                    listProduct.remove(p);
-                }
-            }
+        public void deleteProductInPromo(String s) {
+            listProduct.removeIf(listProduct -> listProduct.getProductID().equals(s));
             productAdapter.notifyDataSetChanged();
         }
 
@@ -137,28 +136,12 @@ public class DetailPromoCodeActivity extends AppCompatActivity
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listProduct.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if (snapshot.child("offerID").getValue(String.class).equals(key)) {
-                        productRef.addValueEventListener(new ValueEventListener() {
-                            @SuppressLint("NotifyDataSetChanged")
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                listProduct.clear();
-                                for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
-                                    if (snapshot.child("productID").getValue(String.class).equals(snapshot1.getKey())) {
-                                        Product product = snapshot1.getValue(Product.class);
-                                        product.setKey(snapshot1.getKey());
-                                        listProduct.add(product);
-                                    }
-                                }
-                                productAdapter.notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+                        DetailPromoCode dp = snapshot.getValue(DetailPromoCode.class);
+                        dp.setKey(snapshot.getKey());
+                        listProduct.add(dp);
                     }
                 }
             }
@@ -264,43 +247,56 @@ public class DetailPromoCodeActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         if (v == btnSave) {
+            // Xoá hết detail trước đó trên dtb
+            promoDetailRef.addListenerForSingleValueEvent(new ValueEventListener(){
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (snapshot.child("offerID").getValue(String.class).equals(key)) {
+                            promoDetailRef.child(snapshot.getKey()).removeValue();
+                        }
+                    }
+                }
 
-        } else if (v == btnAdd) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
+                }
+            });
+
+            // Thêm lại list lên dtb
+            for(DetailPromoCode dp : listProduct) {
+                DetailPromoCode dp1 = new DetailPromoCode();
+                dp1.setOfferID(dp.getOfferID());
+                dp1.setPercentSale(dp.getPercentSale());
+                dp1.setProductID(dp.getProductID());
+                promoDetailRef.push().setValue(dp1);
+            }
+            showSuccesDialog("Cập nhật chi tiết khuyến mãi thành công!");
+        }
+        else if (v == btnAdd) {
             // Kiểm tra trùng sp
             keyPD = ((Product) spinProduct.getSelectedItem()).getKey();
-            String percent = spinGiamGia.getSelectedItem().toString();
+            Integer percent = Integer.parseInt(spinGiamGia.getSelectedItem().toString().substring(0, spinGiamGia.getSelectedItem().toString().length() - 1));
             checkTrung(keyPD);
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     // Add xuống list
                     if (check) {
-                        productRef.addValueEventListener(new ValueEventListener() {
-                            @SuppressLint("NotifyDataSetChanged")
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
-                                    if (snapshot1.getKey().equals(keyPD)) {
-                                        Product product = snapshot1.getValue(Product.class);
-                                        product.setKey(snapshot1.getKey());
-                                        listProduct.add(product);
-                                    }
-                                }
-                                productAdapter.notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+                        DetailPromoCode dp = new DetailPromoCode();
+                        dp.setOfferID(key);
+                        dp.setPercentSale(percent);
+                        dp.setProductID(keyPD);
+                        listProduct.add(dp);
+                        productAdapter.notifyDataSetChanged();
                     } else {
                         showWarningDialog("Khuyến mãi đã được áp dụng trên sản phẩm này!");
                     }
                 }
             }, 200);
-        } else {
+        }
+        else {
             showErrorDialog();
         }
     }
@@ -375,7 +371,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
-            finish();
+            //finish();
         });
 
         if (alertDialog.getWindow() != null) {
@@ -386,8 +382,8 @@ public class DetailPromoCodeActivity extends AppCompatActivity
 
     private void checkTrung(String s) {
         check = true;
-        for (Product p : listProduct) {
-            if(p.getKey() == s) {
+        for (DetailPromoCode p : listProduct) {
+            if(p.getProductID().equals(s)) {
                 check = false;
                 break;
             }

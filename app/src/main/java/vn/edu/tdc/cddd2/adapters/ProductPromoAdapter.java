@@ -25,53 +25,53 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class ProductPromoAdapter  extends RecyclerView.Adapter<ProductPromoAdapter.ViewHolder> {
-    ArrayList<Product> listProducts;
+public class ProductPromoAdapter extends RecyclerView.Adapter<ProductPromoAdapter.ViewHolder> {
+    ArrayList<DetailPromoCode> listProducts;
     private Context context;
-    DatabaseReference promoDetailRef = FirebaseDatabase.getInstance().getReference("Offer_Details");
+    DatabaseReference productRef = FirebaseDatabase.getInstance().getReference("Products");
     ProductPromoAdapter.ItemClickListener itemClickListener;
-    String key, keyPD;
+    String name = "";
 
     public void setItemClickListener(ProductPromoAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public ProductPromoAdapter(ArrayList<Product> listProducts, Context context, String key) {
+    public ProductPromoAdapter(ArrayList<DetailPromoCode> listProducts, Context context) {
         this.listProducts = listProducts;
         this.context = context;
-        this.key = key;
     }
 
     @NonNull
     @Override
     public ProductPromoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.item_product_2,parent,false);
+        View itemView = inflater.inflate(R.layout.item_product_2, parent, false);
         ProductPromoAdapter.ViewHolder viewHolder = new ProductPromoAdapter.ViewHolder(itemView);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProductPromoAdapter.ViewHolder holder, int position) {
-        Product item = listProducts.get(position);
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/products/"+item.getName()+"/"+item.getName()+".jpg");
-        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item);
-            }
-        });
-        holder.tv_name.setText(item.getName());
-        keyPD = item.getKey();
-
-        promoDetailRef.addValueEventListener(new ValueEventListener(){
+        DetailPromoCode item = listProducts.get(position);
+        holder.tv_percent.setText("Khuyến mãi: " + item.getPercentSale() + "%");
+        productRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (snapshot.child("offerID").getValue(String.class).equals(key) && snapshot.child("productID").getValue(String.class).equals(item.getKey())) {
-                        holder.tv_percent.setText("Khuyến mãi: " + snapshot.child("percentSale").getValue(Integer.class) + "%");
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (snapshot.getKey().equals(item.getProductID())) {
+                        name = snapshot.child("name").getValue(String.class);
+                        holder.tv_name.setText(name);
+                        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/products/" + name
+                                + "/" + name + ".jpg");
+                        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item);
+                            }
+                        });
                     }
                 }
             }
@@ -82,10 +82,10 @@ public class ProductPromoAdapter  extends RecyclerView.Adapter<ProductPromoAdapt
             }
         });
         holder.onClickListener = v -> {
-            if(itemClickListener != null) {
-                if(v == holder.im_delete) {
-                    itemClickListener.deleteProductInPromo(keyPD);
-                } else itemClickListener.editProductInPromo(keyPD);
+            if (itemClickListener != null) {
+                if (v == holder.im_delete) {
+                    itemClickListener.deleteProductInPromo(item.getProductID());
+                } else itemClickListener.editProductInPromo(item.getProductID());
             } else {
                 return;
             }
@@ -98,7 +98,7 @@ public class ProductPromoAdapter  extends RecyclerView.Adapter<ProductPromoAdapt
         return listProducts.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView im_item, im_delete;
         TextView tv_name, tv_percent;
         View.OnClickListener onClickListener;
@@ -115,7 +115,7 @@ public class ProductPromoAdapter  extends RecyclerView.Adapter<ProductPromoAdapt
 
         @Override
         public void onClick(View v) {
-            if(onClickListener != null) {
+            if (onClickListener != null) {
                 onClickListener.onClick(v);
             }
         }
@@ -123,6 +123,7 @@ public class ProductPromoAdapter  extends RecyclerView.Adapter<ProductPromoAdapt
 
     public interface ItemClickListener {
         void deleteProductInPromo(String key);
+
         void editProductInPromo(String key);
     }
 }
