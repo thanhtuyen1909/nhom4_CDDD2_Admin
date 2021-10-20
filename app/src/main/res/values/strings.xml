@@ -46,7 +46,7 @@
     <string name="btnAll">Chọn tất cả</string>
 
 <!--  Dialog  -->
-    <string name="succes">succes</string>
+    <string name="titlePercent">Cập nhật</string>
     <string name="warning">warning</string>
     <string name="error">error</string>
     <string name="title">THÔNG BÁO</string>

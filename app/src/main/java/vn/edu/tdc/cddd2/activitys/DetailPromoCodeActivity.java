@@ -6,13 +6,12 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +27,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,14 +40,15 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ProductPromoAdapter;
 import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Product;
-import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class DetailPromoCodeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     // Khai báo biến
     Handler handler = new Handler();
+    Integer percent;
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, btnCancel, title, mess;
+    EditText edtPercent;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
@@ -73,7 +72,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         promoDetailRef.keepSynced(true);
         productRef.keepSynced(true);
 
-        //key = getIntent().getStringExtra("key");
+        key = getIntent().getStringExtra("key");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -108,7 +107,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         recyclerView.setHasFixedSize(true);
         productAdapter = new ProductPromoAdapter(listProduct, this);
         productAdapter.setItemClickListener(itemClickListener);
-        spinAdapter = new ArrayAdapter<Product>(this, android.R.layout.simple_spinner_item, listP);
+        spinAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listP);
         spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinProduct.setAdapter(spinAdapter);
         data();
@@ -117,16 +116,37 @@ public class DetailPromoCodeActivity extends AppCompatActivity
     }
 
     private final ProductPromoAdapter.ItemClickListener itemClickListener = new ProductPromoAdapter.ItemClickListener() {
-        @SuppressLint("NewApi")
+        @SuppressLint({"NewApi", "NotifyDataSetChanged"})
         @Override
         public void deleteProductInPromo(String s) {
             listProduct.removeIf(listProduct -> listProduct.getProductID().equals(s));
             productAdapter.notifyDataSetChanged();
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
-        public void editProductInPromo(String key) {
-            Toast.makeText(DetailPromoCodeActivity.this, key, Toast.LENGTH_SHORT).show();
+        public void editProductInPromo(String s) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(DetailPromoCodeActivity.this, R.style.AlertDialog);
+            builder.setTitle(R.string.titlePercent);
+
+            LayoutInflater inflater = getLayoutInflater();
+            View dialoglayout = inflater.inflate(R.layout.text_input_percent, null);
+            edtPercent = dialoglayout.findViewById(R.id.edtPercent);
+
+            builder.setPositiveButton(R.string.okay, (dialog, which) -> {
+                for (DetailPromoCode dp : listProduct) {
+                    if(dp.getProductID().equals(s)) {
+                        dp.setPercentSale(Integer.parseInt(edtPercent.getText().toString()));
+                    }
+                }
+                productAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            });
+
+            builder.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
+
+            builder.setView(dialoglayout);
+            builder.show();
         }
     };
 
@@ -244,13 +264,14 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onClick(View v) {
         if (v == btnSave) {
             // Xoá hết detail trước đó trên dtb
             promoDetailRef.addListenerForSingleValueEvent(new ValueEventListener(){
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         if (snapshot.child("offerID").getValue(String.class).equals(key)) {
                             promoDetailRef.child(snapshot.getKey()).removeValue();
@@ -259,7 +280,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
             });
@@ -277,22 +298,19 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         else if (v == btnAdd) {
             // Kiểm tra trùng sp
             keyPD = ((Product) spinProduct.getSelectedItem()).getKey();
-            Integer percent = Integer.parseInt(spinGiamGia.getSelectedItem().toString().substring(0, spinGiamGia.getSelectedItem().toString().length() - 1));
+            percent = Integer.parseInt(spinGiamGia.getSelectedItem().toString().substring(0, spinGiamGia.getSelectedItem().toString().length() - 1));
             checkTrung(keyPD);
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    // Add xuống list
-                    if (check) {
-                        DetailPromoCode dp = new DetailPromoCode();
-                        dp.setOfferID(key);
-                        dp.setPercentSale(percent);
-                        dp.setProductID(keyPD);
-                        listProduct.add(dp);
-                        productAdapter.notifyDataSetChanged();
-                    } else {
-                        showWarningDialog("Khuyến mãi đã được áp dụng trên sản phẩm này!");
-                    }
+            handler.postDelayed(() -> {
+                // Add xuống list
+                if (check) {
+                    DetailPromoCode dp = new DetailPromoCode();
+                    dp.setOfferID(key);
+                    dp.setPercentSale(percent);
+                    dp.setProductID(keyPD);
+                    listProduct.add(dp);
+                    productAdapter.notifyDataSetChanged();
+                } else {
+                    showWarningDialog("Khuyến mãi đã được áp dụng trên sản phẩm này!");
                 }
             }, 200);
         }
@@ -371,7 +389,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
-            //finish();
+            finish();
         });
 
         if (alertDialog.getWindow() != null) {

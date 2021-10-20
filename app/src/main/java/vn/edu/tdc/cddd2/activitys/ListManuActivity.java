@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -35,10 +36,12 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
+import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
+    Handler handler = new Handler();
     Toolbar toolbar;
     SearchView searchView;
     TextView btnBack, subtitleAppbar, totalManu, title, mess;
@@ -107,6 +110,9 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
             @Override
             public boolean onQueryTextChange(String newText) {
                 manuAdapter.getFilter().filter(newText);
+                handler.postDelayed(() -> {
+                    totalManu.setText(manuAdapter.getItemCount() + " hãng từ " + listManu.size());
+                }, 200);
                 return false;
             }
         });

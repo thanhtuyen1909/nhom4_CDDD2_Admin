@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class ListPromoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến
+    Handler handler = new Handler();
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar;
     SearchView searchView;
@@ -107,9 +109,13 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 return false;
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public boolean onQueryTextChange(String newText) {
                 promoCodeAdapter.getFilter().filter(newText);
+                handler.postDelayed(() -> {
+                    totalPromo.setText(recyclerView.getAdapter().getItemCount() + " khuyến mãi từ " + listPromoCode.size());
+                }, 200);
                 return false;
             }
         });
@@ -123,7 +129,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
 
     private void data(){
         promoRef.addValueEventListener(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
+            @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listPromoCode.clear();
@@ -252,7 +258,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             // Xoá cả những chi tiết khuyến mãi
             promoDetailRef.addValueEventListener(new ValueEventListener(){
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         if (snapshot.child("offerID").getValue(String.class).equals(key)) {
                             promoDetailRef.child(snapshot.getKey()).removeValue();
@@ -261,7 +267,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
             });

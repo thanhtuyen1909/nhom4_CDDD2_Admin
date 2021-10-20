@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -40,6 +41,7 @@ import vn.edu.tdc.cddd2.data_models.Category;
 
 public class ListCateActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
+    Handler handler = new Handler();
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar, totalCate;
     SearchView searchView;
@@ -108,6 +110,9 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             @Override
             public boolean onQueryTextChange(String newText) {
                 cateAdapter.getFilter().filter(newText);
+                handler.postDelayed(() -> {
+                    totalCate.setText(recyclerView.getAdapter().getItemCount() + " loại từ " + listCate.size());
+                }, 200);
                 return false;
             }
         });
@@ -140,7 +145,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         });
     }
 
-    private CateAdapter.ItemClickListener itemClickListener = new CateAdapter.ItemClickListener() {
+    private final CateAdapter.ItemClickListener itemClickListener = new CateAdapter.ItemClickListener() {
         @Override
         public void deleteCategory(String key) {
             showWarningDialog(key);
