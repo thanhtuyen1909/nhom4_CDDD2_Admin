@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
@@ -20,9 +27,10 @@ import vn.edu.tdc.cddd2.data_models.Order;
 
 public class FragmentWillOrderWHM extends Fragment {
     // Khai báo biến:
-    private RecyclerView recyclerView;
-    private ArrayList<Order> listOrder;
-    private OrderAdapter orderAdapter;
+    RecyclerView recyclerView;
+    ArrayList<Order> listOrder;
+    OrderAdapter orderAdapter;
+    DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
 
     @Nullable
     @Override
@@ -41,18 +49,27 @@ public class FragmentWillOrderWHM extends Fragment {
         return view;
     }
 
-    private OrderAdapter.ItemClickListener itemClickListener = new OrderAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Order item) {
-            Toast.makeText(getActivity(), item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
+    private OrderAdapter.ItemClickListener itemClickListener = item -> Toast.makeText(getActivity(), item.toString(), Toast.LENGTH_SHORT).show();
 
     private void data(){
-        listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
+        orderRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if(snapshot.child("status").getValue(Integer.class) == 6) {
+                        Order order = snapshot.getValue(Order.class);
+                        order.setMaDH(snapshot.getKey());
+                        listOrder.add(order);
+                    }
+                }
+                orderAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

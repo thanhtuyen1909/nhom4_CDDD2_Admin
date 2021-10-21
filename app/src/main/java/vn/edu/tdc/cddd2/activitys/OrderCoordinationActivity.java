@@ -1,10 +1,10 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +18,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import vn.edu.tdc.cddd2.R;
@@ -27,14 +26,14 @@ import vn.edu.tdc.cddd2.fragments.FragmentWillOrderWHM;
 
 public class OrderCoordinationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến:
-    private BottomNavigationView bottomNavigationView;
+    BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar, btnCancel;
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar, btnCancel;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
-    private Intent intent;
+    NavigationView navigationView;
+    Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,7 +44,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Điều phối hàng");
+        subtitleAppbar.setText(R.string.titleLayoutDPH);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -61,40 +60,27 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         // Xử lý sự kiện click button "Lưu":
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnSave.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "Huỷ":
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnCancel.setOnClickListener(v -> finish());
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentWillOrderWHM()).commit();
 
         // Xử lý sự kiện cho thanh bottomnavigationview
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getItemId() == R.id.willorder) {
-                    selectedFragment = new FragmentWillOrderWHM();
-                } else {
-                    selectedFragment = new FragmentWaitShipWHM();
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-                return true;
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if(item.getItemId() == R.id.willorder) {
+                selectedFragment = new FragmentWillOrderWHM();
+            } else {
+                selectedFragment = new FragmentWaitShipWHM();
             }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+            return true;
         });
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
@@ -104,7 +90,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

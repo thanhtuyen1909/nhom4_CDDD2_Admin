@@ -50,7 +50,7 @@ public class FragmentListOrderSP extends Fragment {
     };
 
     private void data(){
-        listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "11/10/2021"));
-        listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "11/10/2021"));
+        //listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "11/10/2021"));
+        //listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "11/10/2021"));
     }
 }

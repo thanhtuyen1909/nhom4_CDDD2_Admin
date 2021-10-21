@@ -44,8 +44,8 @@ public class Order5Adapter extends RecyclerView.Adapter<Order5Adapter.ViewHolder
         Order item = listOrders.get(position);
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getMaDH());
-        holder.tv_total.setText("Tổng: " + String.valueOf(item.getTongTien()));
-        holder.tv_date.setText("Ngày: " + item.getNguoiGiao());
+        holder.tv_total.setText("Tổng: " + String.valueOf(item.getTotal()));
+        holder.tv_date.setText("Ngày: " + item.getCreated_at());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
+import vn.edu.tdc.cddd2.data_models.ShipArea;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
     ArrayList<Order> listOrder;
@@ -42,8 +44,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull OrderAdapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getMaDH());
-        holder.tv_tong.setText("Tổng: " + item.getTongTien());
-        holder.tv_diachi.setText("Địa chỉ: " + item.getDiaChi());
+        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
+        // lấy dữ liệu cho spinner:
+        getKhuVuc(item.getAddress());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +67,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView im_detail;
+        Spinner sp_shipper;
         TextView tv_maDH, tv_tong, tv_diachi;
         View.OnClickListener onClickListener;
 
@@ -71,6 +76,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             tv_maDH = itemView.findViewById(R.id.txt_madonhang);
             tv_tong = itemView.findViewById(R.id.txt_tongtien);
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
+            sp_shipper = itemView.findViewById(R.id.spinShipper);
             im_detail = itemView.findViewById(R.id.btnDetail);
             im_detail.setOnClickListener(this);
         }
@@ -81,6 +87,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                 onClickListener.onClick(v);
             }
         }
+    }
+
+    private void getKhuVuc(String address) {
+
     }
 
     public interface ItemClickListener {

@@ -28,14 +28,14 @@ import vn.edu.tdc.cddd2.fragments.FragmentWillOrderOH;
 
 public class OrderProcessActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến:
-    private BottomNavigationView bottomNavigationView;
+    BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar;
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
-    private Intent intent;
+    NavigationView navigationView;
+    Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class OrderProcessActivity extends AppCompatActivity implements Navigatio
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Xử lý đơn hàng");
+        subtitleAppbar.setText(R.string.titleLayoutXLDH);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);

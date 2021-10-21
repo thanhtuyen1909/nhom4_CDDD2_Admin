@@ -50,10 +50,10 @@ public class FragmentListOrderOH extends Fragment {
     };
 
     private void data(){
-        listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
     }
 }

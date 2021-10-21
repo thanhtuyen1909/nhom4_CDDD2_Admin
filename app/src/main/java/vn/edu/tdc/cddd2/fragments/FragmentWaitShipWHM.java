@@ -48,10 +48,10 @@ public class FragmentWaitShipWHM extends Fragment {
     };
 
     private void data(){
-        listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
-        listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
+//        listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
+//        listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
+//        listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
+//        listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
+//        listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "N.V.An - KV1"));
     }
 }

@@ -21,6 +21,8 @@
     <string name="titleDetailLSP">Chi tiết loại sản phẩm</string>
     <string name="titleLayoutH">Danh sách hãng</string>
     <string name="titleLayoutCTKM">Chi tiết khuyến mãi</string>
+    <string name="titleLayoutXLDH">Xử lý đơn hàng</string>
+    <string name="titleLayoutDPH">Điều phối hàng</string>
     <string name="titleDetailH">Chi tiết hãng</string>
     <string name="buttonBack">Trở lại</string>
     <string name="buttonSave">Lưu</string>

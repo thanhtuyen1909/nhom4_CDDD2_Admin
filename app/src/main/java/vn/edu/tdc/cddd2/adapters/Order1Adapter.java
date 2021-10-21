@@ -42,9 +42,9 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
     public void onBindViewHolder(@NonNull Order1Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getMaDH());
-        holder.tv_tong.setText("Tổng: " + item.getTongTien());
-        holder.tv_diachi.setText("Địa chỉ: " + item.getDiaChi());
-        holder.tv_nguoiship.setText(item.getNguoiGiao());
+        //holder.tv_tong.setText("Tổng: " + item.getTongTien());
+        //holder.tv_diachi.setText("Địa chỉ: " + item.getDiaChi());
+        //holder.tv_nguoiship.setText(item.getNguoiGiao());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

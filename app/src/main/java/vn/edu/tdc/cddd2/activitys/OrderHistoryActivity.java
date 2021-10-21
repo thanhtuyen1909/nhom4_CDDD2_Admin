@@ -98,11 +98,11 @@ public class OrderHistoryActivity extends AppCompatActivity implements Navigatio
     }
 
     private void data() {
-        listOrders.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrders.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrders.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrders.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "12/10/2021"));
-        listOrders.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrders.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrders.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrders.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrders.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "12/10/2021"));
+//        listOrders.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
     }
 
     private Order5Adapter.ItemClickListener itemClickListener = new Order5Adapter.ItemClickListener() {
