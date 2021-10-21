@@ -47,6 +47,13 @@
     <string name="gianhap">Giá nhập</string>
     <string name="giaban">Giá bán</string>
     <string name="btnAll">Chọn tất cả</string>
+    <string name="default_iamge">android.graphics.drawable.AdaptiveIconDrawable@f20e8ad</string>
+
+    <!-- Dialog -->
+    <string name="title">THÔNG BÁO</string>
+    <string name="okay">OK</string>
+    <string name="yes">XÁC NHẬN</string>
+    <string name="no">HUỶ</string>
 
 <!--  Dialog  -->
     <string name="titlePercent">Cập nhật</string>
@@ -95,12 +102,14 @@
     </string-array>
 
     <string-array name="mau">
+        <item></item>
         <item>Đen</item>
         <item>Đỏ</item>
         <item>Xám</item>
     </string-array>
 
     <string-array name="dungluong">
+        <item></item>
         <item>8GB</item>
         <item>16GB</item>
         <item>128GB</item>
