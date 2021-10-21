@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Catagory;
+import vn.edu.tdc.cddd2.data_models.Category;
 
 public class CataAdapter extends RecyclerView.Adapter<CataAdapter.ViewHolder> {
-    ArrayList<Catagory> listCatas;
+    ArrayList<Category> listCatas;
     private Context context;
     CataAdapter.ItemClickListener itemClickListener;
 
@@ -24,7 +24,7 @@ public class CataAdapter extends RecyclerView.Adapter<CataAdapter.ViewHolder> {
         this.itemClickListener = itemClickListener;
     }
 
-    public CataAdapter(ArrayList<Catagory> listCatas, Context context) {
+    public CataAdapter(ArrayList<Category> listCatas, Context context) {
         this.listCatas = listCatas;
         this.context = context;
     }
@@ -40,7 +40,7 @@ public class CataAdapter extends RecyclerView.Adapter<CataAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull CataAdapter.ViewHolder holder, int position) {
-        Catagory item = listCatas.get(position);
+        Category item = listCatas.get(position);
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
         holder.onClickListener = new View.OnClickListener() {
@@ -84,6 +84,6 @@ public class CataAdapter extends RecyclerView.Adapter<CataAdapter.ViewHolder> {
     }
 
     public interface ItemClickListener {
-        void getInfor(Catagory item);
+        void getInfor(Category item);
     }
 }

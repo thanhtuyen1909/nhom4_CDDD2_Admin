@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
-import vn.edu.tdc.cddd2.data_models.Manufacturer;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -33,7 +33,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Manufacturer> listManu;
+    private ArrayList<Manufacture> listManu;
     private ManuAdapter manuAdapter;
     private NavigationView navigationView;
     private Intent intent;
@@ -96,16 +96,16 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void data(){
-        listManu.add(new Manufacturer("Asus"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Apple"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Asus"));
+//        listManu.add(new Manufacturer("Asus"));
+//        listManu.add(new Manufacturer("Acer"));
+//        listManu.add(new Manufacturer("Apple"));
+//        listManu.add(new Manufacturer("Acer"));
+//        listManu.add(new Manufacturer("Asus"));
     }
 
     private ManuAdapter.ItemClickListener itemClickListener = new ManuAdapter.ItemClickListener() {
         @Override
-        public void getInfor(Manufacturer item) {
+        public void getInfor(Manufacture item) {
             Toast.makeText(ListManuActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
         }
     };

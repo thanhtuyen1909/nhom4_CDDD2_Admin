@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Catagory;
 import vn.edu.tdc.cddd2.data_models.DiscountCode;
 
 public class DiscountCodeAdapter extends RecyclerView.Adapter<DiscountCodeAdapter.ViewHolder> {

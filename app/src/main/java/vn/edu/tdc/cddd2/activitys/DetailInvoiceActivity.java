@@ -85,8 +85,8 @@ public class DetailInvoiceActivity extends AppCompatActivity implements Navigati
     }
 
     private void data() {
-        listProducts.add(new Product("Laptop 1", 15000000, "Asus", 2));
-        listProducts.add(new Product("Laptop 2", 14000000, "Acer", 1));
+//        listProducts.add(new Product("Laptop 1", 15000000, "Asus", 2));
+//        listProducts.add(new Product("Laptop 2", 14000000, "Acer", 1));
     }
 
     @Override

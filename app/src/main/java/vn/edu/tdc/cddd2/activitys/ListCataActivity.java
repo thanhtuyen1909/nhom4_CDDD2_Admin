@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CataAdapter;
-import vn.edu.tdc.cddd2.data_models.Catagory;
+import vn.edu.tdc.cddd2.data_models.Category;
 
 public class ListCataActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -33,7 +33,7 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Catagory> lisCata;
+    private ArrayList<Category> lisCata;
     private CataAdapter cataAdapter;
     private NavigationView navigationView;
     private Intent intent;
@@ -96,16 +96,16 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void data(){
-        lisCata.add(new Catagory("Tivi"));
-        lisCata.add(new Catagory("Tủ lạnh"));
-        lisCata.add(new Catagory("Laptop"));
-        lisCata.add(new Catagory("Máy tính bảng"));
-        lisCata.add(new Catagory("Điện thoại"));
+//        lisCata.add(new Catagory("Tivi"));
+//        lisCata.add(new Catagory("Tủ lạnh"));
+//        lisCata.add(new Catagory("Laptop"));
+//        lisCata.add(new Catagory("Máy tính bảng"));
+//        lisCata.add(new Catagory("Điện thoại"));
     }
 
     private CataAdapter.ItemClickListener itemClickListener = new CataAdapter.ItemClickListener() {
         @Override
-        public void getInfor(Catagory item) {
+        public void getInfor(Category item) {
             Toast.makeText(ListCataActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
         }
     };

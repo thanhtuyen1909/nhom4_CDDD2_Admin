@@ -5,9 +5,20 @@
       <map>
         <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/drawable/bg_green_corner_16_header.xml" value="0.1" />
         <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/drawable/bg_white_corner_16.xml" value="0.1" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/drawable/button_warning_background.xml" value="0.1" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/drawable/dialog_background.xml" value="0.1" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/appbar_1.xml" value="0.1" />
         <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/dialog_success.xml" value="0.2" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/item_product_1.xml" value="0.1" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/item_product_2.xml" value="0.25" />
         <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_changepassword.xml" value="0.1" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_detail_edit_product.xml" value="0.15" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_detail_employee.xml" value="0.1" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_detail_product.xml" value="0.22" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_error_dialog.xml" value="0.1" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_list_product.xml" value="0.14166666666666666" />
         <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_login.xml" value="0.20416666666666666" />
+        <entry key="..\:/Android Project/Zuke-Admin/app/src/main/res/layout/layout_warning_dialog.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_green_circle.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_spinner.xml" value="0.21614583333333334" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_toolbar.xml" value="0.11510416666666666" />

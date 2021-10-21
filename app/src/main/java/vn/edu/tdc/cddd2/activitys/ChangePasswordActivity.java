@@ -75,7 +75,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
         edtOldPassword = findViewById(R.id.edtPass);
         edtNewPassword = findViewById(R.id.edtPassNew);
         edtConfirmPassword = findViewById(R.id.edtPassConfirm);
-        openDialog(Gravity.CENTER);
         // Sự kiện xử lý button "Đổi mật khẩu"
         btnChange.setOnClickListener(new View.OnClickListener() {
             @Override

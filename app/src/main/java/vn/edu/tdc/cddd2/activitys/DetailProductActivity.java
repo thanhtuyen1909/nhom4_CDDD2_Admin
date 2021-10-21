@@ -1,16 +1,29 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,28 +32,52 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import vn.edu.tdc.cddd2.DAO.DAOProduct;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.Product1Adapter;
+import vn.edu.tdc.cddd2.data_models.Category;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar, btnCancel;
+    Handler handler = new Handler();
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar, btnCancel;
+    private ImageView productImage;
+    private EditText productID,productName,productDescription,productQuantity,productImportPrice,productPrice;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
+    NavigationView navigationView;
     private Intent intent;
-    private RecyclerView recyclerView;
+    RecyclerView recyclerView;
     private ArrayList<Product> listProduct;
-    private Spinner spinCata, spinManu;
+    private Spinner spinCata, spinManu , spinColor, spinStorage;
     private Product1Adapter proAdapter;
-    private Button btnAdd;
-
+    Button btnAdd;
+    static  int SELECT_IMAGE_CODE = 1;
+    private Uri imageUri;
+    private ArrayList<Manufacture> listManu ;
+    private ArrayList<Category> listCate;
+    static FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
+    boolean check = true, check1 = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,13 +100,58 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         btnSave = findViewById(R.id.txtSave);
         btnCancel = findViewById(R.id.txtCancel);
         btnAdd = findViewById(R.id.btnAdd);
+        productImage = findViewById(R.id.imageView);
+        productID = findViewById(R.id.edtMSP);
+        productName = findViewById(R.id.edtTSP);
+        productDescription = findViewById(R.id.edtMT);
+        productQuantity = findViewById(R.id.edtSL);
+        productImportPrice = findViewById(R.id.edtGN);
+        productPrice = findViewById(R.id.edtGB);
+        spinCata = findViewById(R.id.spinner_cata);
+        spinManu = findViewById(R.id.spinner_manu);
+        spinColor = findViewById(R.id.spinner_color);
+        spinStorage = findViewById(R.id.spinner_size);
         listProduct = new ArrayList<>();
+        data();
+
+        productImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,"Title"),SELECT_IMAGE_CODE);
+            }
+        });
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                finish();
+                check = true;
+               if(listProduct.size() > 0) {
+                   DAOProduct dao = new DAOProduct();
+                   for (Product product : listProduct) {
+                       dao.add(product).addOnSuccessListener(new OnSuccessListener<Void>() {
+                           @Override
+                           public void onSuccess(Void unused) {
+
+                           }
+                       }).addOnFailureListener(new OnFailureListener() {
+                           @Override
+                           public void onFailure(@NonNull Exception e) {
+                               check = false;
+                           }
+                       });
+                   }
+               }
+               if(check){
+                   openDialog(Gravity.CENTER,"Thêm sản phẩm thành công !");
+                   listProduct.clear();
+               }else{
+                   openDialog(Gravity.CENTER,"Thêm sản phẩm thất bại !");
+               }
             }
         });
 
@@ -77,8 +159,90 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                data();
-                proAdapter.notifyDataSetChanged();
+                Date now = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                int id = Integer.parseInt(String.valueOf(productID.getText()));
+                checkTrungID(id);
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(checkError() == 1 && check && check1){
+                            Product product = new Product();
+                            product.setSold(0);
+                            product.setCreated_at(formatter.format(now));
+                            product.setId(Integer.parseInt(String.valueOf(productID.getText())));
+                            String color = String.valueOf(spinColor.getSelectedItem());
+                            String size = String.valueOf(spinStorage.getSelectedItem());
+                            product.setName(String.valueOf(productName.getText()));
+                            if(color != ""){
+                                product.setName(product.getName()+" - "+color);
+                            }
+                            if(size != null){
+                                product.setName(product.getName()+" - "+size);
+                            }
+                            DatabaseReference ref = db.getReference("Manufactures");
+                            Manufacture manu = (Manufacture) spinManu.getSelectedItem();
+                            ref.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for(DataSnapshot node : snapshot.getChildren()){
+                                        Manufacture temp = node.getValue(Manufacture.class);
+                                        if(temp.getName() == manu.getName()){
+                                            product.setManu_id(node.getKey());
+                                            Log.d("TAG", "onDataChange: "+node.getKey());
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                            Category cate = (Category) spinCata.getSelectedItem();
+                            ref = db.getReference("Categories");
+                            ref.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for(DataSnapshot node : snapshot.getChildren()){
+                                        Category temp = node.getValue(Category.class);
+                                        if(temp.getName() == cate.getName()){
+                                            product.setCategory_id(node.getKey());
+                                            Log.d("TAG", "onDataChange: "+node.getKey());
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                            product.setImage(product.getName()+".jpg");
+                            product.setQuantity(Integer.parseInt(String.valueOf(productQuantity.getText())));
+                            product.setImport_price(Integer.parseInt(String.valueOf(productImportPrice.getText())));
+                            product.setPrice(Integer.parseInt(String.valueOf(productPrice.getText())));
+                            product.setDescription(String.valueOf(productDescription.getText()));
+
+                            //upload ảnh
+                            FirebaseStorage storage = FirebaseStorage.getInstance("gs://cddd2-f1bcd.appspot.com/");
+                            StorageReference storageRef = storage.getReference("images/products");
+                            StorageReference productRef = storageRef.child(product.getName()).child(product.getName()+".jpg");
+                            StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
+                            productRef.putFile(imageUri,metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Log.d("image",taskSnapshot.getMetadata().getName()+"."+taskSnapshot.getMetadata().getContentType());
+                                }
+                            });
+                            listProduct.add(product);
+                            proAdapter.notifyDataSetChanged();
+                            clear();
+                        }
+                    }
+                }, 200);
             }
         });
 
@@ -100,6 +264,132 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         recyclerView.setNestedScrollingEnabled(false);
     }
 
+    public int checkError(){
+        //Check chưa chọn image
+        if(imageUri == null){
+            openDialog(Gravity.CENTER,"Vui lòng chọn ảnh cho sản phẩm");
+            return -1;
+        }
+        //Check mã sản phẩm trống
+        if(String.valueOf(productID.getText()).compareTo("") == 0 ){
+            openDialog(Gravity.CENTER,"Mã sản phẩm không được để trống");
+            if(productID.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check tên sản phẩm trống
+        if(String.valueOf(productName.getText()).compareTo("") == 0 ){
+            openDialog(Gravity.CENTER,"Tên sản phẩm không được để trống");
+            if(productName.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check mô tả sản phẩm trống
+        if(String.valueOf(productDescription.getText()).compareTo("") == 0){
+            openDialog(Gravity.CENTER,"Mô tả phẩm không được để trống");
+            if(productDescription.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check Số lượng sản phẩm trống
+        if(String.valueOf(productQuantity.getText()).compareTo("") == 0 ){
+            openDialog(Gravity.CENTER,"Số lượng phẩm không được để trống");
+            if(productQuantity.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check số lượng sản phẩm < 0
+        if(Integer.parseInt(String.valueOf(productQuantity.getText())) < 0){
+            openDialog(Gravity.CENTER,"Số lượng sản phẩm phải lớn hơn hoặc bằng 0");
+            if(productQuantity.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check giá nhập sản phẩm trống
+        if(String.valueOf(productImportPrice.getText()).compareTo("") == 0 ){
+            openDialog(Gravity.CENTER,"Giá nhập sản phẩm không được để trống");
+            if(productImportPrice.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check giá nhập sản phẩm < 0
+        if(Integer.parseInt(String.valueOf(productImportPrice.getText())) < 0){
+            openDialog(Gravity.CENTER,"Giá nhập sản phẩm phải lớn hơn 0");
+            if(productImportPrice.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check giá bán sản phẩm trống
+        if(String.valueOf(productPrice.getText()).compareTo("") == 0 ){
+            openDialog(Gravity.CENTER,"Giá bán sản phẩm không được để trống");
+            if(productPrice.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check giá bản < giá nhập
+        if(Integer.parseInt(String.valueOf(productImportPrice.getText())) > Integer.parseInt(String.valueOf(productImportPrice.getText()))){
+            openDialog(Gravity.CENTER,"Giá bán sản phẩm phải lớn hơn giá nhập");
+            if(productImportPrice.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+
+        return  1;
+    }
+
+    private void checkTrungID(int id){
+        check1 = true;
+        Log.d("aaa", "id: " + id);
+        //Check trùng mã sản phẩm
+        FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
+        DatabaseReference ref = db.getReference("Products");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                check = true;
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Product temp = node.getValue(Product.class);
+                    if(temp.getId() == id){
+
+                        check = false;
+                        openDialog(Gravity.CENTER,"Mã sản phẩm không được trùng");
+
+                        if(productID.requestFocus()) {
+                            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                        }
+                        productID.setText("");
+                        break;
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        for(Product product : listProduct){
+            if(product.getId() == id){
+                openDialog(Gravity.CENTER,"Mã sản phẩm không được trùng");
+                if(productID.requestFocus()) {
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+                productID.setText("");
+                check1 = false;
+            }
+        }
+    }
     private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
         @Override
         public void getInfor(Product item) {
@@ -108,8 +398,69 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
     };
 
     private void data(){
-        listProduct.add(new Product("Laptop 1 - Đen - 16GB ram", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2 - Đen - 8GB ram", 14000000, "Acer", 11));
+        FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
+        DatabaseReference refManu = db.getReference("Manufactures");
+        DatabaseReference refCate = db.getReference("Categories");
+        listManu = new ArrayList<Manufacture>();
+        listCate = new ArrayList<Category>();
+
+        ArrayAdapter manuAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_dropdown_item,listManu);
+
+        ArrayAdapter cateAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_spinner_dropdown_item,listCate);
+
+        manuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinManu.setAdapter(manuAdapter);
+        cateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinCata.setAdapter(cateAdapter);
+        refManu.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Manufacture manu = node.getValue(Manufacture.class);
+                    listManu.add(manu);
+                    manuAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        refCate.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Category cate = node.getValue(Category.class);
+                    listCate.add(cate);
+                    cateAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+    private  void clear(){
+        productImage.setImageResource(R.mipmap.ic_launcher_round);
+        productID.setText("");
+        productName.setText("");
+        productDescription.setText("");
+        productQuantity.setText("");
+        productImportPrice.setText("");
+        productPrice.setText("");
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1){
+            imageUri = data.getData();
+            productImage.setImageURI(imageUri);
+        }
     }
 
     @Override
@@ -139,9 +490,9 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(DetailProductActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(DetailProductActivity.this, OrderProcessActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(DetailProductActivity.this, ListDiscountCodeActivity.class);
@@ -182,5 +533,29 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         } else {
             super.onBackPressed();
         }
+    }
+    public void openDialog(int gravity,String notify){
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_success);
+        Window window = dialog.getWindow();
+        if(window == null) return;
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttribute = window.getAttributes();
+        windowAttribute.gravity = gravity;
+        window.setAttributes(windowAttribute);
+        dialog.setCancelable(false);
+        TextView txtContent = dialog.findViewById(R.id.txtNotifyContent);
+        Button btnOK = dialog.findViewById(R.id.btnOK);
+        txtContent.setText(notify);
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
     }
 }

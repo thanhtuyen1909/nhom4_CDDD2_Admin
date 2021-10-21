@@ -11,9 +11,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
 
 public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHolder> {
@@ -45,7 +52,23 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
         holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        holder.tv_manu.setText("Hãng: " + item.getManu());
+        DatabaseReference ref = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Company");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Manufacture temp = node.getValue(Manufacture.class);
+                    if(node.getKey() == item.getManu_id()){
+                        holder.tv_manu.setText("Hãng: " + temp.getName());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
         holder.onClickListener = new View.OnClickListener() {
             @Override

@@ -1,6 +1,9 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +13,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
 
 public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHolder> {
@@ -41,10 +55,38 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull Product1Adapter.ViewHolder holder, int position) {
         Product item = listProducts.get(position);
-        holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        final long ONE_MEGABYTE = 1024 * 1024;
+        StorageReference imageRef = storage.getReference("images/products/"+item.getName()+"/"+item.getName()+".jpg");
+        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp,  holder.im_item.getWidth(),  holder.im_item.getHeight(), false));
+            }
+        });
+
         holder.tv_name.setText(item.getName());
         holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        holder.tv_manu.setText("Hãng: " + item.getManu());
+        DatabaseReference ref = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Manufactures");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("aaa", "onDataChange: ");
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Manufacture temp = node.getValue(Manufacture.class);
+                    if(node.getKey() == item.getManu_id()){
+                        Log.d("aaa", "onDataChange: "+temp.getName());
+                        holder.tv_manu.setText("Hãng: " + temp.getName());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
         holder.onClickListener = new View.OnClickListener() {
             @Override

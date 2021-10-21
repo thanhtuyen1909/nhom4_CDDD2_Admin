@@ -100,8 +100,8 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
     }
 
     private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 1));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 1));
+//        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 1));
+//        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 1));
     }
 
     @Override
