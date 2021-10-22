@@ -348,7 +348,6 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
 
     private void checkTrungID(int id){
         check1 = true;
-        Log.d("aaa", "id: " + id);
         //Check trùng mã sản phẩm
         FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
         DatabaseReference ref = db.getReference("Products");

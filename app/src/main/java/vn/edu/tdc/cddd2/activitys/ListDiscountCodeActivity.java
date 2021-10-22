@@ -1,15 +1,21 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,7 +24,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -34,10 +47,13 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private Intent intent;
+    private SearchView searchView;
     private RecyclerView recyclerView;
     private ArrayList<DiscountCode> listDiscountCode;
     private DiscountCodeAdapter discountCodeAdapter;
     private Button btnAdd;
+    private TextView title,mess,filter;
+    private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +76,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
+        searchView = findViewById(R.id.editSearch);
+        filter = findViewById(R.id.totalDiscountCode);
         listDiscountCode = new ArrayList<>();
 
         // Xử lý sự kiện click button "Trở lại":
@@ -76,10 +94,56 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             public void onClick(View v) {
                 intent = new Intent(ListDiscountCodeActivity.this, DetailDiscountCodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("type","add");
                 startActivity(intent);
             }
         });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                DatabaseReference codeRef = db.getReference("DiscountCode");
+                codeRef.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        DiscountCode code = snapshot.getValue(DiscountCode.class);
+                        if(newText.equals("")){
+                            listDiscountCode.add(code);
+                        }else {
+                            if(code.getCode().toUpperCase().trim().contains(newText.toUpperCase().trim())){
+                                listDiscountCode.add(code);
+                            }
+                        }
+                        discountCodeAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                return false;
+            }
+        });
         //RecycleView
         recyclerView = findViewById(R.id.listDiscount);
         recyclerView.setHasFixedSize(true);
@@ -93,16 +157,40 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
 
     private DiscountCodeAdapter.ItemClickListener itemClickListener = new DiscountCodeAdapter.ItemClickListener() {
         @Override
-        public void getInfor(DiscountCode item) {
-            Toast.makeText(ListDiscountCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+        public void deleteProduct(String code) {
+            showErrorDialog("Bạn có muốn xoá mã giảm giá ?",code);
+        }
+
+        @Override
+        public void editProduct(DiscountCode item) {
+            intent = new Intent(ListDiscountCodeActivity.this,DetailDiscountCodeActivity.class);
+            intent.putExtra("item", (Parcelable) item);
+            intent.putExtra("type","update");
+            startActivity(intent);
         }
     };
 
     private void data(){
-        listDiscountCode.add(new DiscountCode("13102021DC001"));
-        listDiscountCode.add(new DiscountCode("13102021DC002"));
-        listDiscountCode.add(new DiscountCode("13102021DC003"));
-        listDiscountCode.add(new DiscountCode("13102021DC004"));
+        listDiscountCode = new ArrayList<>();
+        DatabaseReference codeRef = db.getReference("DiscountCode");
+        codeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listDiscountCode.clear();
+                for(DataSnapshot node : snapshot.getChildren()){
+                    DiscountCode code = node.getValue(DiscountCode.class);
+                    listDiscountCode.add(code);
+
+                }
+                discountCodeAdapter.notifyDataSetChanged();
+                filter.setText(discountCodeAdapter.getItemCount() + " sản phẩm từ " + listDiscountCode.size());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
@@ -172,5 +260,77 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         } else {
             super.onBackPressed();
         }
+    }
+    private void showErrorDialog(String notify,String code) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListDiscountCodeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListDiscountCodeActivity.this).inflate(
+                R.layout.layout_error_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
+        ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            DatabaseReference codeRef = db.getReference("DiscountCode");
+            codeRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    for (DataSnapshot node : snapshot.getChildren()){
+                        DiscountCode discountCode = node.getValue(DiscountCode.class);
+                        if(discountCode.getCode().equals(code)){
+                            codeRef.child(node.getKey()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    showSuccesDialog("Xoá mã giảm giá thành công");
+                                }
+                            });
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+            alertDialog.dismiss();
+        });
+
+        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+    private void showSuccesDialog(String notify) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListDiscountCodeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListDiscountCodeActivity.this).inflate(
+                R.layout.layout_succes_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
     }
 }

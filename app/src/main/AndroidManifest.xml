@@ -14,10 +14,7 @@
     <!-- Warehouse Management -->
         <activity android:name=".activitys.MainQLKActivity"/>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListProductActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListManuActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListCataActivity"> </activity>
@@ -31,12 +28,19 @@
         <activity android:screenOrientation="portrait" android:name=".activitys.LoginActivity">
 
         </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListDiscountCodeActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.ListDiscountCodeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ListPromoActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.ChangePasswordActivity">
 
         </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailDiscountCodeActivity"> </activity>
+        <activity android:screenOrientation="portrait" android:name=".activitys.DetailDiscountCodeActivity">
+
+        </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.DetailPromoCodeActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.InformationPromoCodeActivity"> </activity>
         <activity android:screenOrientation="portrait" android:name=".activitys.OrderCoordinationActivity"> </activity>
