@@ -278,7 +278,6 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
         productImportPrice.setText("" + item.getImport_price());
         productPrice.setText("" + item.getPrice());
         String[] list = item.getName().split("- ");
-        String[] list1 = item.getName().split("!");
         if (list.length == 1) {
             spinColor.setSelection(0);
             spinStorage.setSelection(0);

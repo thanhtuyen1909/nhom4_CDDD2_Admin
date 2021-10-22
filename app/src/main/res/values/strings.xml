@@ -80,6 +80,7 @@
         <item>Khách hàng 1 năm</item>
         <item>Khách hàng > 2 năm</item>
         <item>Khách hàng thân thiết</item>
+        <item>Sinh nhật khách hàng</item>
     </string-array>
 
     <string-array name="ngay1">

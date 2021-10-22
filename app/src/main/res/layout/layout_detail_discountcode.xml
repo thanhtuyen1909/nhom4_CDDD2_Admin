@@ -31,7 +31,7 @@
             app:layout_constraintTop_toBottomOf="@+id/include" />
 
         <EditText
-            android:id="@+id/edtTSP"
+            android:id="@+id/edtGiaTri"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_margin="4dp"
@@ -64,21 +64,24 @@
             app:layout_constraintTop_toBottomOf="@+id/edtMGG">
 
             <RadioButton
+                android:id="@+id/radVND"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="VND" />
 
             <RadioButton
+                android:id="@+id/radPercent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:text="%" />
 
             <RadioButton
+                android:id="@+id/radTransfee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:text="Phí vận chuyển" />
+                android:text="Free ship"
+                android:layout_marginLeft="15dp" />
         </RadioGroup>
 
         <Spinner
