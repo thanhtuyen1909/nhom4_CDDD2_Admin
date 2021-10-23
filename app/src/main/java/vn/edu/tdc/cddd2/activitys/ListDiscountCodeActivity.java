@@ -182,6 +182,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                     listDiscountCode.add(code);
 
                 }
+                
                 discountCodeAdapter.notifyDataSetChanged();
                 filter.setText(discountCodeAdapter.getItemCount() + " sản phẩm từ " + listDiscountCode.size());
             }
