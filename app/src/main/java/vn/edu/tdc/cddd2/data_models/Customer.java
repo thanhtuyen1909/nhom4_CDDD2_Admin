@@ -6,6 +6,7 @@ public class Customer {
     private String image;
     private String phone;
     private String dob;
+    private String type_id;
     private String created_at;
     private String status;
 
@@ -65,12 +66,21 @@ public class Customer {
         this.status = status;
     }
 
-    public Customer(int id, String name, String image, String phone, String dob, String created_at, String status) {
+    public String getType_id() {
+        return type_id;
+    }
+
+    public void setType_id(String type_id) {
+        this.type_id = type_id;
+    }
+
+    public Customer(int id, String name, String image, String phone, String dob, String type_id, String created_at, String status) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.phone = phone;
         this.dob = dob;
+        this.type_id = type_id;
         this.created_at = created_at;
         this.status = status;
     }

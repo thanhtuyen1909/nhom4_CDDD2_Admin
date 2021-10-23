@@ -77,9 +77,11 @@
     </string-array>
 
     <string-array name="loaikhachhang">
-        <item>Khách hàng 1 năm</item>
-        <item>Khách hàng > 2 năm</item>
-        <item>Khách hàng thân thiết</item>
+        <item>Tất cả</item>
+        <item>Khách hàng thường</item>
+        <item>Khách hàng Bạc</item>
+        <item>Khách hàng Vàng</item>
+        <item>Khách hàng Kim Cương</item>
         <item>Sinh nhật khách hàng</item>
     </string-array>
 
