@@ -28,6 +28,7 @@
     <string name="title4">Quản lý loại sản phẩm</string>
     <string name="title5">Quản lý hãng</string>
     <string name="title6">Quản lý mã giảm giá</string>
+    <string name="title8">Danh sách mã giảm giá</string>
     <string name="title7">Đăng nhập</string>
     <string name="logout">Đăng xuất</string>
     <string name="changePass">Đổi mật khẩu</string>
@@ -44,6 +45,8 @@
     <string name="okay">OK</string>
     <string name="yes">XÁC NHẬN</string>
     <string name="no">HUỶ</string>
+    <string name="title9">Chi tiết sản phẩm</string>
+    <string name="title10">Chi tiết mã giảm giá</string>
 
     <string-array name="ngay">
         <item>Hôm nay</item>

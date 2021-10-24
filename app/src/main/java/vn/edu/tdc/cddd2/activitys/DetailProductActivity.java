@@ -1,18 +1,16 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Dialog;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -60,24 +59,25 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
     // Khai báo biến
     Handler handler = new Handler();
     Toolbar toolbar;
-    TextView btnSave, subtitleAppbar, btnCancel;
+    TextView btnSave, subtitleAppbar, btnCancel, title, mess;
     private ImageView productImage;
-    private EditText productID,productName,productDescription,productQuantity,productImportPrice,productPrice;
+    private EditText productID, productName, productDescription, productQuantity, productImportPrice, productPrice;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
     private Intent intent;
     RecyclerView recyclerView;
     private ArrayList<Product> listProduct;
-    private Spinner spinCata, spinManu , spinColor, spinStorage;
+    private Spinner spinCata, spinManu, spinColor, spinStorage;
     private Product1Adapter proAdapter;
     Button btnAdd;
-    static  int SELECT_IMAGE_CODE = 1;
+    static int SELECT_IMAGE_CODE = 1;
     private Uri imageUri;
-    private ArrayList<Manufacture> listManu ;
+    private ArrayList<Manufacture> listManu;
     private ArrayList<Category> listCate;
     static FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
     boolean check = true, check1 = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +86,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Chi tiết sản phẩm");
+        subtitleAppbar.setText(R.string.title9);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -114,149 +114,125 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         listProduct = new ArrayList<>();
         data();
 
-        productImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Title"),SELECT_IMAGE_CODE);
-            }
+        productImage.setOnClickListener(v -> {
+            intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Title"), SELECT_IMAGE_CODE);
         });
 
         // Xử lý sự kiện click button "Lưu":
-        btnSave.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                check = true;
-               if(listProduct.size() > 0) {
-                   DAOProduct dao = new DAOProduct();
-                   for (Product product : listProduct) {
-                       dao.add(product).addOnSuccessListener(new OnSuccessListener<Void>() {
-                           @Override
-                           public void onSuccess(Void unused) {
-
-                           }
-                       }).addOnFailureListener(new OnFailureListener() {
-                           @Override
-                           public void onFailure(@NonNull Exception e) {
-                               check = false;
-                           }
-                       });
-                   }
-               }
-               if(check){
-                   openDialog(Gravity.CENTER,"Thêm sản phẩm thành công !");
-                   listProduct.clear();
-               }else{
-                   openDialog(Gravity.CENTER,"Thêm sản phẩm thất bại !");
-               }
+        btnSave.setOnClickListener(v -> {
+            check = true;
+            if (listProduct.size() > 0) {
+                DAOProduct dao = new DAOProduct();
+                for (Product product : listProduct) {
+                    dao.add(product).addOnFailureListener(e -> check = false);
+                }
+            }
+            if (check) {
+                showSuccesDialog("Thêm sản phẩm thành công!");
+                listProduct.clear();
+            } else {
+                showErrorDialog("Thêm sản phẩm thất bại!");
             }
         });
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Date now = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                int id = Integer.parseInt(String.valueOf(productID.getText()));
-                checkTrungID(id);
+        btnAdd.setOnClickListener(v -> {
+            Date now = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            int id = Integer.parseInt(String.valueOf(productID.getText()));
+            checkTrungID(id);
 
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(checkError() == 1 && check && check1){
-                            Product product = new Product();
-                            product.setSold(0);
-                            product.setCreated_at(formatter.format(now));
-                            product.setId(Integer.parseInt(String.valueOf(productID.getText())));
-                            String color = String.valueOf(spinColor.getSelectedItem());
-                            String size = String.valueOf(spinStorage.getSelectedItem());
-                            product.setName(String.valueOf(productName.getText()));
-                            if(color != ""){
-                                product.setName(product.getName()+" - "+color);
-                            }
-                            if(size != null){
-                                product.setName(product.getName()+" - "+size);
-                            }
-                            DatabaseReference ref = db.getReference("Manufactures");
-                            Manufacture manu = (Manufacture) spinManu.getSelectedItem();
-                            ref.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for(DataSnapshot node : snapshot.getChildren()){
-                                        Manufacture temp = node.getValue(Manufacture.class);
-                                        if(temp.getName() == manu.getName()){
-                                            product.setManu_id(node.getKey());
-                                            Log.d("TAG", "onDataChange: "+node.getKey());
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                            Category cate = (Category) spinCata.getSelectedItem();
-                            ref = db.getReference("Categories");
-                            ref.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for(DataSnapshot node : snapshot.getChildren()){
-                                        Category temp = node.getValue(Category.class);
-                                        if(temp.getName() == cate.getName()){
-                                            product.setCategory_id(node.getKey());
-                                            Log.d("TAG", "onDataChange: "+node.getKey());
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-
-                            product.setImage(product.getName()+".jpg");
-                            product.setQuantity(Integer.parseInt(String.valueOf(productQuantity.getText())));
-                            product.setImport_price(Integer.parseInt(String.valueOf(productImportPrice.getText())));
-                            product.setPrice(Integer.parseInt(String.valueOf(productPrice.getText())));
-                            product.setDescription(String.valueOf(productDescription.getText()));
-
-                            //upload ảnh
-                            FirebaseStorage storage = FirebaseStorage.getInstance("gs://cddd2-f1bcd.appspot.com/");
-                            StorageReference storageRef = storage.getReference("images/products");
-                            StorageReference productRef = storageRef.child(product.getName()).child(product.getName()+".jpg");
-                            StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
-                            productRef.putFile(imageUri,metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Log.d("image",taskSnapshot.getMetadata().getName()+"."+taskSnapshot.getMetadata().getContentType());
-                                }
-                            });
-                            listProduct.add(product);
-                            proAdapter.notifyDataSetChanged();
-                            clear();
+            handler.postDelayed(new Runnable() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void run() {
+                    if (checkError() == 1 && check && check1) {
+                        Product product = new Product();
+                        product.setSold(0);
+                        product.setCreated_at(formatter.format(now));
+                        product.setId(Integer.parseInt(String.valueOf(productID.getText())));
+                        String color = String.valueOf(spinColor.getSelectedItem());
+                        String size = String.valueOf(spinStorage.getSelectedItem());
+                        product.setName(String.valueOf(productName.getText()));
+                        if (color != "") {
+                            product.setName(product.getName() + " - " + color);
                         }
+                        if (size != null) {
+                            product.setName(product.getName() + " - " + size);
+                        }
+                        DatabaseReference ref = db.getReference("Manufactures");
+                        Manufacture manu = (Manufacture) spinManu.getSelectedItem();
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot node : snapshot.getChildren()) {
+                                    Manufacture temp = node.getValue(Manufacture.class);
+                                    if (temp.getName() == manu.getName()) {
+                                        product.setManu_id(node.getKey());
+                                        Log.d("TAG", "onDataChange: " + node.getKey());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        Category cate = (Category) spinCata.getSelectedItem();
+                        ref = db.getReference("Categories");
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot node : snapshot.getChildren()) {
+                                    Category temp = node.getValue(Category.class);
+                                    if (temp.getName() == cate.getName()) {
+                                        product.setCategory_id(node.getKey());
+                                        Log.d("TAG", "onDataChange: " + node.getKey());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                        product.setImage(product.getName() + ".jpg");
+                        product.setQuantity(Integer.parseInt(String.valueOf(productQuantity.getText())));
+                        product.setImport_price(Integer.parseInt(String.valueOf(productImportPrice.getText())));
+                        product.setPrice(Integer.parseInt(String.valueOf(productPrice.getText())));
+                        product.setDescription(String.valueOf(productDescription.getText()));
+
+                        //upload ảnh
+                        FirebaseStorage storage = FirebaseStorage.getInstance("gs://cddd2-f1bcd.appspot.com/");
+                        StorageReference storageRef = storage.getReference("images/products");
+                        StorageReference productRef = storageRef.child(product.getName()).child(product.getName() + ".jpg");
+                        StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
+                        productRef.putFile(imageUri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Log.d("image", taskSnapshot.getMetadata().getName() + "." + taskSnapshot.getMetadata().getContentType());
+                            }
+                        });
+                        listProduct.add(product);
+                        proAdapter.notifyDataSetChanged();
+                        clear();
                     }
-                }, 200);
-            }
+                }
+            }, 200);
         });
 
         // Xử lý sự kiện click button "Huỷ":
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnCancel.setOnClickListener(v -> finish());
 
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
-        proAdapter = new Product1Adapter(listProduct,this);
+        proAdapter = new Product1Adapter(listProduct, this);
         proAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -264,89 +240,88 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         recyclerView.setNestedScrollingEnabled(false);
     }
 
-    public int checkError(){
+    public int checkError() {
         //Check chưa chọn image
-        if(imageUri == null){
-            openDialog(Gravity.CENTER,"Vui lòng chọn ảnh cho sản phẩm");
+        if (imageUri == null) {
+            showErrorDialog("Vui lòng chọn ảnh cho sản phẩm!");
             return -1;
         }
         //Check mã sản phẩm trống
-        if(String.valueOf(productID.getText()).compareTo("") == 0 ){
-            openDialog(Gravity.CENTER,"Mã sản phẩm không được để trống");
-            if(productID.requestFocus()) {
+        if (String.valueOf(productID.getText()).compareTo("") == 0) {
+            showErrorDialog("Mã sản phẩm không được để trống!");
+            if (productID.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check tên sản phẩm trống
-        if(String.valueOf(productName.getText()).compareTo("") == 0 ){
-            openDialog(Gravity.CENTER,"Tên sản phẩm không được để trống");
-            if(productName.requestFocus()) {
+        if (String.valueOf(productName.getText()).compareTo("") == 0) {
+            showErrorDialog("Tên sản phẩm không được để trống!");
+            if (productName.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check mô tả sản phẩm trống
-        if(String.valueOf(productDescription.getText()).compareTo("") == 0){
-            openDialog(Gravity.CENTER,"Mô tả phẩm không được để trống");
-            if(productDescription.requestFocus()) {
+        if (String.valueOf(productDescription.getText()).compareTo("") == 0) {
+            showErrorDialog("Mô tả phẩm không được để trống!");
+            if (productDescription.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check Số lượng sản phẩm trống
-        if(String.valueOf(productQuantity.getText()).compareTo("") == 0 ){
-            openDialog(Gravity.CENTER,"Số lượng phẩm không được để trống");
-            if(productQuantity.requestFocus()) {
+        if (String.valueOf(productQuantity.getText()).compareTo("") == 0) {
+            showErrorDialog("Số lượng phẩm không được để trống!");
+            if (productQuantity.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check số lượng sản phẩm < 0
-        if(Integer.parseInt(String.valueOf(productQuantity.getText())) < 0){
-            openDialog(Gravity.CENTER,"Số lượng sản phẩm phải lớn hơn hoặc bằng 0");
-            if(productQuantity.requestFocus()) {
+        if (Integer.parseInt(String.valueOf(productQuantity.getText())) < 0) {
+            showErrorDialog("Số lượng sản phẩm phải lớn hơn hoặc bằng 0!");
+            if (productQuantity.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check giá nhập sản phẩm trống
-        if(String.valueOf(productImportPrice.getText()).compareTo("") == 0 ){
-            openDialog(Gravity.CENTER,"Giá nhập sản phẩm không được để trống");
-            if(productImportPrice.requestFocus()) {
+        if (String.valueOf(productImportPrice.getText()).compareTo("") == 0) {
+            showErrorDialog("Giá nhập sản phẩm không được để trống!");
+            if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check giá nhập sản phẩm < 0
-        if(Integer.parseInt(String.valueOf(productImportPrice.getText())) < 0){
-            openDialog(Gravity.CENTER,"Giá nhập sản phẩm phải lớn hơn 0");
-            if(productImportPrice.requestFocus()) {
+        if (Integer.parseInt(String.valueOf(productImportPrice.getText())) < 0) {
+            showErrorDialog("Giá nhập sản phẩm phải lớn hơn 0!");
+            if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check giá bán sản phẩm trống
-        if(String.valueOf(productPrice.getText()).compareTo("") == 0 ){
-            openDialog(Gravity.CENTER,"Giá bán sản phẩm không được để trống");
-            if(productPrice.requestFocus()) {
+        if (String.valueOf(productPrice.getText()).compareTo("") == 0) {
+            showErrorDialog("Giá bán sản phẩm không được để trống!");
+            if (productPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
         //Check giá bản < giá nhập
-        if(Integer.parseInt(String.valueOf(productImportPrice.getText())) > Integer.parseInt(String.valueOf(productImportPrice.getText()))){
-            openDialog(Gravity.CENTER,"Giá bán sản phẩm phải lớn hơn giá nhập");
-            if(productImportPrice.requestFocus()) {
+        if (Integer.parseInt(String.valueOf(productImportPrice.getText())) > Integer.parseInt(String.valueOf(productImportPrice.getText()))) {
+            showErrorDialog("Giá bán sản phẩm phải lớn hơn giá nhập!");
+            if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             return -1;
         }
-
-        return  1;
+        return 1;
     }
 
-    private void checkTrungID(int id){
+    private void checkTrungID(int id) {
         check1 = true;
         //Check trùng mã sản phẩm
         FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
@@ -355,14 +330,13 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 check = true;
-                for(DataSnapshot node : snapshot.getChildren()){
+                for (DataSnapshot node : snapshot.getChildren()) {
                     Product temp = node.getValue(Product.class);
-                    if(temp.getId() == id){
-
+                    if (temp.getId() == id) {
                         check = false;
-                        openDialog(Gravity.CENTER,"Mã sản phẩm không được trùng");
+                        showErrorDialog("Mã sản phẩm không được trùng!");
 
-                        if(productID.requestFocus()) {
+                        if (productID.requestFocus()) {
                             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         }
                         productID.setText("");
@@ -378,10 +352,10 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
             }
         });
 
-        for(Product product : listProduct){
-            if(product.getId() == id){
-                openDialog(Gravity.CENTER,"Mã sản phẩm không được trùng");
-                if(productID.requestFocus()) {
+        for (Product product : listProduct) {
+            if (product.getId() == id) {
+                showErrorDialog("Mã sản phẩm không được trùng!");
+                if (productID.requestFocus()) {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 }
                 productID.setText("");
@@ -389,6 +363,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
             }
         }
     }
+
     private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
         @Override
         public void getInfor(Product item) {
@@ -396,7 +371,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
     };
 
-    private void data(){
+    private void data() {
         FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
         DatabaseReference refManu = db.getReference("Manufactures");
         DatabaseReference refCate = db.getReference("Categories");
@@ -404,10 +379,10 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         listCate = new ArrayList<Category>();
 
         ArrayAdapter manuAdapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item,listManu);
+                android.R.layout.simple_spinner_dropdown_item, listManu);
 
         ArrayAdapter cateAdapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item,listCate);
+                android.R.layout.simple_spinner_dropdown_item, listCate);
 
         manuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinManu.setAdapter(manuAdapter);
@@ -416,12 +391,13 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         refManu.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot node : snapshot.getChildren()){
+                for (DataSnapshot node : snapshot.getChildren()) {
                     Manufacture manu = node.getValue(Manufacture.class);
                     listManu.add(manu);
                     manuAdapter.notifyDataSetChanged();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -430,7 +406,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         refCate.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot node : snapshot.getChildren()){
+                for (DataSnapshot node : snapshot.getChildren()) {
                     Category cate = node.getValue(Category.class);
                     listCate.add(cate);
                     cateAdapter.notifyDataSetChanged();
@@ -444,7 +420,8 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         });
 
     }
-    private  void clear(){
+
+    private void clear() {
         productImage.setImageResource(R.mipmap.ic_launcher_round);
         productID.setText("");
         productName.setText("");
@@ -453,17 +430,18 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         productImportPrice.setText("");
         productPrice.setText("");
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1){
+        if (requestCode == 1) {
             imageUri = data.getData();
             productImage.setImageURI(imageUri);
         }
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
@@ -473,7 +451,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -533,28 +511,56 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
             super.onBackPressed();
         }
     }
-    public void openDialog(int gravity,String notify){
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_success);
-        Window window = dialog.getWindow();
-        if(window == null) return;
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams windowAttribute = window.getAttributes();
-        windowAttribute.gravity = gravity;
-        window.setAttributes(windowAttribute);
-        dialog.setCancelable(false);
-        TextView txtContent = dialog.findViewById(R.id.txtNotifyContent);
-        Button btnOK = dialog.findViewById(R.id.btnOK);
-        txtContent.setText(notify);
-        btnOK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
 
-            }
+    private void showErrorDialog(String s) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailProductActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(DetailProductActivity.this).inflate(
+                R.layout.layout_error_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText("s");
+        ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
+        ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
         });
-        dialog.show();
+
+        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    private void showSuccesDialog(String s) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailProductActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(DetailProductActivity.this).inflate(
+                R.layout.layout_succes_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText(s);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
     }
 }

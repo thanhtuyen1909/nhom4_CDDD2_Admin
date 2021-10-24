@@ -11,13 +11,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,11 +36,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import vn.edu.tdc.cddd2.DAO.DAOProduct;
 import vn.edu.tdc.cddd2.R;
@@ -49,7 +47,7 @@ import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class ListProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ListProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
     Handler handler = new Handler();
@@ -68,6 +66,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     private Intent intent;
     TextView title, mess;
     private static FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,33 +87,22 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         spinCate = findViewById(R.id.spinner_cata);
         spinManu = findViewById(R.id.spinner_manu);
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListProductActivity.this, DetailProductActivity.class);
-                startActivity(intent);
-            }
+        btnAdd.setOnClickListener(v -> {
+            intent = new Intent(ListProductActivity.this, DetailProductActivity.class);
+            startActivity(intent);
         });
         spinCate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Manufacture manu = (Manufacture) spinManu.getSelectedItem();
-                        Category cate = (Category) spinCate.getSelectedItem();
-                        String query = String.valueOf(searchView.getQuery());
-                        listProduct.clear();
-                        filterProduct(cate.getKey(),manu.getKey(),query,1);
-                    }
+                handler.postDelayed(() -> {
+                    Manufacture manu = (Manufacture) spinManu.getSelectedItem();
+                    Category cate = (Category) spinCate.getSelectedItem();
+                    String query = String.valueOf(searchView.getQuery());
+                    listProduct.clear();
+                    filterProduct(cate.getKey(), manu.getKey(), query, 1);
                 }, 200);
             }
 
@@ -126,16 +114,14 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         spinManu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Manufacture manu = (Manufacture) spinManu.getSelectedItem();
-                        Category cate = (Category) spinCate.getSelectedItem();
-                        String query = String.valueOf(searchView.getQuery());
-                        listProduct.clear();
-                        filterProduct(cate.getKey(),manu.getKey(),query,-1);
-                    }
-                }, 200);;
+                handler.postDelayed(() -> {
+                    Manufacture manu = (Manufacture) spinManu.getSelectedItem();
+                    Category cate = (Category) spinCate.getSelectedItem();
+                    String query = String.valueOf(searchView.getQuery());
+                    listProduct.clear();
+                    filterProduct(cate.getKey(), manu.getKey(), query, -1);
+                }, 200);
+                ;
 
             }
 
@@ -150,7 +136,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         recyclerView.setHasFixedSize(true);
         listProduct = new ArrayList<>();
 
-        proAdapter = new ProductAdapter(listProduct,this);
+        proAdapter = new ProductAdapter(listProduct, this);
         data();
         proAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(proAdapter);
@@ -169,74 +155,62 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                proAdapter.getFilter().filter(newText);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Manufacture manu = (Manufacture) spinManu.getSelectedItem();
-                        Category cate = (Category) spinCate.getSelectedItem();
-                        String query = String.valueOf(searchView.getQuery());
-                        listProduct.clear();
-                        filterProduct(cate.getKey(),manu.getKey(),query,-1);
-                    }
+                handler.postDelayed(() -> {
+                    Manufacture manu = (Manufacture) spinManu.getSelectedItem();
+                    Category cate = (Category) spinCate.getSelectedItem();
+                    String query = String.valueOf(searchView.getQuery());
+                    listProduct.clear();
+                    filterProduct(cate.getKey(), manu.getKey(), query, -1);
                 }, 200);
 
                 return false;
             }
         });
     }
-    private void filterProduct(String category_id,String manu_id,String query,int isFirst){
+
+    private void filterProduct(String category_id, String manu_id, String query, int isFirst) {
         DatabaseReference ref = db.getReference("Products");
         ref.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
                 Product product = snapshot.getValue(Product.class);
                 product.setKey(snapshot.getKey());
-                if(product != null){
-                    if(category_id.equals("") && manu_id.equals("") && query.equals("")){
-                              if(isFirst == 1){
-                                  listProduct.add(product);
-                              }
-
-                    }else{
-                        if(!category_id.equals("")){
-
-                            if(!manu_id.equals("")){
-
-                                if(query.equals("")){
-                                    if(manu_id.equals(product.getManu_id()) && category_id.equals(product.getCategory_id())){
+                if (product != null) {
+                    if (category_id.equals("") && manu_id.equals("") && query.equals("")) {
+                        if (isFirst == 1) {
+                            listProduct.add(product);
+                        }
+                    } else {
+                        if (!category_id.equals("")) {
+                            if (!manu_id.equals("")) {
+                                if (query.equals("")) {
+                                    if (manu_id.equals(product.getManu_id()) && category_id.equals(product.getCategory_id())) {
                                         listProduct.add(product);
                                     }
-                                }else {
-                                    if(product.getName().toLowerCase().contains(query.toLowerCase())
+                                } else {
+                                    if (product.getName().toLowerCase().contains(query.toLowerCase())
                                             && manu_id.equals(product.getManu_id())
-                                            && category_id.equals(product.getCategory_id())){
+                                            && category_id.equals(product.getCategory_id())) {
                                         listProduct.add(product);
                                     }
                                 }
-                            }else {
-
-                                if(query.equals("")){
-                                    if(category_id.equals(product.getCategory_id())){
-                                        Log.d("aaa", "onChildAdded: "+product.getName());
+                            } else {
+                                if (query.equals("")) {
+                                    if (category_id.equals(product.getCategory_id())) {
                                         listProduct.add(product);
                                     }
-                                }else {
-                                    if(product.getName().toLowerCase().contains(query.toLowerCase())
-                                            && category_id.equals(product.getCategory_id())){
+                                } else {
+                                    if (product.getName().toLowerCase().contains(query.toLowerCase())
+                                            && category_id.equals(product.getCategory_id())) {
                                         listProduct.add(product);
                                     }
                                 }
                             }
-
-
-                        }else {
+                        } else {
                             if (!manu_id.equals("")) {
                                 if (query.equals("")) {
                                     if (manu_id.equals(product.getManu_id())) {
-
                                         listProduct.add(product);
                                     }
                                 } else {
@@ -256,8 +230,6 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                             }
                         }
                     }
-
-
                     proAdapter.notifyDataSetChanged();
                 }
             }
@@ -283,19 +255,20 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             }
         });
     }
+
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
+    private void data() {
         DatabaseReference ref = db.getReference("Products");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listProduct.clear();
-                for(DataSnapshot node : snapshot.getChildren()){
+                for (DataSnapshot node : snapshot.getChildren()) {
                     Product product = node.getValue(Product.class);
                     product.setKey(node.getKey());
                     listProduct.add(product);
@@ -324,8 +297,8 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         spinManu.setAdapter(manuAdapter);
         cateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinCate.setAdapter(cateAdapter);
-        listManu.add(new Manufacture("","Tất cả",""));
-        listCate.add(new Category("","Tất cả",""));
+        listManu.add(new Manufacture("", "Tất cả", ""));
+        listCate.add(new Category("", "Tất cả", ""));
         refManu.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -371,12 +344,13 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
         @Override
         public void editProduct(Product item) {
-            intent = new Intent(ListProductActivity.this,DetailEditProductActivity.class);
+            intent = new Intent(ListProductActivity.this, DetailEditProductActivity.class);
             intent.putExtra("item", (Parcelable) item);
             startActivity(intent);
         }
     };
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -427,7 +401,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();

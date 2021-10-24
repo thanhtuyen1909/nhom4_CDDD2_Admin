@@ -1,18 +1,15 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -27,8 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
@@ -52,18 +47,16 @@ import vn.edu.tdc.cddd2.data_models.DiscountCode_Customer;
 
 public class DetailDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
+    Toolbar toolbar;
     private EditText edtCode, edtValue;
     private RadioGroup radType;
-    private TextView btnSave, subtitleAppbar, btnCancel, btnAll;
+    TextView btnSave, subtitleAppbar, btnCancel, btnAll;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
-    private Intent intent;
-    private RecyclerView recyclerView;
-    private ArrayList<Customer> listCustomer;
+    NavigationView navigationView;
+    Intent intent;
+    ArrayList<Customer> listCustomer;
     private Spinner spinDisType;
-    private CustomerAdapter customerAdapter;
     private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
     private final static DatabaseReference codeRef = db.getReference("DiscountCode");
     private TextView title, mess;
@@ -81,7 +74,7 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Chi tiết mã giảm giá");
+        subtitleAppbar.setText(R.string.title10);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -104,97 +97,60 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
         data();
 
         // Xử lý sự kiện click button "Lưu":
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkError() == 1) {
-                    DiscountCode discountCode = new DiscountCode();
-                    discountCode.setCode(String.valueOf(edtCode.getText()));
-                    discountCode.setValue(Integer.parseInt(String.valueOf(edtValue.getText())));
-                    for (int i = 0; i < radType.getChildCount(); i++) {
-                        RadioButton rad = (RadioButton) radType.getChildAt(i);
-                        if (rad.isChecked()) {
-                            discountCode.setType(String.valueOf(rad.getText()));
-                        }
+        btnSave.setOnClickListener(v -> {
+            if (checkError() == 1) {
+                DiscountCode discountCode = new DiscountCode();
+                discountCode.setCode(String.valueOf(edtCode.getText()));
+                discountCode.setValue(Integer.parseInt(String.valueOf(edtValue.getText())));
+                for (int i = 0; i < radType.getChildCount(); i++) {
+                    RadioButton rad = (RadioButton) radType.getChildAt(i);
+                    if (rad.isChecked()) {
+                        discountCode.setType(String.valueOf(rad.getText()));
                     }
-                    discountCode.setEvent(String.valueOf(spinDisType.getSelectedItem()));
-                    if (type.equals("add")) {
-                        codeRef.push().setValue(discountCode).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                createCodeCustomer(discountCode.getCode(),discountCode.getEvent());
-                                showSuccesDialog("Lưu mã giảm giá thành công");
-                            }
-                        });
-                    } else {
-                        db.getReference("DiscountCode").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot node : snapshot.getChildren()) {
-                                    DiscountCode code = node.getValue(DiscountCode.class);
-                                    if (code.getCode().equals(discountCode.getCode())) {
-                                        codeRef.child(node.getKey()).updateChildren(discountCode.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                showSuccesDialog("Cập nhật mã giảm giá thành công");
-                                            }
-                                        });
-                                    }
+                }
+                discountCode.setEvent(String.valueOf(spinDisType.getSelectedItem()));
+                if (type.equals("add")) {
+                    codeRef.push().setValue(discountCode).addOnSuccessListener(unused -> {
+                        createCodeCustomer(discountCode.getCode(),discountCode.getEvent());
+                        showSuccesDialog("Lưu mã giảm giá thành công");
+                    });
+                } else {
+                    db.getReference("DiscountCode").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot node : snapshot.getChildren()) {
+                                DiscountCode code = node.getValue(DiscountCode.class);
+                                if (code.getCode().equals(discountCode.getCode())) {
+                                    codeRef.child(node.getKey()).updateChildren(discountCode.toMap());
                                 }
                             }
+                            showSuccesDialog("Cập nhật mã giảm giá thành công");
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         });
-        radType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.radTransfee) {
-                    edtValue.setText("");
-                    edtValue.setEnabled(false);
-                } else {
-                    edtValue.setEnabled(true);
-                }
+        radType.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radTransfee) {
+                edtValue.setText("");
+                edtValue.setEnabled(false);
+            } else {
+                edtValue.setEnabled(true);
             }
         });
         // Xử lý sự kiện click button "Chọn tất cả":
-        btnAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(DetailDiscountCodeActivity.this, "Chọn tất cả", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnAll.setOnClickListener(v -> Toast.makeText(DetailDiscountCodeActivity.this, "Chọn tất cả", Toast.LENGTH_SHORT).show());
 
         // Xử lý sự kiện click button "Huỷ":
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-//        //RecycleView
-//        recyclerView = findViewById(R.id.listCustomer);
-//        recyclerView.setHasFixedSize(true);
-//        data();
-//        customerAdapter = new CustomerAdapter(listCustomer,this);
-//        customerAdapter.setItemClickListener(itemClickListener);
-//        recyclerView.setAdapter(customerAdapter);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        btnCancel.setOnClickListener(v -> finish());
     }
 
-    private CustomerAdapter.ItemClickListener itemClickListener = new CustomerAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Customer item) {
-            Toast.makeText(DetailDiscountCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
+    private CustomerAdapter.ItemClickListener itemClickListener = item -> Toast.makeText(DetailDiscountCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
 
     private void data() {
         if (type.equals("update") && item != null) {
@@ -409,7 +365,7 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
@@ -419,7 +375,7 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -435,9 +391,9 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(DetailDiscountCodeActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(DetailDiscountCodeActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(DetailDiscountCodeActivity.this, ListDiscountCodeActivity.class);

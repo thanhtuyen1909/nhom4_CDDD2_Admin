@@ -1,10 +1,12 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -41,17 +43,18 @@ import vn.edu.tdc.cddd2.data_models.DiscountCode;
 
 public class ListDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar;
     private DrawerLayout drawerLayout;
+    Handler handler = new Handler();
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
+    NavigationView navigationView;
     private Intent intent;
-    private SearchView searchView;
-    private RecyclerView recyclerView;
+    SearchView searchView;
+    RecyclerView recyclerView;
     private ArrayList<DiscountCode> listDiscountCode;
     private DiscountCodeAdapter discountCodeAdapter;
-    private Button btnAdd;
+    Button btnAdd;
     private TextView title,mess,filter;
     private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
 
@@ -63,7 +66,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Danh sách mã giảm giá");
+        subtitleAppbar.setText(R.string.title8);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -81,22 +84,14 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         listDiscountCode = new ArrayList<>();
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListDiscountCodeActivity.this, DetailDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.putExtra("type","add");
-                startActivity(intent);
-            }
+        btnAdd.setOnClickListener(v -> {
+            intent = new Intent(ListDiscountCodeActivity.this, DetailDiscountCodeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("type","add");
+            startActivity(intent);
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -108,6 +103,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             public boolean onQueryTextChange(String newText) {
                 DatabaseReference codeRef = db.getReference("DiscountCode");
                 codeRef.addChildEventListener(new ChildEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         DiscountCode code = snapshot.getValue(DiscountCode.class);
@@ -119,6 +115,12 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                             }
                         }
                         discountCodeAdapter.notifyDataSetChanged();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                filter.setText(discountCodeAdapter.getItemCount() + " mã giảm giá từ " + listDiscountCode.size());
+                            }
+                        }, 200);
                     }
 
                     @Override
@@ -158,7 +160,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     private DiscountCodeAdapter.ItemClickListener itemClickListener = new DiscountCodeAdapter.ItemClickListener() {
         @Override
         public void deleteProduct(String code) {
-            showErrorDialog("Bạn có muốn xoá mã giảm giá ?",code);
+            showErrorDialog("Bạn có muốn xoá mã giảm giá?", code);
         }
 
         @Override
@@ -174,17 +176,16 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         listDiscountCode = new ArrayList<>();
         DatabaseReference codeRef = db.getReference("DiscountCode");
         codeRef.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listDiscountCode.clear();
                 for(DataSnapshot node : snapshot.getChildren()){
                     DiscountCode code = node.getValue(DiscountCode.class);
                     listDiscountCode.add(code);
-
                 }
-                
                 discountCodeAdapter.notifyDataSetChanged();
-                filter.setText(discountCodeAdapter.getItemCount() + " sản phẩm từ " + listDiscountCode.size());
+                filter.setText(discountCodeAdapter.getItemCount() + " mã giảm giá từ " + listDiscountCode.size());
             }
 
             @Override
@@ -205,7 +206,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -221,9 +222,9 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListDiscountCodeActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListDiscountCodeActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 break;

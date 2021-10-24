@@ -1,6 +1,7 @@
 
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -55,13 +56,13 @@ import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailEditProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     // Khai báo biến
-     Toolbar toolbar;
-     TextView btnSave, subtitleAppbar, btnCancel;
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar, btnCancel;
     private ImageView productImage;
     private EditText productID, productName, productDescription, productQuantity, productImportPrice, productPrice;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-     NavigationView navigationView;
+    NavigationView navigationView;
     TextView title, mess;
     private Intent intent;
     private Spinner spinCata, spinManu, spinColor, spinStorage;
@@ -82,7 +83,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Chi tiết sản phẩm");
+        subtitleAppbar.setText(R.string.title9);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -128,8 +129,6 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
     }
 
     public int checkError() {
-
-
         //Check mã sản phẩm trống
         if (String.valueOf(productID.getText()).compareTo("") == 0) {
             showWarningDialog("Mã sản phẩm không được để trống");
@@ -333,7 +332,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
@@ -343,7 +342,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -435,7 +434,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
                 product.setManu_id(keymanu);
                 product.setCategory_id(keyCate);
 
-                if(!product.getName().equals(item.getName())){
+                if (!product.getName().equals(item.getName())) {
                     StorageReference ref = FirebaseStorage.getInstance().getReference("images/products");
                     StorageReference oldRef = ref.child(item.getName()).child(item.getImage());
                     StorageReference newRef = ref.child(product.getName()).child(product.getImage());
@@ -447,41 +446,31 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
                     oldRef.delete();
                     ref.child(item.getName()).delete();
                 }
-                //upload ảnh
 
+                //upload ảnh
                 if (imageUri != null) {
                     FirebaseStorage storage = FirebaseStorage.getInstance("gs://cddd2-f1bcd.appspot.com/");
                     StorageReference storageRef = storage.getReference("images/products");
                     StorageReference productRef = storageRef.child(product.getName()).child(product.getImage());
-
-              //      StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
                     productRef.putFile(imageUri);
                 }
                 DAOProduct dao = new DAOProduct();
-                dao.update(item.getKey(), product).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        showSuccesDialog("Sửa sản phẩm thành công");
-                    }
-                });
-             //Tạo lịch sử hoạt động
+                dao.update(item.getKey(), product).addOnSuccessListener(unused -> showSuccesDialog("Sửa sản phẩm thành công!"));
+                //Tạo lịch sử hoạt động
                 HistoryActivity history = new HistoryActivity();
                 history.setDate(formatter.format(new Date()));
                 history.setAccount_id(2);
                 history.setAction("Cập nhật sản phẩm");
                 String detail = "";
-                if(!product.getName().equals(item.getName())){
-                    detail += "Tên sản phẩm : "+item.getName()+" -> "+product.getName() + " \n";
+                if (!product.getName().equals(item.getName())) {
+                    detail += "Tên sản phẩm : " + item.getName() + " -> " + product.getName() + " \n";
                 }
-                if(!product.getDescription().equals(item.getDescription())){
+                if (!product.getDescription().equals(item.getDescription())) {
                     detail += "Chỉnh sửa mô tả \n";
                 }
-//                if (!product.getManu_id().equals(item.getManu_id())){
-//                    detail += "chinh"
-//                }
                 DatabaseReference historyRef = db.getReference("HistoryActivities");
-
             }
+            showSuccesDialog("Cập nhật sản phẩm thành công!");
             finish();
         } else {
             finish();
@@ -510,6 +499,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
         }
         alertDialog.show();
     }
+
     private void showWarningDialog(String notify) {
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailEditProductActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailEditProductActivity.this).inflate(
@@ -535,8 +525,5 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
         }
         alertDialog.show();
     }
-
-
-
 }
 
