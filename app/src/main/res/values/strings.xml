@@ -24,6 +24,7 @@
     <string name="titleLayoutXLDH">Xử lý đơn hàng</string>
     <string name="titleLayoutDPH">Điều phối hàng</string>
     <string name="titleDetailH">Chi tiết hãng</string>
+    <string name="titleDetaiCTDH">Chi tiết đơn hàng</string>
     <string name="buttonBack">Trở lại</string>
     <string name="buttonSave">Lưu</string>
     <string name="buttonCancel">Huỷ</string>

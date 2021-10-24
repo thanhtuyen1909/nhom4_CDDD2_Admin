@@ -36,6 +36,7 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_adm.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_adm_detail_invoice.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/appbar_sm.xml" value="0.22" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/fragment_list.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/fragment_waitship_whm.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/fragment_willorder_whm.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/item_account_adm.xml" value="0.20416666666666666" />
@@ -94,7 +95,7 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_login.xml" value="0.18" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_main_1.xml" value="0.25" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_main_2.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_ordercoor.xml" value="0.16" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_ordercoor.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_orderhistory.xml" value="0.22" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_orderprocess_oh.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/layout/layout_payment_sm.xml" value="0.25" />

@@ -1,7 +1,10 @@
 package vn.edu.tdc.cddd2.data_models;
 
-public class Product {
-    //Khai báo biến
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Product implements Parcelable {
+    //properties
     private String key;
     private int id;
     private String name;
@@ -13,14 +16,51 @@ public class Product {
     private int import_price;
     private int price;
 
-    //Get - set
-    public String getKey() {
-        return key;
+    protected Product(Parcel in) {
+        key = in.readString();
+        id = in.readInt();
+        name = in.readString();
+        category_id = in.readString();
+        image = in.readString();
+        manu_id = in.readString();
+        quantity = in.readInt();
+        description = in.readString();
+        import_price = in.readInt();
+        price = in.readInt();
+        sold = in.readInt();
+        created_at = in.readString();
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    public int getSold() {
+        return sold;
     }
+
+    public void setSold(int sold) {
+        this.sold = sold;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    private int sold;
+    private String  created_at;
 
     public int getId() {
         return id;
@@ -94,9 +134,15 @@ public class Product {
         this.price = price;
     }
 
-    //Contructor
-    public Product(String key, int id, String name, String category_id, String image, String manu_id, int quantity, String description, int import_price, int price) {
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
         this.key = key;
+    }
+
+    public Product(String key, int id, String name, String category_id, String image, String manu_id, int quantity, String description, int import_price, int price, int sold, String created_at) {
         this.id = id;
         this.name = name;
         this.category_id = category_id;
@@ -106,15 +152,37 @@ public class Product {
         this.description = description;
         this.import_price = import_price;
         this.price = price;
+        this.sold = sold;
+        this.created_at = created_at;
+        this.key = key;
     }
 
     public Product() {
     }
 
-    // To string
-
     @Override
     public String toString() {
-        return getName();
+        return name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(key);
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(category_id);
+        dest.writeString(image);
+        dest.writeString(manu_id);
+        dest.writeInt(quantity);
+        dest.writeString(description);
+        dest.writeInt(import_price);
+        dest.writeInt(price);
+        dest.writeInt(sold);
+        dest.writeString(created_at);
     }
 }

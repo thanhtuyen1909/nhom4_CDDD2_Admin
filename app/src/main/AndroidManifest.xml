@@ -1,69 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="vn.edu.tdc.cddd2">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
-        android:allowBackup="true"
         android:name=".DAO.FirebaseHandler"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CDDD2">
-    <!-- Warehouse Management -->
-        <activity android:name=".activitys.MainQLKActivity"/>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListProductActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListManuActivity">
-        </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListCateActivity">
-        </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailProductActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailInformationActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.LoginActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListDiscountCodeActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListPromoActivity">
-        </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ChangePasswordActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailDiscountCodeActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailPromoCodeActivity">
+        <!-- Warehouse Management -->
+        <activity android:name=".activitys.MainQLKActivity" />
+        <activity
+            android:name=".activitys.ListProductActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListManuActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListCateActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.DetailProductActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.DetailInformationActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.LoginActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListDiscountCodeActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListPromoActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ChangePasswordActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.DetailDiscountCodeActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.DetailPromoCodeActivity"
+            android:screenOrientation="portrait">
 
         </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.InformationPromoCodeActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.OrderCoordinationActivity">
+        <activity
+            android:name=".activitys.InformationPromoCodeActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.OrderCoordinationActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    <!-- Salesman -->
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListProductSMActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListCartActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.CreateOrderActivity"> </activity>
-    <!-- Order Handler -->
-        <activity android:screenOrientation="portrait" android:name=".activitys.OrderProcessActivity"> </activity>
-    <!-- Shipper -->
-        <activity android:screenOrientation="portrait" android:name=".activitys.ShipProcessActivity"> </activity>
-    <!-- Administrators -->
-        <activity android:screenOrientation="portrait" android:name=".activitys.MainADMActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListAccountActivity"> </activity>
-        <activity android:screenOrientation="landscape" android:name=".activitys.ListHistoryActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.OrderHistoryActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailOrderActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListInvoiceActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailInvoiceActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.RevenueStatisticActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListRatingActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailRatingActivity">
-        </activity>
-    <!-- Administrators -->
-        <activity android:screenOrientation="portrait" android:name=".activitys.AttendanceActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListEmployeeActivity">
+        <!-- Salesman -->
+        <activity
+            android:name=".activitys.ListProductSMActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListCartActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.CreateOrderActivity"
+            android:screenOrientation="portrait"></activity>
+        <!-- Order Handler -->
+        <activity
+            android:name=".activitys.OrderProcessActivity"
+            android:screenOrientation="portrait"></activity>
+        <!-- Shipper -->
+        <activity
+            android:name=".activitys.ShipProcessActivity"
+            android:screenOrientation="portrait"></activity>
+        <!-- Administrators -->
+        <activity
+            android:name=".activitys.MainADMActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListAccountActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListHistoryActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".activitys.OrderHistoryActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.DetailOrderActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListInvoiceActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.DetailInvoiceActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.RevenueStatisticActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListRatingActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.DetailRatingActivity"
+            android:screenOrientation="portrait"></activity>
+        <!-- Administrators -->
+        <activity
+            android:name=".activitys.AttendanceActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activitys.ListEmployeeActivity"
+            android:screenOrientation="portrait">
 
         </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailEmployeeActivity">
+        <activity
+            android:name=".activitys.DetailEmployeeActivity"
+            android:screenOrientation="portrait">
 
         </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.DetailSalaryActivity"> </activity>
+        <activity
+            android:name=".activitys.DetailSalaryActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
