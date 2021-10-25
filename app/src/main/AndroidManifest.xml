@@ -23,7 +23,7 @@
             android:name=".activitys.ListManuActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".activitys.ListCataActivity"
+            android:name=".activitys.ListCateActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".activitys.DetailProductActivity"

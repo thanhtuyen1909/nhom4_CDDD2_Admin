@@ -358,7 +358,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-                intent = new Intent(DetailEditProductActivity.this, OrderProcessActivity.class);
+                intent = new Intent(DetailEditProductActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
@@ -368,13 +368,12 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(DetailEditProductActivity.this, ListCataActivity.class);
+                intent = new Intent(DetailEditProductActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(DetailEditProductActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

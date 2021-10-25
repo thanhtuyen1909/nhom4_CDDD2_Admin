@@ -47,7 +47,7 @@ public class DetailInvoiceActivity extends AppCompatActivity implements Navigati
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Chi tiết hoá đơn");
+        subtitleAppbar.setText(R.string.title11);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -117,7 +117,6 @@ public class DetailInvoiceActivity extends AppCompatActivity implements Navigati
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(DetailInvoiceActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

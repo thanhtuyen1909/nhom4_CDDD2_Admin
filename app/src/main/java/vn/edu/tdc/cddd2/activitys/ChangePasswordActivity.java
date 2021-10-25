@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -210,7 +211,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -226,7 +227,9 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-                Toast.makeText(ChangePasswordActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ChangePasswordActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ChangePasswordActivity.this, ListDiscountCodeActivity.class);
@@ -234,7 +237,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(ChangePasswordActivity.this, ListCataActivity.class);
+                intent = new Intent(ChangePasswordActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

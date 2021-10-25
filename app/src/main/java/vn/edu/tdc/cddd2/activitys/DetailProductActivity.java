@@ -75,7 +75,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
     private Uri imageUri;
     private ArrayList<Manufacture> listManu;
     private ArrayList<Category> listCate;
-    static FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
+    static FirebaseDatabase db = FirebaseDatabase.getInstance();
     boolean check = true, check1 = true;
 
     @Override
@@ -467,7 +467,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-                intent = new Intent(DetailProductActivity.this, OrderProcessActivity.class);
+                intent = new Intent(DetailProductActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
@@ -477,13 +477,12 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(DetailProductActivity.this, ListCataActivity.class);
+                intent = new Intent(DetailProductActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(DetailProductActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

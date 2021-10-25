@@ -379,7 +379,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
-                intent = new Intent(ListProductActivity.this, OrderProcessActivity.class);
+                intent = new Intent(ListProductActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
@@ -389,13 +389,12 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(ListProductActivity.this, ListCataActivity.class);
+                intent = new Intent(ListProductActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListProductActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

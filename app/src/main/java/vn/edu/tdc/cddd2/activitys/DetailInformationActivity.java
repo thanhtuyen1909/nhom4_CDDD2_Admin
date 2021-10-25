@@ -185,7 +185,6 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(DetailInformationActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

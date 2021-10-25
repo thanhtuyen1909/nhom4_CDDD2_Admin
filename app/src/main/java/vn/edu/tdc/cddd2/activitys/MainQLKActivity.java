@@ -108,7 +108,6 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.btnChangePass:
                 intent = new Intent(MainQLKActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 startActivity(intent);
                 break;

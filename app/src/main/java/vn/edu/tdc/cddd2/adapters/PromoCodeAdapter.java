@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -21,7 +22,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class PromoCodeAdapter extends RecyclerView.Adapter<PromoCodeAdapter.ViewHolder> implements Filterable {
@@ -104,6 +104,7 @@ public class PromoCodeAdapter extends RecyclerView.Adapter<PromoCodeAdapter.View
                 return filterResults;
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 listPromoCode = (ArrayList<PromoCode>) filterResults.values;
