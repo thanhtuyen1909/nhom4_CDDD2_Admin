@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,13 +25,18 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
+import vn.edu.tdc.cddd2.data_models.OrderDetail;
+import vn.edu.tdc.cddd2.data_models.Product;
 import vn.edu.tdc.cddd2.fragments.FragmentWaitShipWHM;
 import vn.edu.tdc.cddd2.fragments.FragmentWillOrderWHM;
 
@@ -48,6 +54,8 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     String tagA = "WillOrderWHM";
     ArrayList<Order> listOrder;
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
+    DatabaseReference orderDetailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
+    DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -207,6 +215,38 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                     orderRef.child(order.getOrderID()).setValue(order);
                 } else {
                     orderRef.child(order.getOrderID()).setValue(order);
+                    if(order.getStatus() == 8) {
+                        orderDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    OrderDetail orderDetail = snapshot.getValue(OrderDetail.class);
+                                    if(order.getOrderID().equals(orderDetail.getOrderID())) {
+                                        proRef.child(orderDetail.getProductID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                Product product = dataSnapshot.getValue(Product.class);
+                                                int sold = product.getSold() + orderDetail.getAmount();
+                                                int quantity = product.getQuantity() - orderDetail.getAmount();
+                                                proRef.child(orderDetail.getProductID()).child("quantity").setValue(quantity);
+                                                proRef.child(orderDetail.getProductID()).child("sold").setValue(sold );
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
             }
             showSuccesDialog("Cập nhật đơn hàng thành công!");

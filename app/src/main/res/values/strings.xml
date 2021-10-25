@@ -110,15 +110,25 @@
     <string-array name="mau">
         <item></item>
         <item>Đen</item>
+        <item>Trắng</item>
         <item>Đỏ</item>
         <item>Xám</item>
+        <item>Xanh lục</item>
+        <item>Xanh dương</item>
+        <item>Tím</item>
     </string-array>
 
     <string-array name="dungluong">
         <item></item>
+        <item>2GB</item>
+        <item>4GB</item>
         <item>8GB</item>
         <item>16GB</item>
+        <item>32GB</item>
         <item>128GB</item>
+        <item>256GB</item>
+        <item>512GB</item>
+        <item>1TB</item>
     </string-array>
 
     <string-array name="giamgia">

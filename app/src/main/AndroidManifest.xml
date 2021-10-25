@@ -19,12 +19,7 @@
         <activity android:name=".activitys.MainQLKActivity" />
         <activity
             android:name=".activitys.ListProductActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListManuActivity"
             android:screenOrientation="portrait" />
@@ -42,7 +37,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.LoginActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activitys.ListDiscountCodeActivity"
             android:screenOrientation="portrait" />
