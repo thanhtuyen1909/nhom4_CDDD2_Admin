@@ -1,10 +1,8 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -12,45 +10,32 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
-public class InformationPromoCodeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class InformationPromoCodeActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
     Toolbar toolbar;
     ImageView img;
     TextView btnSave, subtitleAppbar, btnCancel, btnBrowser, title, mess;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    NavigationView navigationView;
     Intent intent;
     private EditText edtStartDate, edtEndDate, edtName;
     private String date;
@@ -59,27 +44,21 @@ public class InformationPromoCodeActivity extends AppCompatActivity
     PromoCode item = null;
     DatabaseReference promoRef;
     StorageReference imageRef = null;
-    String key = null, name = null, image = null, startDate = null, endDate = null;
+    String key = null, name = null, image = null, startDate = null, endDate = null, username = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_info_promocode);
-        item = (PromoCode) getIntent().getParcelableExtra("item");
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        item = (PromoCode) intent.getParcelableExtra("item");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
         subtitleAppbar.setText(R.string.titleLayoutTTKM);
-        drawerLayout = findViewById(R.id.activity_main_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        //NavigationView
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -129,87 +108,6 @@ public class InformationPromoCodeActivity extends AppCompatActivity
                 Calendar.getInstance().get(Calendar.MONTH),
                 Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            filePath = data.getData();
-            Picasso.get().load(filePath).into(img);
-        }
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.nav_qlsp:
-                intent = new Intent(InformationPromoCodeActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlkm:
-                intent = new Intent(InformationPromoCodeActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dph:
-                intent = new Intent(InformationPromoCodeActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlmgg:
-                intent = new Intent(InformationPromoCodeActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qllsp:
-                intent = new Intent(InformationPromoCodeActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dmk:
-                intent = new Intent(InformationPromoCodeActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_dx:
-                intent = new Intent(InformationPromoCodeActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(InformationPromoCodeActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            default:
-                Toast.makeText(InformationPromoCodeActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -263,12 +161,12 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(InformationPromoCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(InformationPromoCodeActivity.this).inflate(
                 R.layout.layout_warning_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Tên không được để trống!");
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
@@ -286,12 +184,12 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(InformationPromoCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(InformationPromoCodeActivity.this).inflate(
                 R.layout.layout_error_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận huỷ?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
@@ -315,12 +213,12 @@ public class InformationPromoCodeActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(InformationPromoCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(InformationPromoCodeActivity.this).inflate(
                 R.layout.layout_succes_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText(message);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 

@@ -1,34 +1,24 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -39,19 +29,16 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 
-public class DetailInformationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class DetailInformationActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, btnCancel, title, mess;
     EditText edtName;
     ImageView img;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    NavigationView navigationView;
     Intent intent;
     Category itemCate = null;
     Manufacture itemManu = null;
-    String to, key = null, name = null, image = null, location = "images/categories";
+    String to, key = null, name = null, image = null, location = "images/categories", username = "";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference cateRef = database.getReference("Categories");
     DatabaseReference manuRef = database.getReference("Manufactures");
@@ -63,9 +50,11 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_infomation);
-        to = getIntent().getStringExtra("to");
-        itemCate = getIntent().getParcelableExtra("itemCate");
-        itemManu = getIntent().getParcelableExtra("itemManu");
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        to = intent.getStringExtra("to");
+        itemCate = intent.getParcelableExtra("itemCate");
+        itemManu = intent.getParcelableExtra("itemManu");
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -85,14 +74,6 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
             edtName.setHint("Tên hãng");
             location = "images/manufactures";
         }
-        drawerLayout = findViewById(R.id.activity_main_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        //NavigationView
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         // Kiểm tra dữ liệu:
         if (itemCate != null) {
@@ -139,77 +120,6 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
                 && data != null && data.getData() != null) {
             filePath = data.getData();
             Picasso.get().load(filePath).into(img);
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.nav_qlsp:
-                intent = new Intent(DetailInformationActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlkm:
-                intent = new Intent(DetailInformationActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dph:
-                intent = new Intent(DetailInformationActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlmgg:
-                intent = new Intent(DetailInformationActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qllsp:
-                intent = new Intent(DetailInformationActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dmk:
-                intent = new Intent(DetailInformationActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_dx:
-                intent = new Intent(DetailInformationActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(DetailInformationActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            default:
-                Toast.makeText(DetailInformationActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -344,6 +254,4 @@ public class DetailInformationActivity extends AppCompatActivity implements Navi
         }
         alertDialog.show();
     }
-
-
 }

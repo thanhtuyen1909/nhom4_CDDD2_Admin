@@ -38,13 +38,15 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
 import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
+import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Handler handler = new Handler();
     Toolbar toolbar;
     SearchView searchView;
-    TextView btnBack, subtitleAppbar, totalManu, title, mess;
+    TextView btnBack, subtitleAppbar, totalManu, title, mess, txtName, txtRole;
+    String username = "", name = "", role = "";
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
@@ -53,12 +55,19 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     NavigationView navigationView;
     private Intent intent;
     Button btnAdd;
-    DatabaseReference manuRef;
+    DatabaseReference manuRef = FirebaseDatabase.getInstance().getReference("Manufactures");
+    DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
+    boolean check = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_manu);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,7 +81,6 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
-        manuRef = FirebaseDatabase.getInstance().getReference("Manufactures");
         totalManu = findViewById(R.id.totalManu);
         searchView = findViewById(R.id.editSearch);
 
@@ -99,6 +107,10 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        txtName.setText(name);
+        txtRole.setText(role);
 
         // Xử lý sự kiện thay đổi dữ liệu searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -173,30 +185,46 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_qlsp:
                 intent = new Intent(ListManuActivity.this, ListProductActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListManuActivity.this, ListPromoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListManuActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListManuActivity.this, ListDiscountCodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListManuActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListManuActivity.this, ChangePasswordActivity.class);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
@@ -240,9 +268,33 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         final AlertDialog alertDialog = builder.create();
 
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            check = true;
+            proRef.addValueEventListener(new ValueEventListener() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Product product = snapshot.getValue(Product.class);
+                        if(product.getManu_id().equals(key)) {
+                            check = false;
+                        }
+                    }
+                    handler.postDelayed(() -> {
+                        if(check) {
+                            manuRef.child(key).removeValue();
+                            showSuccesDialog();
+                        } else {
+                            showErrorDialog("Không thể xoá hãng còn sản phẩm!");
+                        }
+                    }, 100);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
             alertDialog.dismiss();
-            manuRef.child(key).removeValue();
-            showSuccesDialog();
         });
 
         view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
@@ -270,6 +322,30 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         final AlertDialog alertDialog = builder.create();
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    private void showErrorDialog(String notify) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ListManuActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListManuActivity.this).inflate(
+                R.layout.layout_warning_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.yes));
+
+        final android.app.AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));

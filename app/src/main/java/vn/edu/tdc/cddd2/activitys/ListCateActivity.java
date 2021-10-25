@@ -38,12 +38,14 @@ import java.util.ArrayList;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CateAdapter;
 import vn.edu.tdc.cddd2.data_models.Category;
+import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListCateActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Handler handler = new Handler();
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar, totalCate;
+    TextView btnBack, subtitleAppbar, totalCate, txtName, txtRole, title, mess;
+    String username = "", name = "", role = "";
     SearchView searchView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -53,13 +55,19 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
     NavigationView navigationView;
     private Intent intent;
     Button btnAdd;
-    DatabaseReference cateRef;
-    TextView title, mess;
+    DatabaseReference cateRef= FirebaseDatabase.getInstance().getReference("Categories");
+    DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
+    boolean check = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_cate);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,7 +82,6 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
         totalCate = findViewById(R.id.totalCate);
-        cateRef = FirebaseDatabase.getInstance().getReference("Categories");
         searchView = findViewById(R.id.editSearch);
 
         // Xử lý sự kiện click button "Trở lại":
@@ -84,6 +91,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         btnAdd.setOnClickListener(v -> {
             intent = new Intent(ListCateActivity.this, DetailInformationActivity.class);
             intent.putExtra("to", "ListCate");
+            intent.putExtra("username", username);
             startActivity(intent);
         });
 
@@ -99,6 +107,10 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        txtName.setText(name);
+        txtRole.setText(role);
 
         // Xử lý sự kiện thay đổi dữ liệu searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -156,6 +168,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             intent = new Intent(ListCateActivity.this, DetailInformationActivity.class);
             intent.putExtra("to", "ListCate");
             intent.putExtra("itemCate", (Parcelable) item);
+            intent.putExtra("username", username);
             startActivity(intent);
         }
     };
@@ -177,9 +190,33 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         final AlertDialog alertDialog = builder.create();
 
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            check = true;
+            proRef.addValueEventListener(new ValueEventListener() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Product product = snapshot.getValue(Product.class);
+                        if(product.getManu_id().equals(key)) {
+                            check = false;
+                        }
+                    }
+                    handler.postDelayed(() -> {
+                        if(check) {
+                            cateRef.child(key).removeValue();
+                            showSuccesDialog();
+                        } else {
+                            showErrorDialog("Không thể xoá loại sản phẩm còn sản phẩm!");
+                        }
+                    }, 100);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
             alertDialog.dismiss();
-            cateRef.child(key).removeValue();
-            showSuccesDialog();
         });
 
         view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
@@ -213,6 +250,30 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         alertDialog.show();
     }
 
+    private void showErrorDialog(String notify) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ListCateActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListCateActivity.this).inflate(
+                R.layout.layout_warning_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.yes));
+
+        final android.app.AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
@@ -226,27 +287,40 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_qlsp:
                 intent = new Intent(ListCateActivity.this, ListProductActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListCateActivity.this, ListPromoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListCateActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListCateActivity.this, ListDiscountCodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListCateActivity.this, ChangePasswordActivity.class);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
@@ -256,6 +330,9 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_qlh:
                 intent = new Intent(ListCateActivity.this, ListManuActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             default:

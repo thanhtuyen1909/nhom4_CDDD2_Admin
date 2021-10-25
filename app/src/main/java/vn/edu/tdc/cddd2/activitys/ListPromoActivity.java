@@ -42,7 +42,8 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
     // Khai báo biến
     Handler handler = new Handler();
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar;
+    TextView btnBack, subtitleAppbar, txtName, txtRole;
+    String username = "", name = "", role = "";
     SearchView searchView;
     Button btnAdd;
     private DrawerLayout drawerLayout;
@@ -59,6 +60,10 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_promocode);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -85,6 +90,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         btnAdd.setOnClickListener(v -> {
             intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("username", username);
             startActivity(intent);
         });
 
@@ -101,6 +107,10 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        txtName.setText(name);
+        txtRole.setText(role);
 
         // Xử lý sự kiện thay đổi dữ liệu searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -159,6 +169,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("item", (Parcelable) item);
+            intent.putExtra("username", username);
             startActivity(intent);
         }
 
@@ -167,6 +178,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("key", key);
+            intent.putExtra("username", username);
             startActivity(intent);
         }
 
@@ -185,6 +197,9 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             case R.id.nav_qlsp:
                 intent = new Intent(ListPromoActivity.this, ListProductActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
@@ -192,21 +207,31 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             case R.id.nav_dph:
                 intent = new Intent(ListPromoActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListPromoActivity.this, ListDiscountCodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListPromoActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListPromoActivity.this, ChangePasswordActivity.class);
                 startActivity(intent);
+                intent.putExtra("username", username);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ListPromoActivity.this, LoginActivity.class);
@@ -215,6 +240,9 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             case R.id.nav_qlh:
                 intent = new Intent(ListPromoActivity.this, ListManuActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             default:

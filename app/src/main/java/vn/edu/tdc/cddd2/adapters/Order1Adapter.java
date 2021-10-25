@@ -18,7 +18,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Employee;
@@ -54,7 +56,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
     public void onBindViewHolder(@NonNull Order1Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_tong.setText("Tổng: " + formatPrice(item.getTotal()));
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
         shiparea.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -83,26 +85,23 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
 
             }
         });
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    if(v == holder.cb_giaohang && ((CheckBox) v).isChecked()) {
-                        item.setStatus(4);
-                        holder.cb_giaohang.setEnabled(false);
-                    } else if (v == holder.cb_hoanthanh && ((CheckBox) v).isChecked()) {
-                        item.setStatus(8);
-                    } else if (v == holder.rb_huygiao && ((RadioButton) v).isChecked()) {
-                        item.setStatus(2);
-                        item.setShipperID("null");
-                    } else if (v == holder.rb_huynhan && ((RadioButton) v).isChecked()) {
-                        item.setStatus(0);
-                    } else {
-                        itemClickListener.getInfor(item);
-                    }
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                if(v == holder.cb_giaohang && ((CheckBox) v).isChecked()) {
+                    item.setStatus(4);
+                    holder.cb_giaohang.setEnabled(false);
+                } else if (v == holder.cb_hoanthanh && ((CheckBox) v).isChecked()) {
+                    item.setStatus(8);
+                } else if (v == holder.rb_huygiao && ((RadioButton) v).isChecked()) {
+                    item.setStatus(2);
+                    item.setShipperID("null");
+                } else if (v == holder.rb_huynhan && ((RadioButton) v).isChecked()) {
+                    item.setStatus(0);
                 } else {
-                    return;
+                    itemClickListener.getInfor(item);
                 }
+            } else {
+                return;
             }
         };
         if(item.getStatus() == 4) {
@@ -113,6 +112,11 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             holder.cb_hoanthanh.setEnabled(true);
             holder.rb_huynhan.setEnabled(true);
         }
+    }
+
+    private String formatPrice(int price) {
+        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+                .format(price);
     }
 
     @Override

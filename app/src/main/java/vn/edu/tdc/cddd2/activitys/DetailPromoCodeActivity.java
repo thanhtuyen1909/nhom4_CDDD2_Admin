@@ -2,32 +2,24 @@ package vn.edu.tdc.cddd2.activitys;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,17 +33,13 @@ import vn.edu.tdc.cddd2.adapters.ProductPromoAdapter;
 import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class DetailPromoCodeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class DetailPromoCodeActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
     Handler handler = new Handler();
     Integer percent;
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, btnCancel, title, mess;
     EditText edtPercent;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    NavigationView navigationView;
     Intent intent;
     RecyclerView recyclerView;
     ArrayList<DetailPromoCode> listProduct;
@@ -59,7 +47,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity
     private Spinner spinProduct, spinGiamGia;
     ProductPromoAdapter productAdapter;
     Button btnAdd;
-    String key = "-MmLuVjl6Gg64YK9FEft", keyPD = null, remove;
+    String key = "-MmLuVjl6Gg64YK9FEft", keyPD = null, username = "";
     boolean check = true;
     ArrayAdapter<Product> spinAdapter;
     DatabaseReference promoDetailRef = FirebaseDatabase.getInstance().getReference("Offer_Details");
@@ -71,7 +59,8 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         setContentView(R.layout.layout_detail_promocode);
         promoDetailRef.keepSynced(true);
         productRef.keepSynced(true);
-
+        intent = getIntent();
+        username = intent.getStringExtra("username");
         key = getIntent().getStringExtra("key");
 
         // Toolbar
@@ -79,14 +68,6 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
         subtitleAppbar.setText(R.string.titleLayoutCTKM);
-        drawerLayout = findViewById(R.id.activity_main_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        //NavigationView
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -180,7 +161,9 @@ public class DetailPromoCodeActivity extends AppCompatActivity
                 for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                     Product product = snapshot1.getValue(Product.class);
                     product.setKey(snapshot1.getKey());
-                    listP.add(product);
+                    if(product.getStatus() != -1) {
+                        listP.add(product);
+                    }
                 }
                 spinAdapter.notifyDataSetChanged();
             }
@@ -190,77 +173,6 @@ public class DetailPromoCodeActivity extends AppCompatActivity
 
             }
         });
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.nav_qlsp:
-                intent = new Intent(DetailPromoCodeActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlkm:
-                intent = new Intent(DetailPromoCodeActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dph:
-                intent = new Intent(DetailPromoCodeActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlmgg:
-                intent = new Intent(DetailPromoCodeActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qllsp:
-                intent = new Intent(DetailPromoCodeActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dmk:
-                intent = new Intent(DetailPromoCodeActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_dx:
-                intent = new Intent(DetailPromoCodeActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(DetailPromoCodeActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            default:
-                Toast.makeText(DetailPromoCodeActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -323,12 +235,12 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailPromoCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailPromoCodeActivity.this).inflate(
                 R.layout.layout_warning_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText(s);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
@@ -346,12 +258,12 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailPromoCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailPromoCodeActivity.this).inflate(
                 R.layout.layout_error_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận huỷ?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
@@ -375,12 +287,12 @@ public class DetailPromoCodeActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailPromoCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailPromoCodeActivity.this).inflate(
                 R.layout.layout_succes_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText(message);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 

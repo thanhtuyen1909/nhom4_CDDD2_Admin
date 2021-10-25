@@ -14,7 +14,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Product;
@@ -48,15 +50,12 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/products/"+item.getName()+"/"+item.getImage());
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
         holder.tv_name.setText(item.getName());
-        holder.tv_amount.setText(String.valueOf(item.getPrice()) + " x " + String.valueOf(item.getQuantity()));
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(itemClickListener != null) {
-                    itemClickListener.getInfor(item);
-                } else {
-                    return;
-                }
+        holder.tv_amount.setText(formatPrice(item.getPrice()) + " x " + String.valueOf(item.getQuantity()));
+        holder.onClickListener = v -> {
+            if(itemClickListener != null) {
+                itemClickListener.getInfor(item);
+            } else {
+                return;
             }
         };
     }
@@ -89,5 +88,10 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
 
     public interface ItemClickListener {
         void getInfor(Product item);
+    }
+
+    private String formatPrice(int price) {
+        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+                .format(price);
     }
 }

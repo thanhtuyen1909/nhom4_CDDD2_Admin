@@ -29,7 +29,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.Product5Adapter;
@@ -41,11 +43,8 @@ public class DetailOrderActivity extends AppCompatActivity {
     // Khai báo biến
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar, txtMaDH, txtCreatedAt, txtStatus, txtNote, txtName, txtPhone, txtTotal;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
     RecyclerView recyclerView;
     ArrayList<Product> listProducts;
-    NavigationView navigationView;
     Product5Adapter product5Adapter;
     Intent intent;
     Order item = null;
@@ -97,7 +96,7 @@ public class DetailOrderActivity extends AppCompatActivity {
             });
             txtNote.setText("Ghi chú: " + item.getNote());
             txtName.setText("Họ tên khách hàng: " + item.getName());
-            txtTotal.setText("Tổng tiền: " + item.getTotal());
+            txtTotal.setText("Tổng tiền: " + formatPrice(item.getTotal()));
         }
 
         // Xử lý sự kiện click button "Trở lại":
@@ -121,12 +120,6 @@ public class DetailOrderActivity extends AppCompatActivity {
         product5Adapter = new Product5Adapter(listProducts, this);
         recyclerView.setAdapter(product5Adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void data() {
@@ -166,5 +159,10 @@ public class DetailOrderActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private String formatPrice(int price) {
+        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+                .format(price);
     }
 }
