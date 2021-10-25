@@ -108,7 +108,8 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             holder.cb_giaohang.setChecked(true);
         }
         if(item.getStatus() == 5) {
-            holder.cb_giaohang.setChecked(false);
+            holder.cb_giaohang.setChecked(true);
+            holder.cb_giaohang.setEnabled(false);
             holder.cb_hoanthanh.setEnabled(true);
             holder.rb_huynhan.setEnabled(true);
         }
