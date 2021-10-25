@@ -51,12 +51,15 @@
     <string name="default_iamge">android.graphics.drawable.AdaptiveIconDrawable@f20e8ad</string>
 
     <!-- Dialog -->
+    <string name="titleUpdate">Cập nhật</string>
+    <string name="titleAdd">Thêm</string>
     <string name="title">THÔNG BÁO</string>
     <string name="okay">OK</string>
     <string name="yes">XÁC NHẬN</string>
     <string name="no">HUỶ</string>
     <string name="title9">Chi tiết sản phẩm</string>
     <string name="title10">Chi tiết mã giảm giá</string>
+    <string name="doimk">Đổi mật khẩu</string>
 
 <!--  Dialog  -->
     <string name="titlePercent">Cập nhật</string>

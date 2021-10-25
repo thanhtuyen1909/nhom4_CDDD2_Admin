@@ -1,32 +1,31 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.AccountAdapter;
 
 public class MainADMActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
-    private String username;
-    private Toolbar toolbar;
-    private Button btnQLTK, btnLSDH, btnQLHD, btnTK, btnQLBL, btnDX, btnDMK;
+    String username = "", name = "", role = "";
+    TextView txtUsername;
+    Button btnQLTK, btnLSDH, btnQLHD, btnTK, btnQLBL, btnDX, btnDMK;
     private Intent intent;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main_2);
-        if(getIntent().getExtras() != null) {
-            username = getIntent().getExtras().getString("username");
-        }
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+
         // Khởi tạo biến
         btnQLTK = findViewById(R.id.btnQLTK);
         btnLSDH = findViewById(R.id.btnLSDH);
@@ -35,7 +34,11 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
         btnQLBL = findViewById(R.id.btnQLBL);
         btnDX = findViewById(R.id.btnLogout);
         btnDMK = findViewById(R.id.btnChangePass);
-        intent = getIntent();
+        txtUsername = findViewById(R.id.username);
+
+        if(!username.equals("") && !name.equals("") && !role.equals("")){
+            txtUsername.setText(name);
+        }
 
         // Bắt sự kiện xử lý button
         btnQLTK.setOnClickListener(this);

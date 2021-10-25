@@ -2,29 +2,21 @@ package vn.edu.tdc.cddd2.data_models;
 
 public class Account {
     //Properties
-    private int id;
     private String username;
     private String password;
     private int role_id;
     private String status;
-    private String image;
+    private String id;
 
-    public String getImage() {
-        return image;
-    }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public int getId() {
+    //Get - set
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
-
     public String getUsername() {
         return username;
     }
@@ -57,26 +49,20 @@ public class Account {
         this.status = status;
     }
 
-    public Account(int id, String username, String password, int role_id, String status, String image) {
-        this.id = id;
+    // Contructors
+    public Account(String username, String password, int role_id, String status) {
         this.username = username;
         this.password = password;
         this.role_id = role_id;
         this.status = status;
-        this.image = image;
     }
 
     public Account() {
     }
 
+    //Tostring
     @Override
     public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", role_id=" + role_id +
-                ", status='" + status + '\'' +
-                '}';
+        return username;
     }
 }

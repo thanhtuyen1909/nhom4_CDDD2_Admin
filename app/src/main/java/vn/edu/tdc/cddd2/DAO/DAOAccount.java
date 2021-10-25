@@ -27,12 +27,10 @@ public class DAOAccount {
 
     public Task<Void> update(String key,Account account){
         HashMap<String,Object> map = new HashMap<String,Object>();
-        map.put("id",account.getId());
         map.put("username",account.getUsername());
         map.put("password",account.getPassword());
         map.put("role_id",account.getRole_id());
         map.put("status",account.getStatus());
-        map.put("image",account.getImage());
 
         return ref.child(key).updateChildren(map);
     }
