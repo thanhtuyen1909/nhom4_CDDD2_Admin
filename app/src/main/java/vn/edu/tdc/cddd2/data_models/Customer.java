@@ -1,7 +1,7 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Customer {
-    private int id;
+    private String id;
     private String name;
     private String image;
     private String phone;
@@ -10,11 +10,11 @@ public class Customer {
     private String created_at;
     private String status;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -74,7 +74,7 @@ public class Customer {
         this.type_id = type_id;
     }
 
-    public Customer(int id, String name, String image, String phone, String dob, String type_id, String created_at, String status) {
+    public Customer(String id, String name, String image, String phone, String dob, String type_id, String created_at, String status) {
         this.id = id;
         this.name = name;
         this.image = image;

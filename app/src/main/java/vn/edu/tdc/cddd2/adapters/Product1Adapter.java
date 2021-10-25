@@ -3,6 +3,8 @@ package vn.edu.tdc.cddd2.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +23,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
@@ -33,6 +38,8 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
     ArrayList<Product> listProducts;
     private Context context;
     Product1Adapter.ItemClickListener itemClickListener;
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Manufactures");
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public void setItemClickListener(Product1Adapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -47,7 +54,7 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
     @Override
     public Product1Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.item_product_2,parent,false);
+        View itemView = inflater.inflate(R.layout.item_product_6, parent, false);
         Product1Adapter.ViewHolder viewHolder = new Product1Adapter.ViewHolder(itemView);
         return viewHolder;
     }
@@ -55,47 +62,34 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull Product1Adapter.ViewHolder holder, int position) {
         Product item = listProducts.get(position);
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        final long ONE_MEGABYTE = 1024 * 1024;
-        StorageReference imageRef = storage.getReference("images/products/"+item.getName()+"/"+item.getName()+".jpg");
-        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp,  holder.im_item.getWidth(),  holder.im_item.getHeight(), false));
-            }
-        });
-
-        holder.tv_name.setText(item.getName());
-        holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        DatabaseReference ref = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Manufactures");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("aaa", "onDataChange: ");
-                for(DataSnapshot node : snapshot.getChildren()){
-                    Manufacture temp = node.getValue(Manufacture.class);
-                    if(node.getKey() == item.getManu_id()){
-                        Log.d("aaa", "onDataChange: "+temp.getName());
-                        holder.tv_manu.setText("Hãng: " + temp.getName());
+        StorageReference imageRef = storage.getReference("images/products/" + item.getName() + "/" + item.getImage());
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Picasso.get().load(uri).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item);
+            holder.tv_name.setText(item.getName());
+            holder.tv_price.setText("Giá: " + formatPrice(item.getPrice()));
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Manufacture temp = node.getValue(Manufacture.class);
+                        if (node.getKey() == item.getManu_id()) {
+                            holder.tv_manu.setText("Hãng: " + temp.getName());
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
-        holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(itemClickListener != null) {
-                    itemClickListener.getInfor(item);
-                } else {
-                    return;
                 }
+            });
+            holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
+        });
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                itemClickListener.getInfor(item.getId());
+            } else {
+                return;
             }
         };
     }
@@ -105,11 +99,10 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
         return listProducts.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView im_item, im_delete;
         TextView tv_name, tv_price, tv_amount, tv_manu;
         View.OnClickListener onClickListener;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             im_item = itemView.findViewById(R.id.img);
@@ -123,13 +116,18 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
 
         @Override
         public void onClick(View v) {
-            if(onClickListener != null) {
+            if (onClickListener != null) {
                 onClickListener.onClick(v);
             }
         }
     }
 
     public interface ItemClickListener {
-        void getInfor(Product item);
+        void getInfor(String key);
+    }
+
+    private String formatPrice(int price) {
+        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+                .format(price);
     }
 }

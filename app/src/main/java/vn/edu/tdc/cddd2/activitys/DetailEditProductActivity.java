@@ -1,10 +1,8 @@
 
 package vn.edu.tdc.cddd2.activitys;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -21,19 +18,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,15 +46,12 @@ import vn.edu.tdc.cddd2.data_models.HistoryActivity;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class DetailEditProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class DetailEditProductActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, btnCancel;
     private ImageView productImage;
     private EditText productID, productName, productDescription, productQuantity, productImportPrice, productPrice;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    NavigationView navigationView;
     TextView title, mess;
     private Intent intent;
     private Spinner spinCata, spinManu, spinColor, spinStorage;
@@ -70,28 +59,24 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
     private Uri imageUri;
     private ArrayList<Manufacture> listManu;
     private ArrayList<Category> listCate;
-    private final static FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
-
+    private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
+    String username = "";
     Product item = null;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_edit_product);
-        item = getIntent().getParcelableExtra("item");
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        item = intent.getParcelableExtra("item");
+
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
         subtitleAppbar.setText(R.string.title9);
-        drawerLayout = findViewById(R.id.activity_main_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        //NavigationView
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -113,14 +98,11 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
             data();
         }
 
-        productImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Title"), SELECT_IMAGE_CODE);
-            }
+        productImage.setOnClickListener(v -> {
+            intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Title"), SELECT_IMAGE_CODE);
         });
 
         // Xử lý sự kiện click button:
@@ -205,9 +187,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
         return 1;
     }
 
-
     private void data() {
-        FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
         DatabaseReference refManu = db.getReference("Manufactures");
         DatabaseReference refCate = db.getReference("Categories");
         listManu = new ArrayList<>();
@@ -245,6 +225,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
 
             }
         });
+
         refCate.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -309,9 +290,8 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
             }
         }
         //set image
-        FirebaseStorage storage = FirebaseStorage.getInstance();
         final long ONE_MEGABYTE = 1024 * 1024;
-        StorageReference imageRef = storage.getReference("images/products/" + item.getName() + "/" + item.getName() + ".jpg");
+        StorageReference imageRef = storage.getReference("images/products/" + item.getName() + "/" + item.getImage());
         imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
@@ -332,78 +312,6 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.nav_qlsp:
-                intent = new Intent(DetailEditProductActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlkm:
-                intent = new Intent(DetailEditProductActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dph:
-                intent = new Intent(DetailEditProductActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlmgg:
-                intent = new Intent(DetailEditProductActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qllsp:
-                intent = new Intent(DetailEditProductActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dmk:
-                intent = new Intent(DetailEditProductActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_dx:
-                intent = new Intent(DetailEditProductActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(DetailEditProductActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            default:
-                Toast.makeText(DetailEditProductActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-
-    @Override
     public void onClick(View v) {
         if (v == btnSave) {
             Date now = new Date();
@@ -412,14 +320,14 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
                 Product product = new Product();
                 product.setSold(0);
                 product.setCreated_at(formatter.format(now));
-                product.setId(Integer.parseInt(String.valueOf(productID.getText())));
+                product.setId(String.valueOf(productID.getText()));
                 String color = String.valueOf(spinColor.getSelectedItem());
                 String size = String.valueOf(spinStorage.getSelectedItem());
                 product.setName(String.valueOf(productName.getText()));
-                if (color != "") {
+                if (!color.equals("")) {
                     product.setName(product.getName() + " - " + color);
                 }
-                if (size != null) {
+                if (!size.equals("")) {
                     product.setName(product.getName() + " - " + size);
                 }
                 String keymanu = ((Manufacture) spinManu.getSelectedItem()).getKey();
@@ -434,9 +342,8 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
                 product.setCategory_id(keyCate);
 
                 if (!product.getName().equals(item.getName())) {
-                    StorageReference ref = FirebaseStorage.getInstance().getReference("images/products");
+                    StorageReference ref = storage.getReference("images/products");
                     StorageReference oldRef = ref.child(item.getName()).child(item.getImage());
-                    StorageReference newRef = ref.child(product.getName()).child(product.getImage());
                     Bitmap bitmap = ((BitmapDrawable) productImage.getDrawable()).getBitmap();
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -448,29 +355,26 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
 
                 //upload ảnh
                 if (imageUri != null) {
-                    FirebaseStorage storage = FirebaseStorage.getInstance("gs://cddd2-f1bcd.appspot.com/");
                     StorageReference storageRef = storage.getReference("images/products");
                     StorageReference productRef = storageRef.child(product.getName()).child(product.getImage());
                     productRef.putFile(imageUri);
                 }
                 DAOProduct dao = new DAOProduct();
                 dao.update(item.getKey(), product).addOnSuccessListener(unused -> showSuccesDialog("Sửa sản phẩm thành công!"));
-                //Tạo lịch sử hoạt động
-                HistoryActivity history = new HistoryActivity();
-                history.setDate(formatter.format(new Date()));
-                history.setAccount_id(2);
-                history.setAction("Cập nhật sản phẩm");
-                String detail = "";
-                if (!product.getName().equals(item.getName())) {
-                    detail += "Tên sản phẩm : " + item.getName() + " -> " + product.getName() + " \n";
-                }
-                if (!product.getDescription().equals(item.getDescription())) {
-                    detail += "Chỉnh sửa mô tả \n";
-                }
-                DatabaseReference historyRef = db.getReference("HistoryActivities");
+//                //Tạo lịch sử hoạt động
+//                HistoryActivity history = new HistoryActivity();
+//                history.setDate(formatter.format(new Date()));
+//                history.setAccount_id(2);
+//                history.setAction("Cập nhật sản phẩm");
+//                String detail = "";
+//                if (!product.getName().equals(item.getName())) {
+//                    detail += "Tên sản phẩm : " + item.getName() + " -> " + product.getName() + " \n";
+//                }
+//                if (!product.getDescription().equals(item.getDescription())) {
+//                    detail += "Chỉnh sửa mô tả \n";
+//                }
+//                DatabaseReference historyRef = db.getReference("HistoryActivities");
             }
-            showSuccesDialog("Cập nhật sản phẩm thành công!");
-            finish();
         } else {
             finish();
         }
@@ -491,7 +395,10 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
+        });
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -503,7 +410,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailEditProductActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailEditProductActivity.this).inflate(
                 R.layout.layout_warning_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
         title = view.findViewById(R.id.textTitle);
@@ -514,10 +421,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements Navi
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
-            alertDialog.dismiss();
-        });
-
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));

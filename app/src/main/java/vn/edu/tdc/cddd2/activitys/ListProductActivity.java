@@ -98,6 +98,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(v -> {
             intent = new Intent(ListProductActivity.this, DetailProductActivity.class);
+            intent.putExtra("username", username);
             startActivity(intent);
         });
         spinCate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -174,7 +175,6 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                     listProduct.clear();
                     filterProduct(cate.getKey(), manu.getKey(), query, isFirst);
                 }, 200);
-
                 return false;
             }
         });
@@ -182,94 +182,82 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
     private void filterProduct(String category_id, String manu_id, String query, int isFirst) {
         DatabaseReference ref = db.getReference("Products");
-        ref.addChildEventListener(new ChildEventListener() {
-
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Product product = snapshot.getValue(Product.class);
-                product.setKey(snapshot.getKey());
-                if (product != null) {
-                    if (category_id.equals("") && manu_id.equals("") && query.equals("")) {
-                        if(isFirst >= 1){
-                            listProduct.add(product);
-                        }
-
-                    } else {
-                        if (!category_id.equals("")) {
-                            if (!manu_id.equals("")) {
-                                if (query.equals("")) {
-                                    if (manu_id.equals(product.getManu_id()) && category_id.equals(product.getCategory_id())) {
-                                        listProduct.add(product);
-                                    }
-                                } else {
-                                    if (product.getName().toLowerCase().contains(query.toLowerCase())
-                                            && manu_id.equals(product.getManu_id())
-                                            && category_id.equals(product.getCategory_id())) {
-                                        listProduct.add(product);
-                                    }
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listProduct.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Product product = snapshot.getValue(Product.class);
+                    product.setKey(snapshot.getKey());
+                    if (product != null) {
+                        if(product.getStatus() != -1) {
+                            if (category_id.equals("") && manu_id.equals("") && query.equals("")) {
+                                if (isFirst >= 1) {
+                                    listProduct.add(product);
                                 }
                             } else {
-                                if (query.equals("")) {
-                                    if (category_id.equals(product.getCategory_id())) {
-                                        listProduct.add(product);
+                                if (!category_id.equals("")) {
+                                    if (!manu_id.equals("")) {
+                                        if (query.equals("")) {
+                                            if (manu_id.equals(product.getManu_id()) && category_id.equals(product.getCategory_id())) {
+                                                listProduct.add(product);
+                                            }
+                                        } else {
+                                            if (product.getName().toLowerCase().contains(query.toLowerCase())
+                                                    && manu_id.equals(product.getManu_id())
+                                                    && category_id.equals(product.getCategory_id())) {
+                                                listProduct.add(product);
+                                            }
+                                        }
+                                    } else {
+                                        if (query.equals("")) {
+                                            if (category_id.equals(product.getCategory_id())) {
+                                                listProduct.add(product);
+                                            }
+                                        } else {
+                                            if (product.getName().toLowerCase().contains(query.toLowerCase())
+                                                    && category_id.equals(product.getCategory_id())) {
+                                                listProduct.add(product);
+                                            }
+                                        }
                                     }
                                 } else {
-                                    if (product.getName().toLowerCase().contains(query.toLowerCase())
-                                            && category_id.equals(product.getCategory_id())) {
-                                        listProduct.add(product);
+                                    if (!manu_id.equals("")) {
+                                        if (query.equals("")) {
+                                            if (manu_id.equals(product.getManu_id())) {
+                                                listProduct.add(product);
+                                            }
+                                        } else {
+                                            if (product.getName().toLowerCase().contains(query.toLowerCase())
+                                                    && manu_id.equals(product.getManu_id())) {
+                                                listProduct.add(product);
+                                            }
+                                        }
+                                    } else {
+                                        if (query.equals("")) {
+
+                                        } else {
+                                            if (product.getName().toLowerCase().contains(query.toLowerCase())) {
+                                                listProduct.add(product);
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        } else {
-                            if (!manu_id.equals("")) {
-                                if (query.equals("")) {
-                                    if (manu_id.equals(product.getManu_id())) {
-                                        listProduct.add(product);
-                                    }
-                                } else {
-                                    if (product.getName().toLowerCase().contains(query.toLowerCase())
-                                            && manu_id.equals(product.getManu_id())) {
-                                        listProduct.add(product);
-                                    }
+                            proAdapter.notifyDataSetChanged();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    totalProduct.setText(proAdapter.getItemCount() + " sản phẩm từ " + size);
                                 }
-                            } else {
-                                if (query.equals("")) {
-
-                                } else {
-                                    if (product.getName().toLowerCase().contains(query.toLowerCase())) {
-                                        listProduct.add(product);
-                                    }
-                                }
-                            }
+                            }, 200);
                         }
                     }
-                    proAdapter.notifyDataSetChanged();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            totalProduct.setText(proAdapter.getItemCount() + " sản phẩm từ " + size);
-                        }
-                    }, 200);
                 }
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -286,11 +274,16 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                size = 0;
                 for (DataSnapshot node : snapshot.getChildren()) {
                     Product product = node.getValue(Product.class);
                     product.setKey(node.getKey());
-                    size++;
+                    if(product.getStatus() != -1) {
+                        listProduct.add(product);
+                        size++;
+                    }
                 }
+                proAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -354,14 +347,15 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
     private ProductAdapter.ItemClickListener itemClickListener = new ProductAdapter.ItemClickListener() {
         @Override
-        public void deleteProduct(String key) {
-            showWarningDialog(key);
+        public void deleteProduct(Product item) {
+            showWarningDialog(item);
         }
 
         @Override
         public void editProduct(Product item) {
             intent = new Intent(ListProductActivity.this, DetailEditProductActivity.class);
             intent.putExtra("item", (Parcelable) item);
+            intent.putExtra("username", username);
             startActivity(intent);
         }
     };
@@ -376,25 +370,38 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             case R.id.nav_qlkm:
                 intent = new Intent(ListProductActivity.this, ListPromoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListProductActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListProductActivity.this, ListDiscountCodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListProductActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListProductActivity.this, ChangePasswordActivity.class);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
@@ -404,6 +411,9 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             case R.id.nav_qlh:
                 intent = new Intent(ListProductActivity.this, ListManuActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             default:
@@ -423,7 +433,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         }
     }
 
-    private void showWarningDialog(String key) {
+    private void showWarningDialog(Product item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListProductActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListProductActivity.this).inflate(
                 R.layout.layout_error_dialog,
@@ -441,13 +451,15 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
             alertDialog.dismiss();
+            item.setStatus(-1);
             DAOProduct dao = new DAOProduct();
-            dao.delete(key).addOnSuccessListener(new OnSuccessListener<Void>() {
+            dao.update(item.getKey(), item).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
                     showSuccesDialog();
                 }
             });
+            proAdapter.notifyDataSetChanged();
         });
 
         view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
@@ -473,7 +485,9 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+        });
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));

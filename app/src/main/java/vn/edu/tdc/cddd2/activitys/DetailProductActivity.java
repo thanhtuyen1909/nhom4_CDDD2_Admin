@@ -2,14 +2,11 @@ package vn.edu.tdc.cddd2.activitys;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -18,22 +15,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.navigation.NavigationView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,17 +47,15 @@ import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class DetailProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DetailProductActivity extends AppCompatActivity {
     // Khai báo biến
     Handler handler = new Handler();
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, btnCancel, title, mess;
     private ImageView productImage;
     private EditText productID, productName, productDescription, productQuantity, productImportPrice, productPrice;
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    NavigationView navigationView;
     private Intent intent;
+    String username = "";
     RecyclerView recyclerView;
     private ArrayList<Product> listProduct;
     private Spinner spinCata, spinManu, spinColor, spinStorage;
@@ -76,25 +66,21 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
     private ArrayList<Manufacture> listManu;
     private ArrayList<Category> listCate;
     static FirebaseDatabase db = FirebaseDatabase.getInstance();
-    boolean check = true, check1 = true;
+    boolean check = true, check1 = true, checkSave = true;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_product);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
         subtitleAppbar.setText(R.string.title9);
-        drawerLayout = findViewById(R.id.activity_main_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        //NavigationView
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -123,18 +109,17 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(v -> {
-            check = true;
+            checkSave = true;
             if (listProduct.size() > 0) {
                 DAOProduct dao = new DAOProduct();
                 for (Product product : listProduct) {
-                    dao.add(product).addOnFailureListener(e -> check = false);
+                    dao.add(product).addOnFailureListener(e -> checkSave = false);
                 }
             }
-            if (check) {
+            if (checkSave) {
                 showSuccesDialog("Thêm sản phẩm thành công!");
-                listProduct.clear();
             } else {
-                showErrorDialog("Thêm sản phẩm thất bại!");
+                showWarningDialog("Thêm sản phẩm thất bại!");
             }
         });
 
@@ -142,25 +127,22 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         btnAdd.setOnClickListener(v -> {
             Date now = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            int id = Integer.parseInt(String.valueOf(productID.getText()));
+            String id = String.valueOf(productID.getText());
             checkTrungID(id);
-
-            handler.postDelayed(new Runnable() {
-                @SuppressLint("NotifyDataSetChanged")
-                @Override
-                public void run() {
-                    if (checkError() == 1 && check && check1) {
+            if (checkError() == 1) {
+                handler.postDelayed(() -> {
+                    if (check && check1) {
                         Product product = new Product();
                         product.setSold(0);
                         product.setCreated_at(formatter.format(now));
-                        product.setId(Integer.parseInt(String.valueOf(productID.getText())));
+                        product.setId(String.valueOf(productID.getText()));
                         String color = String.valueOf(spinColor.getSelectedItem());
                         String size = String.valueOf(spinStorage.getSelectedItem());
                         product.setName(String.valueOf(productName.getText()));
-                        if (color != "") {
+                        if (!color.equals("")) {
                             product.setName(product.getName() + " - " + color);
                         }
-                        if (size != null) {
+                        if (!size.equals("")) {
                             product.setName(product.getName() + " - " + size);
                         }
                         DatabaseReference ref = db.getReference("Manufactures");
@@ -172,7 +154,6 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
                                     Manufacture temp = node.getValue(Manufacture.class);
                                     if (temp.getName() == manu.getName()) {
                                         product.setManu_id(node.getKey());
-                                        Log.d("TAG", "onDataChange: " + node.getKey());
                                     }
                                 }
                             }
@@ -191,7 +172,6 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
                                     Category temp = node.getValue(Category.class);
                                     if (temp.getName() == cate.getName()) {
                                         product.setCategory_id(node.getKey());
-                                        Log.d("TAG", "onDataChange: " + node.getKey());
                                     }
                                 }
                             }
@@ -209,22 +189,23 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
                         product.setDescription(String.valueOf(productDescription.getText()));
 
                         //upload ảnh
-                        FirebaseStorage storage = FirebaseStorage.getInstance("gs://cddd2-f1bcd.appspot.com/");
                         StorageReference storageRef = storage.getReference("images/products");
                         StorageReference productRef = storageRef.child(product.getName()).child(product.getName() + ".jpg");
                         StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
-                        productRef.putFile(imageUri, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        productRef.putFile(imageUri, metadata).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                            @SuppressLint("NotifyDataSetChanged")
                             @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                Log.d("image", taskSnapshot.getMetadata().getName() + "." + taskSnapshot.getMetadata().getContentType());
+                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    listProduct.add(product);
+                                    proAdapter.notifyDataSetChanged();
+                                    clear();
+                                }
                             }
                         });
-                        listProduct.add(product);
-                        proAdapter.notifyDataSetChanged();
-                        clear();
                     }
-                }
-            }, 200);
+                }, 200);
+            }
         });
 
         // Xử lý sự kiện click button "Huỷ":
@@ -243,12 +224,12 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
     public int checkError() {
         //Check chưa chọn image
         if (imageUri == null) {
-            showErrorDialog("Vui lòng chọn ảnh cho sản phẩm!");
+            showWarningDialog("Vui lòng chọn ảnh cho sản phẩm!");
             return -1;
         }
         //Check mã sản phẩm trống
         if (String.valueOf(productID.getText()).compareTo("") == 0) {
-            showErrorDialog("Mã sản phẩm không được để trống!");
+            showWarningDialog("Mã sản phẩm không được để trống!");
             if (productID.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -256,7 +237,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check tên sản phẩm trống
         if (String.valueOf(productName.getText()).compareTo("") == 0) {
-            showErrorDialog("Tên sản phẩm không được để trống!");
+            showWarningDialog("Tên sản phẩm không được để trống!");
             if (productName.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -264,7 +245,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check mô tả sản phẩm trống
         if (String.valueOf(productDescription.getText()).compareTo("") == 0) {
-            showErrorDialog("Mô tả phẩm không được để trống!");
+            showWarningDialog("Mô tả phẩm không được để trống!");
             if (productDescription.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -272,7 +253,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check Số lượng sản phẩm trống
         if (String.valueOf(productQuantity.getText()).compareTo("") == 0) {
-            showErrorDialog("Số lượng phẩm không được để trống!");
+            showWarningDialog("Số lượng phẩm không được để trống!");
             if (productQuantity.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -280,7 +261,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check số lượng sản phẩm < 0
         if (Integer.parseInt(String.valueOf(productQuantity.getText())) < 0) {
-            showErrorDialog("Số lượng sản phẩm phải lớn hơn hoặc bằng 0!");
+            showWarningDialog("Số lượng sản phẩm phải lớn hơn hoặc bằng 0!");
             if (productQuantity.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -288,7 +269,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check giá nhập sản phẩm trống
         if (String.valueOf(productImportPrice.getText()).compareTo("") == 0) {
-            showErrorDialog("Giá nhập sản phẩm không được để trống!");
+            showWarningDialog("Giá nhập sản phẩm không được để trống!");
             if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -296,7 +277,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check giá nhập sản phẩm < 0
         if (Integer.parseInt(String.valueOf(productImportPrice.getText())) < 0) {
-            showErrorDialog("Giá nhập sản phẩm phải lớn hơn 0!");
+            showWarningDialog("Giá nhập sản phẩm phải lớn hơn 0!");
             if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -304,7 +285,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check giá bán sản phẩm trống
         if (String.valueOf(productPrice.getText()).compareTo("") == 0) {
-            showErrorDialog("Giá bán sản phẩm không được để trống!");
+            showWarningDialog("Giá bán sản phẩm không được để trống!");
             if (productPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -312,7 +293,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
         //Check giá bản < giá nhập
         if (Integer.parseInt(String.valueOf(productImportPrice.getText())) > Integer.parseInt(String.valueOf(productImportPrice.getText()))) {
-            showErrorDialog("Giá bán sản phẩm phải lớn hơn giá nhập!");
+            showWarningDialog("Giá bán sản phẩm phải lớn hơn giá nhập!");
             if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -321,21 +302,19 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         return 1;
     }
 
-    private void checkTrungID(int id) {
+    private void checkTrungID(String id) {
         check1 = true;
         //Check trùng mã sản phẩm
-        FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
         DatabaseReference ref = db.getReference("Products");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 check = true;
                 for (DataSnapshot node : snapshot.getChildren()) {
                     Product temp = node.getValue(Product.class);
-                    if (temp.getId() == id) {
+                    if (temp.getId().equals(id) && temp.getStatus() != -1) {
                         check = false;
-                        showErrorDialog("Mã sản phẩm không được trùng!");
-
+                        showWarningDialog("Mã sản phẩm không được trùng!");
                         if (productID.requestFocus()) {
                             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         }
@@ -353,21 +332,25 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         });
 
         for (Product product : listProduct) {
-            if (product.getId() == id) {
-                showErrorDialog("Mã sản phẩm không được trùng!");
+            if (product.getId().equals(id)) {
+                showWarningDialog("Mã sản phẩm không được trùng!");
                 if (productID.requestFocus()) {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 }
                 productID.setText("");
                 check1 = false;
+                break;
             }
         }
+
     }
 
+    @SuppressLint("NewApi")
     private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
         @Override
-        public void getInfor(Product item) {
-            Toast.makeText(DetailProductActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+        public void getInfor(String key) {
+            listProduct.removeIf(listProduct -> listProduct.getId().equals(key));
+            proAdapter.notifyDataSetChanged();
         }
     };
 
@@ -429,6 +412,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         productQuantity.setText("");
         productImportPrice.setText("");
         productPrice.setText("");
+        imageUri = null;
     }
 
     @Override
@@ -440,99 +424,25 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         }
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.nav_qlsp:
-                intent = new Intent(DetailProductActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlkm:
-                intent = new Intent(DetailProductActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dph:
-                intent = new Intent(DetailProductActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlmgg:
-                intent = new Intent(DetailProductActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qllsp:
-                intent = new Intent(DetailProductActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dmk:
-                intent = new Intent(DetailProductActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_dx:
-                intent = new Intent(DetailProductActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(DetailProductActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            default:
-                Toast.makeText(DetailProductActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    private void showErrorDialog(String s) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(DetailProductActivity.this, R.style.AlertDialogTheme);
+    private void showWarningDialog(String notify) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(DetailProductActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(DetailProductActivity.this).inflate(
-                R.layout.layout_error_dialog,
+                R.layout.layout_warning_dialog,
                 findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
         title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
         mess = view.findViewById(R.id.textMessage);
-        mess.setText("s");
-        ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
-        ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.yes));
 
-        final AlertDialog alertDialog = builder.create();
+        final android.app.AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
-            finish();
         });
 
-        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -555,7 +465,10 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
+        });
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));

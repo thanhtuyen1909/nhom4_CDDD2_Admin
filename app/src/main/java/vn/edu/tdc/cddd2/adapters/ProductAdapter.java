@@ -24,7 +24,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
@@ -69,8 +71,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         });
 
         holder.tv_name.setText(item.getName());
-        holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        DatabaseReference ref = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Manufactures");
+        holder.tv_price.setText("Giá: " + formatPrice(item.getPrice()));
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Manufactures");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -93,7 +95,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             public void onClick(View v) {
                 if(itemClickListener != null) {
                     if (v == holder.im_delete) {
-                        itemClickListener.deleteProduct(item.getKey());
+                        itemClickListener.deleteProduct(item);
                     } else itemClickListener.editProduct(item);
 
                 } else {
@@ -137,7 +139,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     public interface ItemClickListener {
-        void deleteProduct(String key);
+        void deleteProduct(Product item);
         void editProduct(Product item);
+    }
+
+    private String formatPrice(int price) {
+        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+                .format(price);
     }
 }

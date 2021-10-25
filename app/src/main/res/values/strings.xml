@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Zuke-Quản trị</string>
+    <string name="app_name">Quản trị Zuke</string>
     <string name="login_text">Đăng nhập</string>
     <string name="changpass_text">Đổi mật khẩu</string>
     <string name="username_text">Tên đăng nhập</string>

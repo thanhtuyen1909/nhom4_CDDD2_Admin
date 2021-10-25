@@ -27,6 +27,7 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
     ArrayList<Product> listProducts;
     private Context context;
     Product2Adapter.ItemClickListener itemClickListener;
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Manufactures");
 
     public void setItemClickListener(Product2Adapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -52,13 +53,12 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
         holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
         holder.tv_name.setText(item.getName());
         holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        DatabaseReference ref = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Company");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot node : snapshot.getChildren()){
                     Manufacture temp = node.getValue(Manufacture.class);
-                    if(node.getKey() == item.getManu_id()){
+                    if(node.getKey().equals(item.getManu_id())){
                         holder.tv_manu.setText("Hãng: " + temp.getName());
                     }
                 }

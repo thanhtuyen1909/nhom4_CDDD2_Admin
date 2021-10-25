@@ -22,7 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Employee;
@@ -61,7 +63,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull OrderAdapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_tong.setText("Tổng: " + formatPrice(item.getTotal()));
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
         // lấy dữ liệu cho spinner:
         ArrayList<ShipArea> list = new ArrayList<>();
@@ -115,6 +117,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
             }
         });
+    }
+
+    private String formatPrice(int price) {
+        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+                .format(price);
     }
 
     @Override

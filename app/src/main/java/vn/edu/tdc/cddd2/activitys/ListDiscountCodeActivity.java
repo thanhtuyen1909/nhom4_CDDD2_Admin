@@ -54,7 +54,7 @@ import vn.edu.tdc.cddd2.data_models.DiscountCode_Customer;
 public class ListDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar, title, mess, filter;
+    TextView btnBack, subtitleAppbar, title, mess, filter, txtName, txtRole;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
@@ -71,11 +71,17 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     boolean check = true;
     private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference codeRef = db.getReference("DiscountCode");
+    String username = "", name = "", role = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_discountcode);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,6 +95,10 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        txtName.setText(name);
+        txtRole.setText(role);
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
@@ -309,6 +319,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                size = 0;
                 listDiscountCode.clear();
                 for (DataSnapshot node : snapshot.getChildren()) {
                     DiscountCode code = node.getValue(DiscountCode.class);
@@ -525,16 +536,25 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             case R.id.nav_qlsp:
                 intent = new Intent(ListDiscountCodeActivity.this, ListProductActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListDiscountCodeActivity.this, ListPromoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListDiscountCodeActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
@@ -542,10 +562,14 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             case R.id.nav_qllsp:
                 intent = new Intent(ListDiscountCodeActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListDiscountCodeActivity.this, ChangePasswordActivity.class);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
@@ -555,6 +579,9 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             case R.id.nav_qlh:
                 intent = new Intent(ListDiscountCodeActivity.this, ListManuActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             default:

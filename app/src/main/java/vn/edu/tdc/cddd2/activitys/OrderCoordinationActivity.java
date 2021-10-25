@@ -39,7 +39,8 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     BottomNavigationView bottomNavigationView;
     Fragment selectedFragment = null;
     Toolbar toolbar;
-    TextView btnSave, subtitleAppbar, btnCancel, title, mess;
+    TextView btnSave, subtitleAppbar, btnCancel, title, mess, txtName, txtRole;
+    String username = "", name = "", role = "";
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
@@ -52,6 +53,10 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_ordercoor);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -66,6 +71,10 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        txtName.setText(name);
+        txtRole.setText(role);
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -113,11 +122,17 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
             case R.id.nav_qlsp:
                 intent = new Intent(OrderCoordinationActivity.this, ListProductActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(OrderCoordinationActivity.this, ListPromoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dph:
@@ -125,16 +140,22 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
             case R.id.nav_qlmgg:
                 intent = new Intent(OrderCoordinationActivity.this, ListDiscountCodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(OrderCoordinationActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(OrderCoordinationActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
@@ -144,6 +165,9 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
             case R.id.nav_qlh:
                 intent = new Intent(OrderCoordinationActivity.this, ListManuActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             default:
@@ -185,7 +209,6 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                     orderRef.child(order.getOrderID()).setValue(order);
                 }
             }
-
             showSuccesDialog("Cập nhật đơn hàng thành công!");
         }
     }
@@ -236,7 +259,6 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
-            finish();
         });
 
         if (alertDialog.getWindow() != null) {
