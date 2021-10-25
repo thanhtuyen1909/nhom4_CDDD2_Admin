@@ -1,6 +1,8 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -19,52 +23,56 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Category;
-import vn.edu.tdc.cddd2.data_models.Manufacture;
 
-public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> implements Filterable {
-    ArrayList<Manufacture> listManus, listManuFilter, list;
+public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> implements Filterable {
+    ArrayList<Category> listCatas, listCataFilter, list;
     Context context;
-    ManuAdapter.ItemClickListener itemClickListener;
+    CateAdapter.ItemClickListener itemClickListener;
 
-    public void setItemClickListener(ManuAdapter.ItemClickListener itemClickListener) {
+    public void setItemClickListener(CateAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public ManuAdapter(ArrayList<Manufacture> listManus, Context context) {
-        this.listManus = listManus;
+    public CateAdapter(ArrayList<Category> listCatas, Context context) {
+        this.listCatas = listCatas;
         this.context = context;
-        this.list = listManus;
+        this.list = listCatas;
     }
 
     @NonNull
     @Override
-    public ManuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CateAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_manu_1, parent, false);
-        ManuAdapter.ViewHolder viewHolder = new ManuAdapter.ViewHolder(itemView);
+        CateAdapter.ViewHolder viewHolder = new CateAdapter.ViewHolder(itemView);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ManuAdapter.ViewHolder holder, int position) {
-        Manufacture item = listManus.get(position);
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/manufactures/" + item.getImage());
+    public void onBindViewHolder(@NonNull CateAdapter.ViewHolder holder, int position) {
+        Category item = listCatas.get(position);
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + item.getImage());
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
         holder.tv_name.setText(item.getName());
-        holder.onClickListener = v -> {
-            if (itemClickListener != null) {
-                if (v.getId() == R.id.btnEdit) {
-                    itemClickListener.editManufacture(item);
-                } else itemClickListener.deleteManufacture(item.getKey());
-            } else {
-                return;
+        holder.onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemClickListener != null) {
+                    if (v.getId() == R.id.btnEdit) {
+                        itemClickListener.editCategory(item);
+                    } else {
+                        itemClickListener.deleteCategory(item.getKey());
+                    }
+                } else {
+                    return;
+                }
             }
         };
     }
 
     @Override
     public int getItemCount() {
-        return listManus.size();
+        return listCatas.size();
     }
 
     @Override
@@ -75,23 +83,23 @@ public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> im
                 FilterResults filterResults = new FilterResults();
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
-                    listManuFilter = list;
+                    listCataFilter = list;
                 } else {
-                    ArrayList<Manufacture> filters = new ArrayList<>();
-                    for (Manufacture row : listManus) {
+                    ArrayList<Category> filters = new ArrayList<>();
+                    for (Category row : listCatas) {
                         if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filters.add(row);
                         }
                     }
-                    listManuFilter = filters;
+                    listCataFilter = filters;
                 }
-                filterResults.values = listManuFilter;
+                filterResults.values = listCataFilter;
                 return filterResults;
             }
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                listManus = (ArrayList<Manufacture>) filterResults.values;
+                listCatas = (ArrayList<Category>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -121,8 +129,8 @@ public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> im
     }
 
     public interface ItemClickListener {
-        void deleteManufacture(String key);
+        void deleteCategory(String key);
 
-        void editManufacture(Manufacture item);
+        void editCategory(Category item);
     }
 }

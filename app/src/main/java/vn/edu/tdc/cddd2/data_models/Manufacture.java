@@ -72,8 +72,4 @@ public class Manufacture implements Parcelable {
     public Manufacture() {
     }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

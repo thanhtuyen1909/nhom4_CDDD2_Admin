@@ -10,6 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
@@ -41,7 +45,8 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull Product5Adapter.ViewHolder holder, int position) {
         Product item = listProducts.get(position);
-        holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/products/"+item.getName()+"/"+item.getImage());
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
         holder.tv_name.setText(item.getName());
         holder.tv_amount.setText(String.valueOf(item.getPrice()) + " x " + String.valueOf(item.getQuantity()));
         holder.onClickListener = new View.OnClickListener() {

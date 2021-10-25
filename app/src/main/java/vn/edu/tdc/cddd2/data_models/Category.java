@@ -73,9 +73,4 @@ public class Category implements Parcelable {
         dest.writeString(name);
         dest.writeString(image);
     }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

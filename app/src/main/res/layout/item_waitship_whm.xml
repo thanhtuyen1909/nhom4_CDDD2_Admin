@@ -61,8 +61,7 @@
             android:id="@+id/btnDetail"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/checkhoanthanh"
+            android:layout_alignParentEnd="true"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/baseline_info_24"
@@ -72,35 +71,39 @@
             android:id="@+id/checkgiao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@+id/txt_nguoigiao"
+            android:layout_alignParentStart="true"
             android:text="Giao hàng" />
 
         <CheckBox
             android:id="@+id/checkhoanthanh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/checkgiao"
-            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/txt_nguoigiao"
+            android:layout_toEndOf="@+id/checkgiao"
+            android:enabled="false"
             android:text="Hoàn thành" />
 
         <RadioGroup
-            android:layout_below="@+id/checkhoanthanh"
+            android:layout_below="@+id/txt_nguoigiao"
+            android:layout_toEndOf="@+id/checkhoanthanh"
             android:background="@drawable/rounded_border_edittext"
             android:layout_alignParentEnd="true"
-            android:gravity="center"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <RadioButton
+                android:id="@+id/checkhuygiao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Huỷ giao"/>
 
             <RadioButton
+                android:id="@+id/checkhuynhan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:text="Huỷ nhận"/>
         </RadioGroup>
     </RelativeLayout>

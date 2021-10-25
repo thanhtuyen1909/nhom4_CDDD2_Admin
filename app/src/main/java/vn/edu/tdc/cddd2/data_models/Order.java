@@ -1,61 +1,158 @@
 package vn.edu.tdc.cddd2.data_models;
 
-public class Order {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Order implements Parcelable {
     // Khai báo biến
-    private String maDH;
-    private int tongTien;
-    private String diaChi;
-    private String nguoiGiao;
+    private String orderID;
+    private String accountID;
+    private String address;
+    private String created_at;
+    private String note;
+    private String shipperID;
+    private int status;
+    private int total;
+    private String phone;
+    private String name;
 
-    // Get - set:
-    public String getMaDH() {
-        return maDH;
+    protected Order(Parcel in) {
+        orderID = in.readString();
+        accountID = in.readString();
+        address = in.readString();
+        created_at = in.readString();
+        note = in.readString();
+        shipperID = in.readString();
+        status = in.readInt();
+        total = in.readInt();
+        phone = in.readString();
+        name = in.readString();
     }
 
-    public void setMaDH(String maDH) {
-        this.maDH = maDH;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(orderID);
+        dest.writeString(accountID);
+        dest.writeString(address);
+        dest.writeString(created_at);
+        dest.writeString(note);
+        dest.writeString(shipperID);
+        dest.writeInt(status);
+        dest.writeInt(total);
+        dest.writeString(phone);
+        dest.writeString(name);
     }
 
-    public int getTongTien() {
-        return tongTien;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setTongTien(int tongTien) {
-        this.tongTien = tongTien;
+    public static final Creator<Order> CREATOR = new Creator<Order>() {
+        @Override
+        public Order createFromParcel(Parcel in) {
+            return new Order(in);
+        }
+
+        @Override
+        public Order[] newArray(int size) {
+            return new Order[size];
+        }
+    };
+
+    // Get - set
+    public String getOrderID() {
+        return orderID;
     }
 
-    public String getDiaChi() {
-        return diaChi;
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
     }
 
-    public void setDiaChi(String diaChi) {
-        this.diaChi = diaChi;
+    public String getAccountID() {
+        return accountID;
     }
 
-    public String getNguoiGiao() {
-        return nguoiGiao;
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
-    public void setNguoiGiao(String nguoiGiao) {
-        this.nguoiGiao = nguoiGiao;
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getShipperID() {
+        return shipperID;
+    }
+
+    public void setShipperID(String shipperID) {
+        this.shipperID = shipperID;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     // Contructor
-    public Order(String maDH, int tongTien, String diaChi, String nguoiGiao) {
-        this.maDH = maDH;
-        this.tongTien = tongTien;
-        this.diaChi = diaChi;
-        this.nguoiGiao = nguoiGiao;
+    public Order() {
     }
 
-    // toString
-    @Override
-    public String toString() {
-        return "Oder{" +
-                "maDH='" + maDH + '\'' +
-                ", tongTien=" + tongTien +
-                ", diaChi='" + diaChi + '\'' +
-                ", nguoiGiao='" + nguoiGiao + '\'' +
-                '}';
+    public Order(String orderID, String accountID, String address, String created_at, String note, String shipperID, int status, int total) {
+        this.orderID = orderID;
+        this.accountID = accountID;
+        this.address = address;
+        this.created_at = created_at;
+        this.note = note;
+        this.shipperID = shipperID;
+        this.status = status;
+        this.total = total;
     }
 }

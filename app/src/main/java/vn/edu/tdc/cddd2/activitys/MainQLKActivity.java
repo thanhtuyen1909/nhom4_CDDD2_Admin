@@ -99,7 +99,7 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 break;
             case R.id.btnQLLSP:
-                intent = new Intent(MainQLKActivity.this, ListCataActivity.class);
+                intent = new Intent(MainQLKActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);

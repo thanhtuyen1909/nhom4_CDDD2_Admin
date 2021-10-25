@@ -1,16 +1,23 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -19,6 +26,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -28,16 +40,20 @@ import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class ListPromoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
-    private Button btnAdd;
+    Handler handler = new Handler();
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar;
+    SearchView searchView;
+    Button btnAdd;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private RecyclerView recyclerView;
-    private ArrayList<PromoCode> listPromoCode;
-    private NavigationView navigationView;
-    private PromoCodeAdapter promoCodeAdapter;
+    RecyclerView recyclerView;
+    ArrayList<PromoCode> listPromoCode;
+    NavigationView navigationView;
+    PromoCodeAdapter promoCodeAdapter;
     private Intent intent;
+    DatabaseReference promoRef, promoDetailRef;
+    TextView title, mess, totalPromo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +64,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Danh sách khuyến mãi");
+        subtitleAppbar.setText(R.string.titleLayoutKM);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -57,23 +73,19 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
+        promoRef = FirebaseDatabase.getInstance().getReference("Offers");
+        promoDetailRef = FirebaseDatabase.getInstance().getReference("Offer_Details");
+        totalPromo = findViewById(R.id.totalPromoCode);
+        searchView = findViewById(R.id.editSearch);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-            }
+        btnAdd.setOnClickListener(v -> {
+            intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         });
 
         //RecycleView
@@ -89,36 +101,83 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Xử lý sự kiện thay đổi dữ liệu searchview:
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                promoCodeAdapter.getFilter().filter(newText);
+                handler.postDelayed(() -> {
+                    totalPromo.setText(recyclerView.getAdapter().getItemCount() + " khuyến mãi từ " + listPromoCode.size());
+                }, 200);
+                return false;
+            }
+        });
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void data(){
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
+        promoRef.addValueEventListener(new ValueEventListener() {
+            @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listPromoCode.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    PromoCode promoCode = new PromoCode(
+                            snapshot.getKey(),
+                            snapshot.child("name").getValue(String.class),
+                            snapshot.child("startDate").getValue(String.class),
+                            snapshot.child("endDate").getValue(String.class),
+                            snapshot.child("image").getValue(String.class));
+                    listPromoCode.add(promoCode);
+                }
+                promoCodeAdapter.notifyDataSetChanged();
+                totalPromo.setText(recyclerView.getAdapter().getItemCount() + " khuyến mãi từ " + listPromoCode.size());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    private PromoCodeAdapter.ItemClickListener itemClickListener = new PromoCodeAdapter.ItemClickListener() {
+    private final PromoCodeAdapter.ItemClickListener itemClickListener = new PromoCodeAdapter.ItemClickListener() {
         @Override
-        public void getInfor(PromoCode item) {
-            Toast.makeText(ListPromoActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void getLayoutAddDetailPromoCode() {
-            intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
+        public void editPromoCode(PromoCode item) {
+            intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("item", (Parcelable) item);
             startActivity(intent);
         }
+
+        @Override
+        public void addDetailPromoCode(String key) {
+            intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("key", key);
+            startActivity(intent);
+        }
+
+        @Override
+        public void deletePromoCode(String key) {
+            showWarningDialog(key);
+        }
+
     };
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -131,9 +190,9 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             case R.id.nav_qlkm:
                 break;
             case R.id.nav_dph:
-//                Intent intent = new Intent(ListProductActivity.this, ListProductActivity.class);
-//                startActivity(intent);
-                Toast.makeText(ListPromoActivity.this, "Điều phối hàng", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ListPromoActivity.this, OrderCoordinationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListPromoActivity.this, ListDiscountCodeActivity.class);
@@ -141,7 +200,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 startActivity(intent);
                 break;
             case R.id.nav_qllsp:
-                intent = new Intent(ListPromoActivity.this, ListCataActivity.class);
+                intent = new Intent(ListPromoActivity.this, ListCateActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
@@ -174,5 +233,81 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         } else {
             super.onBackPressed();
         }
+    }
+
+    // Xử lý sự kiện xoá:
+    private void showWarningDialog(String key) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListPromoActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListPromoActivity.this).inflate(
+                R.layout.layout_error_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText("Xác nhận xoá khuyến mãi?");
+        ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
+        ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            promoRef.child(key).removeValue();
+            // Xoá cả những chi tiết khuyến mãi
+            promoDetailRef.addValueEventListener(new ValueEventListener(){
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (snapshot.child("offerID").getValue(String.class).equals(key)) {
+                            promoDetailRef.child(snapshot.getKey()).removeValue();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            showSuccesDialog();
+        });
+
+        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    // Xử lý sự kiện thông báo xoá thành công:
+    private void showSuccesDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListPromoActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListPromoActivity.this).inflate(
+                R.layout.layout_succes_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText("Xoá khuyến mãi thành công!");
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
     }
 }
