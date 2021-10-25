@@ -206,7 +206,6 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListPromoActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

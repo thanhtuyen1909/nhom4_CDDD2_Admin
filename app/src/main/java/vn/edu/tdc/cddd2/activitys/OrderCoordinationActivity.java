@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,13 +23,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
@@ -85,19 +81,16 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentWillOrderWHM(), tagA).commit();
 
         // Xử lý sự kiện cho thanh bottomnavigationview
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getItemId() == R.id.willorder) {
-                    selectedFragment = new FragmentWillOrderWHM();
-                    tagA = "WillOrderWHM";
-                } else {
-                    selectedFragment = new FragmentWaitShipWHM();
-                    tagA = "WaitShipWHM";
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment, tagA).commit();
-                return true;
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if(item.getItemId() == R.id.willorder) {
+                selectedFragment = new FragmentWillOrderWHM();
+                tagA = "WillOrderWHM";
+            } else {
+                selectedFragment = new FragmentWaitShipWHM();
+                tagA = "WaitShipWHM";
             }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment, tagA).commit();
+            return true;
         });
     }
 
@@ -201,12 +194,12 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         AlertDialog.Builder builder = new AlertDialog.Builder(OrderCoordinationActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(OrderCoordinationActivity.this).inflate(
                 R.layout.layout_error_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText("Xác nhận huỷ?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
@@ -230,12 +223,12 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         AlertDialog.Builder builder = new AlertDialog.Builder(OrderCoordinationActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(OrderCoordinationActivity.this).inflate(
                 R.layout.layout_succes_dialog,
-                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+                findViewById(R.id.layoutDialogContainer)
         );
         builder.setView(view);
-        title = (TextView) view.findViewById(R.id.textTitle);
+        title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
-        mess = (TextView) view.findViewById(R.id.textMessage);
+        mess = view.findViewById(R.id.textMessage);
         mess.setText(message);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 

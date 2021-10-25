@@ -235,7 +235,6 @@ public class DetailPromoCodeActivity extends AppCompatActivity
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(DetailPromoCodeActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

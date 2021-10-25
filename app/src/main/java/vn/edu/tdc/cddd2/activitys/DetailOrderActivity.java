@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -37,9 +36,8 @@ import vn.edu.tdc.cddd2.adapters.Product5Adapter;
 import vn.edu.tdc.cddd2.data_models.Order;
 import vn.edu.tdc.cddd2.data_models.OrderDetail;
 import vn.edu.tdc.cddd2.data_models.Product;
-import vn.edu.tdc.cddd2.data_models.PromoCode;
 
-public class DetailOrderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DetailOrderActivity extends AppCompatActivity {
     // Khai báo biến
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar, txtMaDH, txtCreatedAt, txtStatus, txtNote, txtName, txtPhone, txtTotal;
@@ -66,10 +64,6 @@ public class DetailOrderActivity extends AppCompatActivity implements Navigation
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
         subtitleAppbar.setText(R.string.titleDetaiCTDH);
-        drawerLayout = findViewById(R.id.activity_main_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
@@ -110,16 +104,13 @@ public class DetailOrderActivity extends AppCompatActivity implements Navigation
         btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click phone:
-        txtPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse("tel:" + txtPhone.getText()));
-                if (ActivityCompat.checkSelfPermission(DetailOrderActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                startActivity(intent);
+        txtPhone.setOnClickListener(v -> {
+            intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:" + txtPhone.getText()));
+            if (ActivityCompat.checkSelfPermission(DetailOrderActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                return;
             }
+            startActivity(intent);
         });
 
         //RecycleView
@@ -130,10 +121,6 @@ public class DetailOrderActivity extends AppCompatActivity implements Navigation
         product5Adapter = new Product5Adapter(listProducts, this);
         recyclerView.setAdapter(product5Adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        //NavigationView
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -179,63 +166,5 @@ public class DetailOrderActivity extends AppCompatActivity implements Navigation
 
             }
         });
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.nav_qltk:
-                break;
-            case R.id.nav_lsdh:
-                intent = new Intent(DetailOrderActivity.this, OrderHistoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlhd:
-                intent = new Intent(DetailOrderActivity.this, ListInvoiceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlmgg:
-                intent = new Intent(DetailOrderActivity.this, RevenueStatisticActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qllsp:
-                intent = new Intent(DetailOrderActivity.this, ListRatingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dmk:
-                intent = new Intent(DetailOrderActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_dx:
-                intent = new Intent(DetailOrderActivity.this, LoginActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(DetailOrderActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            default:
-                Toast.makeText(DetailOrderActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 }

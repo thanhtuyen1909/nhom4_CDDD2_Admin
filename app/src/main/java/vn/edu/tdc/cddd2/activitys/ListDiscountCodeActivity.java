@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,10 +56,9 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar, title, mess, filter;
     private DrawerLayout drawerLayout;
-    Handler handler = new Handler();
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
-    private Intent intent;
+    Intent intent;
     SearchView searchView;
     RecyclerView recyclerView;
     private ArrayList<DiscountCode> listDiscountCode;
@@ -104,10 +101,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(v -> {
-            showDialog("add", null);
-
-        });
+        btnAdd.setOnClickListener(v -> showDialog("add", null));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -171,122 +165,128 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     private void createCodeCustomer(String code, String event) {
         DatabaseReference cusRef = db.getReference("Customer");
         DatabaseReference ref = db.getReference("DiscountCode_Customer");
-        if (event.equals("Tất cả")) {
-            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Customer cus = node.getValue(Customer.class);
-                        DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
-                        ref.push().setValue(discus);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        } else if (event.equals("Khách hàng thường")) {
-            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Customer cus = node.getValue(Customer.class);
-                        if (cus.getType_id().equals("Type")) {
+        switch (event) {
+            case "Tất cả":
+                cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
                             DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                             ref.push().setValue(discus);
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
+                break;
+            case "Khách hàng thường":
+                cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Customer cus = node.getValue(Customer.class);
+                            if (cus.getType_id().equals("Type")) {
+                                DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                                ref.push().setValue(discus);
+                            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        } else if (event.equals("Khách hàng Bạc")) {
-            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Customer cus = node.getValue(Customer.class);
-                        if (cus.getType_id().equals("Type1")) {
-                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
-                            ref.push().setValue(discus);
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
+                break;
+            case "Khách hàng Bạc":
+                cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Customer cus = node.getValue(Customer.class);
+                            if (cus.getType_id().equals("Type1")) {
+                                DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                                ref.push().setValue(discus);
+                            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        } else if (event.equals("Khách hàng Vàng")) {
-            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Customer cus = node.getValue(Customer.class);
-                        if (cus.getType_id().equals("Type2")) {
-                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
-                            ref.push().setValue(discus);
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
+                break;
+            case "Khách hàng Vàng":
+                cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Customer cus = node.getValue(Customer.class);
+                            if (cus.getType_id().equals("Type2")) {
+                                DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                                ref.push().setValue(discus);
+                            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        } else if (event.equals("Khách hàng Kim Cương")) {
-            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Customer cus = node.getValue(Customer.class);
-                        if (cus.getType_id().equals("Type3")) {
-                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
-                            ref.push().setValue(discus);
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
+                break;
+            case "Khách hàng Kim Cương":
+                cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Customer cus = node.getValue(Customer.class);
+                            if (cus.getType_id().equals("Type3")) {
+                                DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                                ref.push().setValue(discus);
+                            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        } else {
-            Calendar cal = Calendar.getInstance();
-            int month = cal.get(Calendar.MONTH) + 1;
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
-            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Customer cus = node.getValue(Customer.class);
-                        Date temp = formatter.parse(cus.getDob(), new ParsePosition(0));
-
-                        if (temp.getMonth() + 1 == month) {
-                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
-                            ref.push().setValue(discus);
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                }
+                });
+                break;
+            default:
+                Calendar cal = Calendar.getInstance();
+                int month = cal.get(Calendar.MONTH) + 1;
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+                cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Customer cus = node.getValue(Customer.class);
+                            Date temp = formatter.parse(cus.getDob(), new ParsePosition(0));
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                            if (temp.getMonth() + 1 == month) {
+                                DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                                ref.push().setValue(discus);
+                            }
 
-                }
-            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                break;
         }
     }
 
@@ -379,7 +379,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 check = true;
                 for (DataSnapshot node : snapshot.getChildren()) {
                     DiscountCode temp = node.getValue(DiscountCode.class);
-                    if (temp.getCode() == code) {
+                    if (temp.getCode().equals(code)) {
                         check = false;
                         break;
                     }
@@ -425,20 +425,17 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             spinDisType.setEnabled(false);
         }
 
-        radType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.radTransfee) {
-                    edtValue.setText("");
-                    edtValue.setEnabled(false);
-                } else {
-                    edtValue.setEnabled(true);
-                }
+        radType.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radTransfee) {
+                edtValue.setText("");
+                edtValue.setEnabled(false);
+            } else {
+                edtValue.setEnabled(true);
             }
         });
 
         builder.setPositiveButton(R.string.okay, (dialog, which) -> {
-                if (checkError() == 1) {
+            if (checkError() == 1) {
                 DiscountCode discountCode = new DiscountCode();
                 discountCode.setCode(String.valueOf(edtCode.getText()));
                 discountCode.setValue(Integer.parseInt(String.valueOf(edtValue.getText())));
@@ -451,7 +448,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 discountCode.setEvent(String.valueOf(spinDisType.getSelectedItem()));
                 if (s.equals("add")) {
                     codeRef.push().setValue(discountCode).addOnSuccessListener(unused -> {
-                        createCodeCustomer(discountCode.getCode(),discountCode.getEvent());
+                        createCodeCustomer(discountCode.getCode(), discountCode.getEvent());
                         showSuccesDialog("Lưu mã giảm giá thành công");
                     });
                 } else {
@@ -549,7 +546,6 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListDiscountCodeActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
