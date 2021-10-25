@@ -11,8 +11,13 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,16 +41,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.DiscountCodeAdapter;
+import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.DiscountCode;
+import vn.edu.tdc.cddd2.data_models.DiscountCode_Customer;
 
 public class ListDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar;
+    TextView btnBack, subtitleAppbar, title, mess, filter;
     private DrawerLayout drawerLayout;
     Handler handler = new Handler();
     private ActionBarDrawerToggle drawerToggle;
@@ -55,8 +67,13 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     private ArrayList<DiscountCode> listDiscountCode;
     private DiscountCodeAdapter discountCodeAdapter;
     Button btnAdd;
-    private TextView title,mess,filter;
+    EditText edtCode, edtValue;
+    RadioGroup radType;
+    Spinner spinDisType;
+    int size = 0;
+    boolean check = true;
     private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference codeRef = db.getReference("DiscountCode");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +105,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
 
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(v -> {
-            intent = new Intent(ListDiscountCodeActivity.this, DetailDiscountCodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            intent.putExtra("type","add");
-            startActivity(intent);
+            showDialog("add", null);
+
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -101,26 +116,22 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                listDiscountCode.clear();
                 DatabaseReference codeRef = db.getReference("DiscountCode");
                 codeRef.addChildEventListener(new ChildEventListener() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         DiscountCode code = snapshot.getValue(DiscountCode.class);
-                        if(newText.equals("")){
+                        if (newText.equals("")) {
                             listDiscountCode.add(code);
-                        }else {
-                            if(code.getCode().toUpperCase().trim().contains(newText.toUpperCase().trim())){
+                        } else {
+                            if (code.getCode().toUpperCase().trim().contains(newText.toUpperCase().trim())) {
                                 listDiscountCode.add(code);
                             }
                         }
                         discountCodeAdapter.notifyDataSetChanged();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                filter.setText(discountCodeAdapter.getItemCount() + " mã giảm giá từ " + listDiscountCode.size());
-                            }
-                        }, 200);
+                        filter.setText(discountCodeAdapter.getItemCount() + " mã giảm giá từ " + size);
                     }
 
                     @Override
@@ -151,10 +162,132 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         recyclerView.setHasFixedSize(true);
         listDiscountCode = new ArrayList<>();
         data();
-        discountCodeAdapter = new DiscountCodeAdapter(listDiscountCode,this);
+        discountCodeAdapter = new DiscountCodeAdapter(listDiscountCode, this);
         discountCodeAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(discountCodeAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void createCodeCustomer(String code, String event) {
+        DatabaseReference cusRef = db.getReference("Customer");
+        DatabaseReference ref = db.getReference("DiscountCode_Customer");
+        if (event.equals("Tất cả")) {
+            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Customer cus = node.getValue(Customer.class);
+                        DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                        ref.push().setValue(discus);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else if (event.equals("Khách hàng thường")) {
+            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Customer cus = node.getValue(Customer.class);
+                        if (cus.getType_id().equals("Type")) {
+                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                            ref.push().setValue(discus);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else if (event.equals("Khách hàng Bạc")) {
+            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Customer cus = node.getValue(Customer.class);
+                        if (cus.getType_id().equals("Type1")) {
+                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                            ref.push().setValue(discus);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else if (event.equals("Khách hàng Vàng")) {
+            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Customer cus = node.getValue(Customer.class);
+                        if (cus.getType_id().equals("Type2")) {
+                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                            ref.push().setValue(discus);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else if (event.equals("Khách hàng Kim Cương")) {
+            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Customer cus = node.getValue(Customer.class);
+                        if (cus.getType_id().equals("Type3")) {
+                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                            ref.push().setValue(discus);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            Calendar cal = Calendar.getInstance();
+            int month = cal.get(Calendar.MONTH) + 1;
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+            cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Customer cus = node.getValue(Customer.class);
+                        Date temp = formatter.parse(cus.getDob(), new ParsePosition(0));
+
+                        if (temp.getMonth() + 1 == month) {
+                            DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
+                            ref.push().setValue(discus);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
     }
 
     private DiscountCodeAdapter.ItemClickListener itemClickListener = new DiscountCodeAdapter.ItemClickListener() {
@@ -165,14 +298,11 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
 
         @Override
         public void editProduct(DiscountCode item) {
-            intent = new Intent(ListDiscountCodeActivity.this,DetailDiscountCodeActivity.class);
-            intent.putExtra("item", (Parcelable) item);
-            intent.putExtra("type","update");
-            startActivity(intent);
+            showDialog("update", item);
         }
     };
 
-    private void data(){
+    private void data() {
         listDiscountCode = new ArrayList<>();
         DatabaseReference codeRef = db.getReference("DiscountCode");
         codeRef.addValueEventListener(new ValueEventListener() {
@@ -180,9 +310,10 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listDiscountCode.clear();
-                for(DataSnapshot node : snapshot.getChildren()){
+                for (DataSnapshot node : snapshot.getChildren()) {
                     DiscountCode code = node.getValue(DiscountCode.class);
                     listDiscountCode.add(code);
+                    size++;
                 }
                 discountCodeAdapter.notifyDataSetChanged();
                 filter.setText(discountCodeAdapter.getItemCount() + " mã giảm giá từ " + listDiscountCode.size());
@@ -193,6 +324,189 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
 
             }
         });
+    }
+
+    private int checkError() {
+        if (String.valueOf(edtCode.getText()).equals("")) {
+            showWarningDialog("Mã giảm giá không được để trống");
+            return -1;
+        }
+        checkTrungID(String.valueOf(edtCode.getText()));
+        if (!check) {
+            showWarningDialog("Mã giảm giá không được trùng");
+            if (edtCode.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            edtCode.setText("");
+            return -1;
+        }
+        check = false;
+        for (int i = 0; i < radType.getChildCount(); i++) {
+            RadioButton rad = (RadioButton) radType.getChildAt(i);
+            if ((String.valueOf(rad.getText()).equals("VND") ||
+                    String.valueOf(rad.getText()).equals("%")) &&
+                    rad.isChecked()) {
+                if (String.valueOf(edtValue.getText()).equals("")) {
+                    showWarningDialog("Giá trị mã giảm giá không được trống");
+                    check = true;
+
+                }
+            }
+        }
+        check = false;
+        for (int i = 0; i < radType.getChildCount(); i++) {
+            RadioButton rad = (RadioButton) radType.getChildAt(i);
+            if (rad.isChecked()) {
+                check = true;
+            }
+        }
+
+        if (!check) {
+            showWarningDialog("Vui lòng chọn hình thức giảm giá");
+            return -1;
+        }
+
+        return 1;
+    }
+
+    private void checkTrungID(String code) {
+        check = true;
+        //Check trùng mã sản phẩm
+        DatabaseReference ref = db.getReference("DiscountCode");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                check = true;
+                for (DataSnapshot node : snapshot.getChildren()) {
+                    DiscountCode temp = node.getValue(DiscountCode.class);
+                    if (temp.getCode() == code) {
+                        check = false;
+                        break;
+                    }
+                }
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void showDialog(String s, DiscountCode item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListDiscountCodeActivity.this, R.style.AlertDialog);
+        builder.setTitle(R.string.titleAdd);
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.layout_detail_discountcode, null);
+        edtCode = dialoglayout.findViewById(R.id.edtMGG);
+        edtValue = dialoglayout.findViewById(R.id.edtGiaTri);
+        radType = dialoglayout.findViewById(R.id.radioGroup);
+        spinDisType = dialoglayout.findViewById(R.id.loaiKH);
+
+        if (s.equals("update") && item != null) {
+            edtCode.setText(item.getCode());
+            builder.setTitle(R.string.titleUpdate);
+            edtValue.setText(String.valueOf(item.getValue()));
+            for (int i = 0; i < radType.getChildCount(); i++) {
+                RadioButton rad = (RadioButton) radType.getChildAt(i);
+                if (String.valueOf(rad.getText()).equals(item.getType())) {
+                    rad.setChecked(true);
+                }
+            }
+            for (int i = 0; i < spinDisType.getCount(); i++) {
+                String event = String.valueOf(spinDisType.getItemAtPosition(i));
+                if (event.equals(item.getEvent())) {
+                    spinDisType.setSelection(i);
+                }
+            }
+            edtCode.setEnabled(false);
+            spinDisType.setEnabled(false);
+        }
+
+        radType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radTransfee) {
+                    edtValue.setText("");
+                    edtValue.setEnabled(false);
+                } else {
+                    edtValue.setEnabled(true);
+                }
+            }
+        });
+
+        builder.setPositiveButton(R.string.okay, (dialog, which) -> {
+                if (checkError() == 1) {
+                DiscountCode discountCode = new DiscountCode();
+                discountCode.setCode(String.valueOf(edtCode.getText()));
+                discountCode.setValue(Integer.parseInt(String.valueOf(edtValue.getText())));
+                for (int i = 0; i < radType.getChildCount(); i++) {
+                    RadioButton rad = (RadioButton) radType.getChildAt(i);
+                    if (rad.isChecked()) {
+                        discountCode.setType(String.valueOf(rad.getText()));
+                    }
+                }
+                discountCode.setEvent(String.valueOf(spinDisType.getSelectedItem()));
+                if (s.equals("add")) {
+                    codeRef.push().setValue(discountCode).addOnSuccessListener(unused -> {
+                        createCodeCustomer(discountCode.getCode(),discountCode.getEvent());
+                        showSuccesDialog("Lưu mã giảm giá thành công");
+                    });
+                } else {
+                    db.getReference("DiscountCode").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot node : snapshot.getChildren()) {
+                                DiscountCode code = node.getValue(DiscountCode.class);
+                                if (code.getCode().equals(discountCode.getCode())) {
+                                    codeRef.child(node.getKey()).updateChildren(discountCode.toMap());
+                                }
+                            }
+                            showSuccesDialog("Cập nhật mã giảm giá thành công");
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            }
+            dialog.dismiss();
+        });
+
+        builder.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
+
+        builder.setView(dialoglayout);
+        builder.show();
+    }
+
+    private void showWarningDialog(String notify) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListDiscountCodeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListDiscountCodeActivity.this).inflate(
+                R.layout.layout_warning_dialog,
+                (ConstraintLayout) findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.yes));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+        });
+
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
     }
 
     @Override
@@ -263,7 +577,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             super.onBackPressed();
         }
     }
-    private void showErrorDialog(String notify,String code) {
+
+    private void showErrorDialog(String notify, String code) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListDiscountCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListDiscountCodeActivity.this).inflate(
                 R.layout.layout_error_dialog,
@@ -285,9 +600,9 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    for (DataSnapshot node : snapshot.getChildren()){
+                    for (DataSnapshot node : snapshot.getChildren()) {
                         DiscountCode discountCode = node.getValue(DiscountCode.class);
-                        if(discountCode.getCode().equals(code)){
+                        if (discountCode.getCode().equals(code)) {
                             codeRef.child(node.getKey()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -313,6 +628,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         }
         alertDialog.show();
     }
+
     private void showSuccesDialog(String notify) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListDiscountCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListDiscountCodeActivity.this).inflate(

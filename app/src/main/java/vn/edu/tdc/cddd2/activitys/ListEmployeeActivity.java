@@ -100,11 +100,6 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
     }
 
     private void data() {
-        listEmployees.add(new Employee("NV001", "Nguyễn Văn A", "Nhân viên bán hàng"));
-        listEmployees.add(new Employee("QLK001", "Trương Thị Bình", "Quản ly kho"));
-        listEmployees.add(new Employee("XL001", "La Văn Tiến", "Xử lý đơn hàng"));
-        listEmployees.add(new Employee("GH001", "Nguyễn Bình", "Nhân viên giao hàng"));
-        listEmployees.add(new Employee("QTV001", "Lê Danh", "Quản trị viên"));
     }
 
     private Employee1Adapter.ItemClickListener itemClickListener = new Employee1Adapter.ItemClickListener() {

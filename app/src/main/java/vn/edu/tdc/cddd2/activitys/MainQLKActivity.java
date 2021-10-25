@@ -1,25 +1,32 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import vn.edu.tdc.cddd2.R;
 
 public class MainQLKActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private Button btnQLH, btnQLSP, btnQLLSP, btnDPH, btnQLKM, btnQLMGG, btnDX, btnDMK;
-    private Intent intent;
+    Button btnQLH, btnQLSP, btnQLLSP, btnDPH, btnQLKM, btnQLMGG, btnDX, btnDMK;
+    TextView txtUsername;
+    Intent intent;
+    String username = "", name = "", role = "";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main_1);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+
         // Khởi tạo biến
         btnQLH = findViewById(R.id.btnQLH);
         btnQLLSP = findViewById(R.id.btnQLLSP);
@@ -29,6 +36,11 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
         btnQLMGG = findViewById(R.id.btnQLMGG);
         btnDX = findViewById(R.id.btnLogout);
         btnDMK = findViewById(R.id.btnChangePass);
+        txtUsername = findViewById(R.id.username);
+
+        if(!username.equals("") && !name.equals("") && !role.equals("")){
+            txtUsername.setText(name);
+        }
 
         // Bắt sự kiện xử lý button
         btnQLH.setOnClickListener(this);
@@ -41,6 +53,7 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
         btnDMK.setOnClickListener(this);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -48,36 +61,55 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btnQLSP:
                 intent = new Intent(MainQLKActivity.this, ListProductActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.btnQLH:
                 intent = new Intent(MainQLKActivity.this, ListManuActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.btnQLKM:
                 intent = new Intent(MainQLKActivity.this, ListPromoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.btnQLMGG:
                 intent = new Intent(MainQLKActivity.this, ListDiscountCodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.btnDPH:
                 intent = new Intent(MainQLKActivity.this, OrderCoordinationActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.btnQLLSP:
                 intent = new Intent(MainQLKActivity.this, ListCataActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
                 startActivity(intent);
                 break;
             case R.id.btnChangePass:
                 intent = new Intent(MainQLKActivity.this, ChangePasswordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.btnLogout:

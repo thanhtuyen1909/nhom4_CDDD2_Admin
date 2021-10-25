@@ -44,9 +44,9 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     public void onBindViewHolder(@NonNull EmployeeAdapter.ViewHolder holder, int position) {
         Employee item = listEmployees.get(position);
         holder.im_item.setImageResource(R.drawable.baseline_person_24);
-        holder.tv_name.setText(item.getHoTenNV());
-        holder.tv_manv.setText(item.getMaNV());
-        holder.tv_chucvu.setText(item.getChucVu());
+//        holder.tv_name.setText(item.getHoTenNV());
+//        holder.tv_manv.setText(item.getMaNV());
+//        holder.tv_chucvu.setText(item.getChucVu());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

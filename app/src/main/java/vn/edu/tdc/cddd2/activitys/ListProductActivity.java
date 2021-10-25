@@ -51,7 +51,8 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     // Khai báo biến
     Toolbar toolbar;
     Handler handler = new Handler();
-    TextView btnBack, totalProduct;
+    TextView btnBack, totalProduct, txtName, txtRole, title, mess;
+    String username = "", name = "", role = "";
     SearchView searchView;
     Button btnAdd;
     private Spinner spinCate, spinManu;
@@ -63,14 +64,19 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     private ArrayList<Category> listCate;
     NavigationView navigationView;
     private ProductAdapter proAdapter;
-    private Intent intent;
-    TextView title, mess;
-    private static FirebaseDatabase db = FirebaseDatabase.getInstance("https://cddd2-f1bcd-default-rtdb.asia-southeast1.firebasedatabase.app/");
+    Intent intent;
+    int isFirst = 0, size = 0;
+    private static FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_product);
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,7 +108,8 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                     Category cate = (Category) spinCate.getSelectedItem();
                     String query = String.valueOf(searchView.getQuery());
                     listProduct.clear();
-                    filterProduct(cate.getKey(), manu.getKey(), query, 1);
+                    filterProduct(cate.getKey(), manu.getKey(), query, isFirst);
+                    isFirst++;
                 }, 200);
             }
 
@@ -119,7 +126,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                     Category cate = (Category) spinCate.getSelectedItem();
                     String query = String.valueOf(searchView.getQuery());
                     listProduct.clear();
-                    filterProduct(cate.getKey(), manu.getKey(), query, -1);
+                    filterProduct(cate.getKey(), manu.getKey(), query, isFirst);
                 }, 200);
                 ;
 
@@ -145,6 +152,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        txtName.setText(name);
+        txtRole.setText(role);
+
 
         // Xự kiện searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -160,7 +172,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                     Category cate = (Category) spinCate.getSelectedItem();
                     String query = String.valueOf(searchView.getQuery());
                     listProduct.clear();
-                    filterProduct(cate.getKey(), manu.getKey(), query, -1);
+                    filterProduct(cate.getKey(), manu.getKey(), query, isFirst);
                 }, 200);
 
                 return false;
@@ -178,9 +190,10 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 product.setKey(snapshot.getKey());
                 if (product != null) {
                     if (category_id.equals("") && manu_id.equals("") && query.equals("")) {
-                        if (isFirst == 1) {
+                        if(isFirst >= 1){
                             listProduct.add(product);
                         }
+
                     } else {
                         if (!category_id.equals("")) {
                             if (!manu_id.equals("")) {
@@ -231,6 +244,12 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                         }
                     }
                     proAdapter.notifyDataSetChanged();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            totalProduct.setText(proAdapter.getItemCount() + " sản phẩm từ " + size);
+                        }
+                    }, 200);
                 }
             }
 
@@ -267,14 +286,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listProduct.clear();
                 for (DataSnapshot node : snapshot.getChildren()) {
                     Product product = node.getValue(Product.class);
                     product.setKey(node.getKey());
-                    listProduct.add(product);
+                    size++;
                 }
-                proAdapter.notifyDataSetChanged();
-                totalProduct.setText(proAdapter.getItemCount() + " sản phẩm từ " + listProduct.size());
             }
 
             @Override
