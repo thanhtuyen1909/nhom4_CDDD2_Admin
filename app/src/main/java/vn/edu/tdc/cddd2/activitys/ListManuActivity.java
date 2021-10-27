@@ -230,6 +230,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_dx:
                 intent = new Intent(ListManuActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlh:
                 break;

@@ -239,6 +239,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
             case R.id.nav_dx:
                 intent = new Intent(OrderCoordinationActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(OrderCoordinationActivity.this, ListManuActivity.class);

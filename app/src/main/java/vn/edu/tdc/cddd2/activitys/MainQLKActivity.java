@@ -18,14 +18,15 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
     TextView txtUsername;
     Intent intent;
     String username = "", name = "", role = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_main_1);
         intent = getIntent();
         username = intent.getStringExtra("username");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        setContentView(R.layout.layout_main_1);
 
         // Khởi tạo biến
         btnQLH = findViewById(R.id.btnQLH);
@@ -38,7 +39,7 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
         btnDMK = findViewById(R.id.btnChangePass);
         txtUsername = findViewById(R.id.username);
 
-        if(!username.equals("") && !name.equals("") && !role.equals("")){
+        if (!username.equals("") && !name.equals("") && !role.equals("")) {
             txtUsername.setText(name);
         }
 
@@ -114,6 +115,7 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btnLogout:
                 intent = new Intent(MainQLKActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(MainQLKActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

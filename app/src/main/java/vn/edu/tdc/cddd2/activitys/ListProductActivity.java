@@ -407,6 +407,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             case R.id.nav_dx:
                 intent = new Intent(ListProductActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListProductActivity.this, ListManuActivity.class);

@@ -236,6 +236,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             case R.id.nav_dx:
                 intent = new Intent(ListPromoActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListPromoActivity.this, ListManuActivity.class);
