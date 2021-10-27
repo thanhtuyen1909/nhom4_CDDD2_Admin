@@ -24,11 +24,6 @@ import vn.edu.tdc.cddd2.data_models.Product;
 public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHolder> {
     ArrayList<Product> listProducts;
     private Context context;
-    Product5Adapter.ItemClickListener itemClickListener;
-
-    public void setItemClickListener(Product5Adapter.ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
 
     public Product5Adapter(ArrayList<Product> listProducts, Context context) {
         this.listProducts = listProducts;
@@ -51,13 +46,6 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
         holder.tv_name.setText(item.getName());
         holder.tv_amount.setText(formatPrice(item.getPrice()) + " x " + String.valueOf(item.getQuantity()));
-        holder.onClickListener = v -> {
-            if(itemClickListener != null) {
-                itemClickListener.getInfor(item);
-            } else {
-                return;
-            }
-        };
     }
 
     @Override
@@ -65,7 +53,7 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
         return listProducts.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView im_item ;
         TextView tv_name, tv_amount ;
         View.OnClickListener onClickListener;
@@ -75,19 +63,7 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
             im_item = itemView.findViewById(R.id.img);
             tv_name = itemView.findViewById(R.id.txt_name);
             tv_amount = itemView.findViewById(R.id.txt_amount);
-            im_item.setOnClickListener(this);
         }
-
-        @Override
-        public void onClick(View v) {
-            if(onClickListener != null) {
-                onClickListener.onClick(v);
-            }
-        }
-    }
-
-    public interface ItemClickListener {
-        void getInfor(Product item);
     }
 
     private String formatPrice(int price) {

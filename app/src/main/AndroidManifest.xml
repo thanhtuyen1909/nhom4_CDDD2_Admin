@@ -38,10 +38,7 @@
         <activity
             android:name=".activitys.LoginActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity
             android:name=".activitys.ListDiscountCodeActivity"
@@ -60,7 +57,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.OrderCoordinationActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!-- Salesman -->
         <activity
             android:name=".activitys.ListProductSMActivity"

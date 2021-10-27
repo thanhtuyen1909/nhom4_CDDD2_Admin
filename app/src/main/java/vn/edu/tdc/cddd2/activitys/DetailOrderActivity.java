@@ -136,6 +136,7 @@ public class DetailOrderActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for(DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                     Product product = snapshot1.getValue(Product.class);
+                                    product.setPrice(orderDetail.getPrice());
                                     product.setKey(snapshot1.getKey());
                                     product.setQuantity(orderDetail.getAmount());
                                     if(product.getKey().equals(orderDetail.getProductID())) {

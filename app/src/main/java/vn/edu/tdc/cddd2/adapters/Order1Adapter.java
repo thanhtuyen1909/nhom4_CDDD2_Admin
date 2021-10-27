@@ -1,6 +1,7 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +64,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot node : dataSnapshot.getChildren()) {
                     ShipArea ship = node.getValue(ShipArea.class);
-                    if(item.getShipperID().equals(ship.getEmployeeID())) {
+                    if (item.getShipperID().equals(ship.getEmployeeID())) {
                         emRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -85,29 +86,91 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
 
             }
         });
+        int stt = item.getStatus();
         holder.onClickListener = v -> {
+//            switch (v.getId()) {
+//                case R.id.checkhuygiao:
+//                    if (holder.rb_huygiao.isSelected()) {
+//                        Log.d("TAG", "onBindViewHolder: ");
+//                        holder.rb_huygiao.setSelected(false);
+//                        holder.rb_huygiao.setChecked(false);
+//                    } else {
+//                        Log.d("TAG", "onBindViewHolder1: ");
+//                        holder.rb_huygiao.setSelected(true);
+//                        holder.rb_huygiao.setChecked(true);
+//                    }
+//                    break;
+//            }
             if (itemClickListener != null) {
-                if(v == holder.cb_giaohang && ((CheckBox) v).isChecked()) {
-                    item.setStatus(4);
-                    holder.cb_giaohang.setEnabled(false);
-                } else if (v == holder.cb_hoanthanh && ((CheckBox) v).isChecked()) {
-                    item.setStatus(8);
-                } else if (v == holder.rb_huygiao && ((RadioButton) v).isChecked()) {
-                    item.setStatus(2);
-                    item.setShipperID("null");
-                } else if (v == holder.rb_huynhan && ((RadioButton) v).isChecked()) {
-                    item.setStatus(0);
-                } else {
+                if(v == holder.cb_giaohang) {
+                    if(((CheckBox) v).isChecked()) {
+                        item.setStatus(4);
+                    }
+                    else {
+                        item.setStatus(stt);
+                    }
+                }
+                else if (v == holder.cb_hoanthanh) {
+                    if(((CheckBox) v).isChecked()) {
+                        item.setStatus(8);
+                        holder.rb_huygiao.setEnabled(false);
+                        holder.rb_huynhan.setEnabled(false);
+                    }
+                    else {
+                        item.setStatus(stt);
+                        holder.rb_huynhan.setEnabled(true);
+                        holder.rb_huygiao.setEnabled(true);
+                    }
+                }
+                else if (v == holder.rb_huygiao) {
+                    if(v.isSelected()) {
+                        item.setStatus(stt);
+                        holder.rb_huygiao.setSelected(false);
+                        holder.rb_huygiao.setChecked(false);
+                        if(stt >= 5) {
+                            holder.rb_huynhan.setEnabled(true);
+                            holder.cb_hoanthanh.setEnabled(true);
+                        }
+                    }
+                    else {
+                        item.setStatus(2);
+                        item.setShipperID("null");
+                        holder.rb_huygiao.setSelected(true);
+                        holder.rb_huygiao.setChecked(true);
+                        if(stt >= 5) {
+                            holder.rb_huynhan.setEnabled(false);
+                            holder.cb_hoanthanh.setEnabled(false);
+                        }
+                    }
+                }
+                else if (v == holder.rb_huynhan) {
+                    if(v.isSelected()) {
+                        item.setStatus(stt);
+                        holder.cb_hoanthanh.setEnabled(true);
+                        holder.rb_huygiao.setEnabled(true);
+                        holder.rb_huynhan.setSelected(false);
+                        holder.rb_huynhan.setChecked(false);
+                    } else {
+                        item.setStatus(0);
+                        holder.cb_hoanthanh.setEnabled(false);
+                        holder.rb_huygiao.setEnabled(false);
+                        holder.rb_huynhan.setSelected(true);
+                        holder.rb_huynhan.setChecked(true);
+                    }
+                }
+                else if(v == holder.im_detail) {
                     itemClickListener.getInfor(item);
                 }
-            } else {
+            }
+            else {
                 return;
             }
         };
-        if(item.getStatus() == 4) {
+        if (item.getStatus() == 4) {
             holder.cb_giaohang.setChecked(true);
+            holder.cb_giaohang.setEnabled(false);
         }
-        if(item.getStatus() == 5) {
+        if (item.getStatus() == 5) {
             holder.cb_giaohang.setChecked(true);
             holder.cb_giaohang.setEnabled(false);
             holder.cb_hoanthanh.setEnabled(true);

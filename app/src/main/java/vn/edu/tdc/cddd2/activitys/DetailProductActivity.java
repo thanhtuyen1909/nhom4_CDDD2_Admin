@@ -196,7 +196,7 @@ public class DetailProductActivity extends AppCompatActivity {
                             @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     listProduct.add(product);
                                     proAdapter.notifyDataSetChanged();
                                     clear();
@@ -260,8 +260,8 @@ public class DetailProductActivity extends AppCompatActivity {
             return -1;
         }
         //Check số lượng sản phẩm < 0
-        if (Integer.parseInt(String.valueOf(productQuantity.getText())) < 0) {
-            showWarningDialog("Số lượng sản phẩm phải lớn hơn hoặc bằng 0!");
+        if (Integer.parseInt(String.valueOf(productQuantity.getText())) <= 0) {
+            showWarningDialog("Số lượng sản phẩm phải lớn hơn 0!");
             if (productQuantity.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -276,7 +276,7 @@ public class DetailProductActivity extends AppCompatActivity {
             return -1;
         }
         //Check giá nhập sản phẩm < 0
-        if (Integer.parseInt(String.valueOf(productImportPrice.getText())) < 0) {
+        if (Integer.parseInt(String.valueOf(productImportPrice.getText())) <= 0) {
             showWarningDialog("Giá nhập sản phẩm phải lớn hơn 0!");
             if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -292,7 +292,7 @@ public class DetailProductActivity extends AppCompatActivity {
             return -1;
         }
         //Check giá bản < giá nhập
-        if (Integer.parseInt(String.valueOf(productImportPrice.getText())) > Integer.parseInt(String.valueOf(productImportPrice.getText()))) {
+        if (Integer.parseInt(String.valueOf(productImportPrice.getText())) >= Integer.parseInt(String.valueOf(productPrice.getText()))) {
             showWarningDialog("Giá bán sản phẩm phải lớn hơn giá nhập!");
             if (productImportPrice.requestFocus()) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -314,7 +314,7 @@ public class DetailProductActivity extends AppCompatActivity {
                     Product temp = node.getValue(Product.class);
                     if (temp.getId().equals(id) && temp.getStatus() != -1) {
                         check = false;
-                        showWarningDialog("Mã sản phẩm không được trùng!");
+                        showWarningDialog("Mã sản phẩm đã tồn tại!");
                         if (productID.requestFocus()) {
                             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                         }
@@ -333,7 +333,7 @@ public class DetailProductActivity extends AppCompatActivity {
 
         for (Product product : listProduct) {
             if (product.getId().equals(id)) {
-                showWarningDialog("Mã sản phẩm không được trùng!");
+                showWarningDialog("Mã sản phẩm đã tồn tại!");
                 if (productID.requestFocus()) {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 }
@@ -342,7 +342,6 @@ public class DetailProductActivity extends AppCompatActivity {
                 break;
             }
         }
-
     }
 
     @SuppressLint("NewApi")

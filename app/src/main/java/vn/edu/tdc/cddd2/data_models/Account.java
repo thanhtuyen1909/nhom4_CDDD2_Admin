@@ -8,7 +8,6 @@ public class Account {
     private String status;
     private String id;
 
-
     //Get - set
     public String getId() {
         return id;
@@ -17,6 +16,7 @@ public class Account {
     public void setId(String id) {
         this.id = id;
     }
+
     public String getUsername() {
         return username;
     }

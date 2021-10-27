@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,8 +26,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
@@ -45,6 +50,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
     DatabaseReference promoRef;
     StorageReference imageRef = null;
     String key = null, name = null, image = null, startDate = null, endDate = null, username = "";
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,9 +103,42 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
         edtEndDate.setOnClickListener(this);
     }
 
+    public int checkError() {
+        name = edtName.getText().toString();
+        startDate = edtStartDate.getText().toString();
+        endDate = edtEndDate.getText().toString();
+        Date sdate = sdf.parse(startDate, new ParsePosition(0));
+        Date edate = sdf.parse(endDate, new ParsePosition(0));
+        Date now = new Date();
+        //Check chưa chọn image
+        if (filePath == null) {
+            showWarningDialog("Vui lòng chọn ảnh cho sản phẩm!");
+            return -1;
+        }
+        //Check tên khuyến mãi trống
+        if (name.equals("")) {
+            showWarningDialog("Tên khuyến mãi không được để trống!");
+            if (edtName.requestFocus()) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            return -1;
+        }
+        //Check ngày
+        if (sdate.before(now)) {
+            showWarningDialog("Ngày bắt đầu phải lớn hơn hoặc bằng ngày hiện tại!");
+            return -1;
+        }
+        if (edate.before(sdate)) {
+            showWarningDialog("Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!");
+            return -1;
+        }
+
+        return 1;
+    }
+
     private void showDatePickerDialog(View v) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
-            date = dayOfMonth + "/" + (month + 1) + "/" + year;
+            date = (dayOfMonth + 1) + "/" + (month + 1) + "/" + year;
             if (v.getId() == R.id.edtNgayBD) {
                 edtStartDate.setText(date);
             } else edtEndDate.setText(date);
@@ -111,21 +150,29 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            filePath = data.getData();
+            Picasso.get().load(filePath).into(img);
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         if (v == btnSave) {
             name = edtName.getText().toString();
             startDate = edtStartDate.getText().toString();
             endDate = edtEndDate.getText().toString();
-            //upload ảnh
-            if (filePath != null) {
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
-                        .child(name + "." + getFileExtension(filePath));
-                storageRef.putFile(filePath);
-                image = name + "." + getFileExtension(filePath);
-            }
-            if (name == null) {
-                showWarningDialog();
-            } else {
+            if(checkError() == 1) {
+                //upload ảnh
+                if (filePath != null) {
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
+                            .child(name + "." + getFileExtension(filePath));
+                    storageRef.putFile(filePath);
+                    image = name + "." + getFileExtension(filePath);
+                }
                 PromoCode promoCode = new PromoCode();
                 promoCode.setName(name);
                 promoCode.setStartDate(startDate);
@@ -157,7 +204,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
         return mimeTypeMap.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void showWarningDialog() {
+    private void showWarningDialog(String s) {
         AlertDialog.Builder builder = new AlertDialog.Builder(InformationPromoCodeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(InformationPromoCodeActivity.this).inflate(
                 R.layout.layout_warning_dialog,
@@ -167,7 +214,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
         title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
         mess = view.findViewById(R.id.textMessage);
-        mess.setText("Tên không được để trống!");
+        mess.setText(s);
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
         final AlertDialog alertDialog = builder.create();
