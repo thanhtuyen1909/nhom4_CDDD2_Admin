@@ -40,6 +40,6 @@ public class ShipArea {
 
     @Override
     public String toString() {
-        return shipperName+" - "+areaID;
+        return shipperName+ " - " + areaID;
     }
 }

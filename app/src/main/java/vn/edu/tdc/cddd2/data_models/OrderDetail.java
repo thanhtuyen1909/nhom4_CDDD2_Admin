@@ -5,7 +5,7 @@ public class OrderDetail {
     private String orderID;
     private int amount;
     private String productID;
-    private int totalPrice;
+    private int price;
 
     // Get - set
     public String getOrderID() {
@@ -32,22 +32,22 @@ public class OrderDetail {
         this.productID = productID;
     }
 
-    public int getTotalPrice() {
-        return totalPrice;
+    public int getPrice() {
+        return price;
     }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     // Contructors
     public OrderDetail() {
     }
 
-    public OrderDetail(String orderID, int amount, String productID, int totalPrice) {
+    public OrderDetail(String orderID, int amount, String productID, int price) {
         this.orderID = orderID;
         this.amount = amount;
         this.productID = productID;
-        this.totalPrice = totalPrice;
+        this.price = price;
     }
 }

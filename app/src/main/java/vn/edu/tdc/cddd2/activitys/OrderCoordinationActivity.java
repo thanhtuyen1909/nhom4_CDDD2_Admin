@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +21,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -34,6 +36,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.adapters.AreaAdapter;
+import vn.edu.tdc.cddd2.data_models.Area;
 import vn.edu.tdc.cddd2.data_models.Order;
 import vn.edu.tdc.cddd2.data_models.OrderDetail;
 import vn.edu.tdc.cddd2.data_models.Product;
@@ -43,6 +47,8 @@ import vn.edu.tdc.cddd2.fragments.FragmentWillOrderWHM;
 public class OrderCoordinationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     // Khai báo biến:
     BottomNavigationView bottomNavigationView;
+    ImageView img_help;
+    float dx, dy;
     Fragment selectedFragment = null;
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, btnCancel, title, mess, txtName, txtRole;
@@ -53,10 +59,15 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     Intent intent;
     String tagA = "WillOrderWHM";
     ArrayList<Order> listOrder;
+    ArrayList<Area> listArea;
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
     DatabaseReference orderDetailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
     DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
+    DatabaseReference areaRef = FirebaseDatabase.getInstance().getReference("Area");
 
+    private GestureDetector gestureDetector;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +99,65 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         btnSave = findViewById(R.id.txtSave);
         btnCancel = findViewById(R.id.txtCancel);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        gestureDetector = new GestureDetector(this, new SingleTapConfirm());
+        img_help = findViewById(R.id.img_help);
+        img_help.setOnClickListener(this);
+
+        img_help.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (gestureDetector.onTouchEvent(event)) {
+                    // show dialog:
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(OrderCoordinationActivity.this);
+                    View customView = LayoutInflater.from(OrderCoordinationActivity.this).inflate(R.layout.layout_detail_area, null);
+                    dialog.setView(customView);
+                    listArea = new ArrayList<>();
+                    ListView listView = customView.findViewById(R.id.listarea);
+                    AreaAdapter adapter = new AreaAdapter(OrderCoordinationActivity.this, listArea);
+                    listView.setAdapter(adapter);
+                    // get data:
+                    areaRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            listArea.clear();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Area area = new Area(snapshot.getKey(), snapshot.child("area").getValue(String.class));
+                                listArea.add(area);
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    final AlertDialog alertDialog = dialog.create();
+
+                    if (alertDialog.getWindow() != null) {
+                        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+                    }
+                    alertDialog.show();
+                    return true;
+                } else {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            dx = v.getX() - event.getRawX();
+                            dy = v.getY() - event.getRawY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            v.animate()
+                                    .x(event.getRawX() + dx)
+                                    .y(event.getRawY() + (dy - v.getWidth()))
+                                    .setDuration(0)
+                                    .start();
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(this);
@@ -99,7 +169,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
 
         // Xử lý sự kiện cho thanh bottomnavigationview
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            if(item.getItemId() == R.id.willorder) {
+            if (item.getItemId() == R.id.willorder) {
                 selectedFragment = new FragmentWillOrderWHM();
                 tagA = "WillOrderWHM";
             } else {
@@ -195,33 +265,39 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         }
     }
 
+    private class SingleTapConfirm extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapUp(MotionEvent event) {
+            return true;
+        }
+    }
+
     @Override
     public void onClick(View v) {
-        if(v == btnCancel) {
+        if (v == btnCancel) {
             showErrorDialog();
         } else {
             listOrder = new ArrayList<>();
-            FragmentWaitShipWHM fragmentWaitShipWHM = (FragmentWaitShipWHM)getSupportFragmentManager().findFragmentByTag("WaitShipWHM");
-            FragmentWillOrderWHM fragmentWillOrderWHM = (FragmentWillOrderWHM)getSupportFragmentManager().findFragmentByTag("WillOrderWHM");
-            if(fragmentWaitShipWHM != null && fragmentWaitShipWHM.isVisible()) {
+            FragmentWaitShipWHM fragmentWaitShipWHM = (FragmentWaitShipWHM) getSupportFragmentManager().findFragmentByTag("WaitShipWHM");
+            FragmentWillOrderWHM fragmentWillOrderWHM = (FragmentWillOrderWHM) getSupportFragmentManager().findFragmentByTag("WillOrderWHM");
+            if (fragmentWaitShipWHM != null && fragmentWaitShipWHM.isVisible()) {
                 listOrder = fragmentWaitShipWHM.getList();
-            }
-            else {
+            } else {
                 listOrder = fragmentWillOrderWHM.getList();
             }
             for (Order order : listOrder) {
-                if(order.getStatus() == 2 && !order.getShipperID().equals("null")) {
+                if (order.getStatus() == 2 && !order.getShipperID().equals("null")) {
                     order.setStatus(3);
                     orderRef.child(order.getOrderID()).setValue(order);
                 } else {
                     orderRef.child(order.getOrderID()).setValue(order);
-                    if(order.getStatus() == 8) {
+                    if (order.getStatus() == 8) {
                         orderDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     OrderDetail orderDetail = snapshot.getValue(OrderDetail.class);
-                                    if(order.getOrderID().equals(orderDetail.getOrderID())) {
+                                    if (order.getOrderID().equals(orderDetail.getOrderID())) {
                                         proRef.child(orderDetail.getProductID()).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -229,7 +305,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                                                 int sold = product.getSold() + orderDetail.getAmount();
                                                 int quantity = product.getQuantity() - orderDetail.getAmount();
                                                 proRef.child(orderDetail.getProductID()).child("quantity").setValue(quantity);
-                                                proRef.child(orderDetail.getProductID()).child("sold").setValue(sold );
+                                                proRef.child(orderDetail.getProductID()).child("sold").setValue(sold);
                                             }
 
                                             @Override
