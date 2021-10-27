@@ -575,6 +575,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             case R.id.nav_dx:
                 intent = new Intent(ListDiscountCodeActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListDiscountCodeActivity.this, ListManuActivity.class);

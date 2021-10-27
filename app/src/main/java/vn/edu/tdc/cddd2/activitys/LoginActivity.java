@@ -88,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
                                                         startActivity(intent);
+                                                        finish();
                                                         break;
                                                     case 3:
                                                         intent = new Intent(LoginActivity.this, ListProductSMActivity.class);
@@ -118,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         startActivity(intent);
                                                         break;
                                                     default:
-                                                        ;
+                                                        break;
                                                 }
                                                 break;
                                             }

@@ -326,6 +326,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_dx:
                 intent = new Intent(ListCateActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListCateActivity.this, ListManuActivity.class);
