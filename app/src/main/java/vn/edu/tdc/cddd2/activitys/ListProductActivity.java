@@ -91,7 +91,14 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         spinCate = findViewById(R.id.spinner_cata);
         spinManu = findViewById(R.id.spinner_manu);
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            intent = new Intent(ListProductActivity.this, MainQLKActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            startActivity(intent);
+            finish();
+        });
 
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(v -> {

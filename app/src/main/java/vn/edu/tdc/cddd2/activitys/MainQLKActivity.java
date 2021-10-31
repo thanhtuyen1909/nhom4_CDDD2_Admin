@@ -61,51 +61,51 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
         switch (id) {
             case R.id.btnQLSP:
                 intent = new Intent(MainQLKActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.btnQLH:
                 intent = new Intent(MainQLKActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.btnQLKM:
                 intent = new Intent(MainQLKActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.btnQLMGG:
                 intent = new Intent(MainQLKActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.btnDPH:
                 intent = new Intent(MainQLKActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.btnQLLSP:
                 intent = new Intent(MainQLKActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.btnChangePass:
                 intent = new Intent(MainQLKActivity.this, ChangePasswordActivity.class);

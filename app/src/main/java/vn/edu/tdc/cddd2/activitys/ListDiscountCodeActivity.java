@@ -108,7 +108,14 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         listDiscountCode = new ArrayList<>();
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            intent = new Intent(ListDiscountCodeActivity.this, MainQLKActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            startActivity(intent);
+            finish();
+        });
 
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(v -> showDialog("add", null));
