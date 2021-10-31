@@ -18,7 +18,7 @@ import vn.edu.tdc.cddd2.data_models.Order;
 
 public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder> {
     ArrayList<Order> listOrder;
-    private Context context;
+    Context context;
     Order2Adapter.ItemClickListener itemClickListener;
 
     public void setItemClickListener(Order2Adapter.ItemClickListener itemClickListener) {

@@ -1,16 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -29,9 +18,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -101,6 +99,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             intent.putExtra("username", username);
             startActivity(intent);
         });
+
         spinCate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -175,7 +174,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                     listProduct.clear();
                     filterProduct(cate.getKey(), manu.getKey(), query, isFirst);
                 }, 200);
-                return false;
+                return true;
             }
         });
     }
@@ -186,11 +185,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listProduct.clear();
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Product product = snapshot.getValue(Product.class);
                     product.setKey(snapshot.getKey());
                     if (product != null) {
-                        if(product.getStatus() != -1) {
+                        if (product.getStatus() != -1) {
                             if (category_id.equals("") && manu_id.equals("") && query.equals("")) {
                                 if (isFirst >= 1) {
                                     listProduct.add(product);
@@ -278,7 +277,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 for (DataSnapshot node : snapshot.getChildren()) {
                     Product product = node.getValue(Product.class);
                     product.setKey(node.getKey());
-                    if(product.getStatus() != -1) {
+                    if (product.getStatus() != -1) {
                         listProduct.add(product);
                         size++;
                     }
@@ -369,35 +368,35 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListProductActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListProductActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListProductActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListProductActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListProductActivity.this, ChangePasswordActivity.class);
@@ -411,11 +410,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListProductActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListProductActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

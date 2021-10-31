@@ -286,35 +286,35 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListCateActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListCateActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListCateActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListCateActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qllsp:
                 break;
@@ -330,11 +330,11 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListCateActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListCateActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

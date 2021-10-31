@@ -1,11 +1,6 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,10 +19,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
@@ -83,8 +74,9 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
 
                 }
             });
-            holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
+            holder.tv_amount.setText("Số lượng: " + item.getQuantity());
         });
+
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
                 itemClickListener.getInfor(item.getId());
@@ -103,6 +95,7 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
         ImageView im_item, im_delete;
         TextView tv_name, tv_price, tv_amount, tv_manu;
         View.OnClickListener onClickListener;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             im_item = itemView.findViewById(R.id.img);
@@ -127,7 +120,14 @@ public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHo
     }
 
     private String formatPrice(int price) {
-        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
-                .format(price);
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 }

@@ -1,21 +1,15 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,10 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
@@ -34,7 +27,7 @@ import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
     ArrayList<Product> listProducts, list;
-    private Context context;
+    Context context;
     ItemClickListener itemClickListener;
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
@@ -60,15 +53,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product item = listProducts.get(position);
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        final long ONE_MEGABYTE = 1024 * 1024;
         StorageReference imageRef = storage.getReference("images/products/"+item.getName()+"/"+item.getImage());
-        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                holder.im_item.setImageBitmap(Bitmap.createScaledBitmap(bmp,  holder.im_item.getWidth(),  holder.im_item.getHeight(), false));
-            }
-        });
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).fit().into(holder.im_item));
 
         holder.tv_name.setText(item.getName());
         holder.tv_price.setText("Giá: " + formatPrice(item.getPrice()));
@@ -90,17 +76,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             }
         });
         holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(itemClickListener != null) {
-                    if (v == holder.im_delete) {
-                        itemClickListener.deleteProduct(item);
-                    } else itemClickListener.editProduct(item);
+        holder.onClickListener = v -> {
+            if(itemClickListener != null) {
+                if (v == holder.im_delete) {
+                    itemClickListener.deleteProduct(item);
+                } else itemClickListener.editProduct(item);
 
-                } else {
-                    return;
-                }
+            } else {
+                return;
             }
         };
     }
@@ -144,7 +127,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     private String formatPrice(int price) {
-        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
-                .format(price);
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 }

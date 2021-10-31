@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -18,7 +19,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 
 public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> implements Filterable {
@@ -49,7 +49,7 @@ public class ManuAdapter extends RecyclerView.Adapter<ManuAdapter.ViewHolder> im
     public void onBindViewHolder(@NonNull ManuAdapter.ViewHolder holder, int position) {
         Manufacture item = listManus.get(position);
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/manufactures/" + item.getImage());
-        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).fit().into(holder.im_item));
         holder.tv_name.setText(item.getName());
         holder.onClickListener = v -> {
             if (itemClickListener != null) {

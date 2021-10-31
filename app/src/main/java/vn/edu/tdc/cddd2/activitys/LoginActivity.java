@@ -79,8 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
                                                         startActivity(intent);
-                                                        break;
-                                                    case 1:
+                                                        finish();
                                                         break;
                                                     case 2:
                                                         intent = new Intent(LoginActivity.this, MainQLKActivity.class);
@@ -96,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
                                                         startActivity(intent);
+                                                        finish();
                                                         break;
                                                     case 4:
                                                         intent = new Intent(LoginActivity.this, OrderProcessActivity.class);
@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
                                                         startActivity(intent);
+                                                        finish();
                                                         break;
                                                     case 5:
                                                         intent = new Intent(LoginActivity.this, AttendanceActivity.class);
@@ -110,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
                                                         startActivity(intent);
+                                                        finish();
                                                         break;
                                                     case 6:
                                                         intent = new Intent(LoginActivity.this, ShipProcessActivity.class);
@@ -117,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
                                                         startActivity(intent);
+                                                        finish();
                                                         break;
                                                     default:
                                                         break;

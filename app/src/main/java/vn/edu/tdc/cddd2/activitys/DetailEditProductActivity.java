@@ -225,7 +225,6 @@ public class DetailEditProductActivity extends AppCompatActivity implements View
 
             }
         });
-
         refCate.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -255,8 +254,8 @@ public class DetailEditProductActivity extends AppCompatActivity implements View
         productName.setText(item.getName().split("- ")[0].trim());
         productDescription.setText(item.getDescription());
         productQuantity.setText("" + item.getQuantity());
-        productImportPrice.setText("" + item.getImport_price());
-        productPrice.setText("" + item.getPrice());
+        productImportPrice.setText("" + formatPrice(item.getImport_price()));
+        productPrice.setText("" + formatPrice(item.getPrice()));
         String[] list = item.getName().split("- ");
         if (list.length == 1) {
             spinColor.setSelection(0);
@@ -427,6 +426,18 @@ public class DetailEditProductActivity extends AppCompatActivity implements View
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
+    }
+
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 }
 

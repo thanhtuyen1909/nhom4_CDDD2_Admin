@@ -167,7 +167,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         public void editManufacture(Manufacture item) {
             intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
             intent.putExtra("to", "ListManu");
-            intent.putExtra("itemManu", (Parcelable) item);
+            intent.putExtra("itemManu", item);
             startActivity(intent);
         }
     };
@@ -184,43 +184,43 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListManuActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListManuActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListManuActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListManuActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListManuActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListManuActivity.this, ChangePasswordActivity.class);
