@@ -204,6 +204,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements View.O
                 dp1.setProductID(dp.getProductID());
                 promoDetailRef.push().setValue(dp1);
             }
+
             showSuccesDialog("Cập nhật chi tiết khuyến mãi thành công!");
         }
         else if (v == btnAdd) {

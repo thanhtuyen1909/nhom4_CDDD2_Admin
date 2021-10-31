@@ -1,45 +1,38 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Customer {
-    private String id;
-    private String name;
-    private String image;
-    private String phone;
-    private String dob;
-    private String type_id;
+    private String key;
+    private String accountID;
     private String created_at;
+    private String dob;
+    private String image;
+    private String name;
     private String status;
+    private String type_id;
+    private String email;
 
-    public String getId() {
-        return id;
+    public String getKey() {
+        return key;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public String getName() {
-        return name;
+    public String getAccountID() {
+        return accountID;
     }
 
-    public String getImage() {
-        return image;
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 
     public String getDob() {
@@ -50,12 +43,20 @@ public class Customer {
         this.dob = dob;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public String getImage() {
+        return image;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getStatus() {
@@ -74,18 +75,25 @@ public class Customer {
         this.type_id = type_id;
     }
 
-    public Customer(String id, String name, String image, String phone, String dob, String type_id, String created_at, String status) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
-        this.phone = phone;
-        this.dob = dob;
-        this.type_id = type_id;
-        this.created_at = created_at;
-        this.status = status;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Customer() {
+    }
+
+    public Customer(String accountID, String created_at, String dob, String image, String name, String status, String type_id) {
+        this.accountID = accountID;
+        this.created_at = created_at;
+        this.dob = dob;
+        this.image = image;
+        this.name = name;
+        this.status = status;
+        this.type_id = type_id;
     }
 
     @Override
