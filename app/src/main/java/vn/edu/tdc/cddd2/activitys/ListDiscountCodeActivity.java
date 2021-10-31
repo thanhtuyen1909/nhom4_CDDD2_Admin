@@ -540,6 +540,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListDiscountCodeActivity.this, ListPromoActivity.class);
@@ -548,6 +549,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListDiscountCodeActivity.this, OrderCoordinationActivity.class);
@@ -556,6 +558,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlmgg:
                 break;
@@ -566,11 +569,13 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListDiscountCodeActivity.this, ChangePasswordActivity.class);
                 intent.putExtra("username", username);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ListDiscountCodeActivity.this, LoginActivity.class);
@@ -584,6 +589,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListDiscountCodeActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

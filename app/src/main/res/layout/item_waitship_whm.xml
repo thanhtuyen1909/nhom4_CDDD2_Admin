@@ -85,6 +85,7 @@
             android:text="Hoàn thành" />
 
         <RadioGroup
+            android:id="@+id/group"
             android:layout_below="@+id/txt_nguoigiao"
             android:layout_toEndOf="@+id/checkhoanthanh"
             android:background="@drawable/rounded_border_edittext"

@@ -64,6 +64,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     DatabaseReference orderDetailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
     DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
     DatabaseReference areaRef = FirebaseDatabase.getInstance().getReference("Area");
+    DatabaseReference cusRef = FirebaseDatabase.getInstance().getReference("Customer");
 
     private GestureDetector gestureDetector;
 
@@ -103,60 +104,57 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         img_help = findViewById(R.id.img_help);
         img_help.setOnClickListener(this);
 
-        img_help.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (gestureDetector.onTouchEvent(event)) {
-                    // show dialog:
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(OrderCoordinationActivity.this);
-                    View customView = LayoutInflater.from(OrderCoordinationActivity.this).inflate(R.layout.layout_detail_area, null);
-                    dialog.setView(customView);
-                    listArea = new ArrayList<>();
-                    ListView listView = customView.findViewById(R.id.listarea);
-                    AreaAdapter adapter = new AreaAdapter(OrderCoordinationActivity.this, listArea);
-                    listView.setAdapter(adapter);
-                    // get data:
-                    areaRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            listArea.clear();
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                Area area = new Area(snapshot.getKey(), snapshot.child("area").getValue(String.class));
-                                listArea.add(area);
-                            }
-                            adapter.notifyDataSetChanged();
+        img_help.setOnTouchListener((v, event) -> {
+            if (gestureDetector.onTouchEvent(event)) {
+                // show dialog:
+                AlertDialog.Builder dialog = new AlertDialog.Builder(OrderCoordinationActivity.this);
+                View customView = LayoutInflater.from(OrderCoordinationActivity.this).inflate(R.layout.layout_detail_area, null);
+                dialog.setView(customView);
+                listArea = new ArrayList<>();
+                ListView listView = customView.findViewById(R.id.listarea);
+                AreaAdapter adapter = new AreaAdapter(OrderCoordinationActivity.this, listArea);
+                listView.setAdapter(adapter);
+                // get data:
+                areaRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        listArea.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Area area = new Area(snapshot.getKey(), snapshot.child("area").getValue(String.class));
+                            listArea.add(area);
                         }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-                    final AlertDialog alertDialog = dialog.create();
-
-                    if (alertDialog.getWindow() != null) {
-                        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+                        adapter.notifyDataSetChanged();
                     }
-                    alertDialog.show();
-                    return true;
-                } else {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            dx = v.getX() - event.getRawX();
-                            dy = v.getY() - event.getRawY();
-                            break;
-                        case MotionEvent.ACTION_MOVE:
-                            v.animate()
-                                    .x(event.getRawX() + dx)
-                                    .y(event.getRawY() + (dy - v.getWidth()))
-                                    .setDuration(0)
-                                    .start();
-                            break;
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                     }
+                });
+
+                final AlertDialog alertDialog = dialog.create();
+
+                if (alertDialog.getWindow() != null) {
+                    alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
                 }
-                return false;
+                alertDialog.show();
+                return true;
+            } else {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        dx = v.getX() - event.getRawX();
+                        dy = v.getY() - event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        v.animate()
+                                .x(event.getRawX() + dx)
+                                .y(event.getRawY() + (dy - v.getWidth()))
+                                .setDuration(0)
+                                .start();
+                        break;
+                }
             }
+            return false;
         });
 
         // Xử lý sự kiện click button "Lưu":
@@ -199,37 +197,37 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(OrderCoordinationActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(OrderCoordinationActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dph:
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(OrderCoordinationActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(OrderCoordinationActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(OrderCoordinationActivity.this, ChangePasswordActivity.class);
@@ -243,11 +241,11 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(OrderCoordinationActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(OrderCoordinationActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
@@ -292,7 +290,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                     orderRef.child(order.getOrderID()).setValue(order);
                 } else {
                     orderRef.child(order.getOrderID()).setValue(order);
-                    if (order.getStatus() == 8) {
+                    if (order.getStatus() == 8 || order.getStatus() == 6) {
                         orderDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -316,6 +314,46 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                                         });
                                     }
                                 }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        orderRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                int iSum = 0, iDem = 0;
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Order od = snapshot.getValue(Order.class);
+                                    if (od.getAccountID().equals(order.getAccountID())) {
+                                        iSum += order.getTotal();
+                                        iDem++;
+                                    }
+                                }
+                                String typeID = "";
+                                if (iSum >= 15000000) {
+                                    typeID = "Type1";
+                                } else if (iSum > 100000000) {
+                                    typeID = "Type2";
+                                } else if (iSum > 200000000) {
+                                    typeID = "Type3";
+                                } else typeID = "Type";
+                                String finalTypeID = typeID;
+                                cusRef.orderByChild("accountID").equalTo(order.getAccountID()).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                            cusRef.child(dataSnapshot1.getKey()).child("type_id").setValue(finalTypeID);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
 
                             @Override

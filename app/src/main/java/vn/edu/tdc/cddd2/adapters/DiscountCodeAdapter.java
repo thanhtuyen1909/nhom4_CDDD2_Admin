@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.DiscountCode;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DiscountCodeAdapter extends RecyclerView.Adapter<DiscountCodeAdapter.ViewHolder> {
     ArrayList<DiscountCode> listCatas;
@@ -43,14 +42,11 @@ public class DiscountCodeAdapter extends RecyclerView.Adapter<DiscountCodeAdapte
     public void onBindViewHolder(@NonNull DiscountCodeAdapter.ViewHolder holder, int position) {
         DiscountCode item = listCatas.get(position);
         holder.tv_name.setText(item.getCode());
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v == holder.im_edit) {
-                    itemClickListener.editProduct(item);
-                } else {
-                    itemClickListener.deleteProduct(item.getCode());
-                }
+        holder.onClickListener = v -> {
+            if (v == holder.im_edit) {
+                itemClickListener.editProduct(item);
+            } else {
+                itemClickListener.deleteProduct(item.getCode());
             }
         };
     }

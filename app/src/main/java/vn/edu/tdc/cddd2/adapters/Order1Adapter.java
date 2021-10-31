@@ -1,13 +1,15 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,18 +21,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Employee;
 import vn.edu.tdc.cddd2.data_models.Order;
 import vn.edu.tdc.cddd2.data_models.ShipArea;
 
-public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder> {
-    ArrayList<Order> listOrder;
-    private Context context;
+public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder> implements Filterable {
+    ArrayList<Order> listOrder, listOrderFilter, list;
+    Context context;
+
     Order1Adapter.ItemClickListener itemClickListener;
     DatabaseReference shiparea = FirebaseDatabase.getInstance().getReference("Ship_area");
     DatabaseReference emRef = FirebaseDatabase.getInstance().getReference("Employees");
@@ -59,6 +60,10 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         holder.tv_maDH.setText(item.getOrderID());
         holder.tv_tong.setText("Tổng: " + formatPrice(item.getTotal()));
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
+        holder.cb_hoanthanh.setChecked(false);
+        holder.cb_hoanthanh.setEnabled(false);
+        holder.cb_giaohang.setChecked(false);
+        holder.cb_giaohang.setEnabled(true);
         shiparea.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -88,19 +93,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         });
         int stt = item.getStatus();
         holder.onClickListener = v -> {
-//            switch (v.getId()) {
-//                case R.id.checkhuygiao:
-//                    if (holder.rb_huygiao.isSelected()) {
-//                        Log.d("TAG", "onBindViewHolder: ");
-//                        holder.rb_huygiao.setSelected(false);
-//                        holder.rb_huygiao.setChecked(false);
-//                    } else {
-//                        Log.d("TAG", "onBindViewHolder1: ");
-//                        holder.rb_huygiao.setSelected(true);
-//                        holder.rb_huygiao.setChecked(true);
-//                    }
-//                    break;
-//            }
+            holder.group.clearCheck();
             if (itemClickListener != null) {
                 if(v == holder.cb_giaohang) {
                     if(((CheckBox) v).isChecked()) {
@@ -179,8 +172,45 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
     }
 
     private String formatPrice(int price) {
-        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
-                .format(price);
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                FilterResults filterResults = new FilterResults();
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    listOrderFilter = list;
+                } else {
+                    ArrayList<Order> filters = new ArrayList<>();
+                    for (Order row : listOrder) {
+                        if (row.getOrderID().toLowerCase().contains(charString.toLowerCase())) {
+                            filters.add(row);
+                        }
+                    }
+                    listOrderFilter = filters;
+                }
+                filterResults.values = listOrderFilter;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                listOrder = (ArrayList<Order>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     @Override
@@ -194,6 +224,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         CheckBox cb_giaohang, cb_hoanthanh;
         RadioButton rb_huygiao, rb_huynhan;
         View.OnClickListener onClickListener;
+        RadioGroup group;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -206,6 +237,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             rb_huygiao = itemView.findViewById(R.id.checkhuygiao);
             rb_huynhan = itemView.findViewById(R.id.checkhuynhan);
             im_detail = itemView.findViewById(R.id.btnDetail);
+            group = itemView.findViewById(R.id.group);
             im_detail.setOnClickListener(this);
             cb_giaohang.setOnClickListener(this);
             cb_hoanthanh.setOnClickListener(this);

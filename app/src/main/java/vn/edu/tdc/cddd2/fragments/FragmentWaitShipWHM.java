@@ -76,7 +76,7 @@ public class FragmentWaitShipWHM extends Fragment {
         public void getInfor(Order item) {
             intent = new Intent(getActivity(), DetailOrderActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            intent.putExtra("item", (Parcelable) item);
+            intent.putExtra("item", item);
             startActivity(intent);
         }
     };

@@ -1,8 +1,6 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -50,20 +49,17 @@ public class CateAdapter extends RecyclerView.Adapter<CateAdapter.ViewHolder> im
     public void onBindViewHolder(@NonNull CateAdapter.ViewHolder holder, int position) {
         Category item = listCatas.get(position);
         StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + item.getImage());
-        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).fit().into(holder.im_item));
         holder.tv_name.setText(item.getName());
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    if (v.getId() == R.id.btnEdit) {
-                        itemClickListener.editCategory(item);
-                    } else {
-                        itemClickListener.deleteCategory(item.getKey());
-                    }
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                if (v.getId() == R.id.btnEdit) {
+                    itemClickListener.editCategory(item);
                 } else {
-                    return;
+                    itemClickListener.deleteCategory(item.getKey());
                 }
+            } else {
+                return;
             }
         };
     }

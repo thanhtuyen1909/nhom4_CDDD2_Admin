@@ -11,7 +11,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,20 +21,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Employee;
-import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Order;
-import vn.edu.tdc.cddd2.data_models.Product;
 import vn.edu.tdc.cddd2.data_models.ShipArea;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> implements Filterable {
     ArrayList<Order> listOrder, list, listOrderFilter;
-    private Context context;
+    Context context;
     OrderAdapter.ItemClickListener itemClickListener;
     DatabaseReference shiparea = FirebaseDatabase.getInstance().getReference("Ship_area");
     DatabaseReference emRef = FirebaseDatabase.getInstance().getReference("Employees");
@@ -120,8 +115,15 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     }
 
     private String formatPrice(int price) {
-        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
-                .format(price);
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 
     @Override

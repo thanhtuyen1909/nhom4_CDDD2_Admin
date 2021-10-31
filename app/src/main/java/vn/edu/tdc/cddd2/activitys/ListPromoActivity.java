@@ -89,7 +89,6 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(v -> {
             intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("username", username);
             startActivity(intent);
         });
@@ -167,7 +166,6 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         @Override
         public void editPromoCode(PromoCode item) {
             intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("item", (Parcelable) item);
             intent.putExtra("username", username);
             startActivity(intent);
@@ -176,7 +174,6 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         @Override
         public void addDetailPromoCode(String key) {
             intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("key", key);
             intent.putExtra("username", username);
             startActivity(intent);
@@ -196,37 +193,37 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListPromoActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlkm:
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListPromoActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListPromoActivity.this, ListDiscountCodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListPromoActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListPromoActivity.this, ChangePasswordActivity.class);
@@ -240,11 +237,11 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListPromoActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListPromoActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
