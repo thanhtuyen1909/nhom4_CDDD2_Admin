@@ -386,6 +386,11 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
 
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
             alertDialog.dismiss();
+            intent = new Intent(OrderCoordinationActivity.this, MainQLKActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            startActivity(intent);
             finish();
         });
 

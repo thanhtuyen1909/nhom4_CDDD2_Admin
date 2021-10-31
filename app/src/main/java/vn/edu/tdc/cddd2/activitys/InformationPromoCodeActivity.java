@@ -110,11 +110,13 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
         Date sdate = sdf.parse(startDate, new ParsePosition(0));
         Date edate = sdf.parse(endDate, new ParsePosition(0));
         Date now = new Date();
+
         //Check chưa chọn image
-        if (filePath == null) {
+        if (filePath == null && item.getImage().equals("")) {
             showWarningDialog("Vui lòng chọn ảnh cho sản phẩm!");
             return -1;
         }
+
         //Check tên khuyến mãi trống
         if (name.equals("")) {
             showWarningDialog("Tên khuyến mãi không được để trống!");

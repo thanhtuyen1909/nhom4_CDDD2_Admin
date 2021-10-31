@@ -85,7 +85,14 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         searchView = findViewById(R.id.editSearch);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            intent = new Intent(ListCateActivity.this, MainQLKActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            startActivity(intent);
+            finish();
+        });
 
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(v -> {
