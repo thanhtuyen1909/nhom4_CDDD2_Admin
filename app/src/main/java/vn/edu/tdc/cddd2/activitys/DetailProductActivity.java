@@ -181,7 +181,8 @@ public class DetailProductActivity extends AppCompatActivity {
 
                             }
                         });
-
+                        product.setStatus(0);
+                        product.setRating(0);
                         product.setImage(product.getName() + ".jpg");
                         product.setQuantity(Integer.parseInt(String.valueOf(productQuantity.getText())));
                         product.setImport_price(Integer.parseInt(String.valueOf(productImportPrice.getText())));

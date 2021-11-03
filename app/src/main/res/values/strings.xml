@@ -73,7 +73,14 @@
         <item>Hôm nay</item>
         <item>13/10/2021</item>
     </string-array>
+    <string-array name="position">
+        <item>Quản trị viên</item>
+        <item>Nhân viên bán hàng</item>
+        <item>Quản trị viên</item>
+        <item>Quản trị viên</item>
+        <item>Quản trị viên</item>
 
+    </string-array>
     <string-array name="thang">
         <item>Tháng 8</item>
         <item>Tháng 9</item>

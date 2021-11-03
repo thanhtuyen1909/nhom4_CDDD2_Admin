@@ -4,8 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +43,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,9 +55,11 @@ import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.DiscountCodeAdapter;
+import vn.edu.tdc.cddd2.data_models.Account;
 import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.DiscountCode;
 import vn.edu.tdc.cddd2.data_models.DiscountCode_Customer;
+import vn.edu.tdc.cddd2.data_models.Notification;
 
 public class ListDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -178,18 +188,53 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         recyclerView.setAdapter(discountCodeAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-
+    private void pushNotification(String code,String accountID){
+        DatabaseReference notiRef = FirebaseDatabase.getInstance().getReference("Notification");
+        Log.d("TAG", "pushNotification: "+code);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        if (!code.equals("")) {
+            Notification noti = new Notification();
+            noti.setTitle("Bạn đã nhận được 1 mã giảm giá");
+            noti.setAccountID(accountID);
+            noti.setCreated_at(sdf.format(new Date()));
+            noti.setContent("Mã giảm giá của bạn là: " + code);
+            //get image uri
+            Bitmap bitmap = ((BitmapDrawable) getResources().getDrawable(R.drawable.discount_code)).getBitmap();
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            String path = MediaStore.Images.Media.insertImage(ListDiscountCodeActivity.this.getContentResolver(), bitmap, "Title", null);
+            Uri imageUri = Uri.parse(path);
+            Log.d("TAG", "pushNotification: "+imageUri);
+            FirebaseStorage.getInstance().getReference("images/promocodes").child("discount_code").putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    FirebaseStorage.getInstance().getReference("images/promocodes/discount_code").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            noti.setImage(uri.toString());
+                            Log.d("TAG", "pushNotification: "+"success");
+                            notiRef.push().setValue(noti);
+                        }
+                    });
+                }
+            });
+        }
+    }
     private void createCodeCustomer(String code, String event) {
         DatabaseReference cusRef = db.getReference("Customer");
         DatabaseReference ref = db.getReference("DiscountCode_Customer");
+
         switch (event) {
             case "Tất cả":
                 cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot node : snapshot.getChildren()) {
+
                             DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                             ref.push().setValue(discus);
+                            Customer customer = node.getValue(Customer.class);
+                           pushNotification(code,customer.getAccountID());
                         }
                     }
 
@@ -208,6 +253,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                             if (cus.getType_id().equals("Type")) {
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
+                                Customer customer = node.getValue(Customer.class);
+                                pushNotification(code,customer.getAccountID());
                             }
 
                         }
@@ -228,6 +275,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                             if (cus.getType_id().equals("Type1")) {
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
+                                Customer customer = node.getValue(Customer.class);
+                                pushNotification(code,customer.getAccountID());
                             }
 
                         }
@@ -248,6 +297,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                             if (cus.getType_id().equals("Type2")) {
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
+                                Customer customer = node.getValue(Customer.class);
+                                pushNotification(code,customer.getAccountID());
                             }
 
                         }
@@ -268,6 +319,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                             if (cus.getType_id().equals("Type3")) {
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
+                                Customer customer = node.getValue(Customer.class);
+                                pushNotification(code,customer.getAccountID());
                             }
 
                         }
@@ -293,6 +346,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                             if (temp.getMonth() + 1 == month) {
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
+                                Customer customer = node.getValue(Customer.class);
+                                pushNotification(code,customer.getAccountID());
                             }
 
                         }
@@ -468,6 +523,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                     codeRef.push().setValue(discountCode).addOnSuccessListener(unused -> {
                         createCodeCustomer(discountCode.getCode(), discountCode.getEvent());
                         showSuccesDialog("Lưu mã giảm giá thành công");
+
                     });
                 } else {
                     db.getReference("DiscountCode").addValueEventListener(new ValueEventListener() {
@@ -681,7 +737,13 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+        view.findViewById(R.id.buttonAction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                alertDialog.dismiss();
+            }
+        });
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
