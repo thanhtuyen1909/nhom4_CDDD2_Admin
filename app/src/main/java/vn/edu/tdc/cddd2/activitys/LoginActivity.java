@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot node : snapshot.getChildren()) {
                             Account temp = node.getValue(Account.class);
-                            temp.setId(node.getKey());
+                            temp.setKey(node.getKey());
                             if (account.getUsername().equals(temp.getUsername()) && account.getPassword().equals(temp.getPassword()) &&
                                     temp.getStatus().equals("unlock")) {
                                 emRef.addValueEventListener(new ValueEventListener() {
@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot snapshot1) {
                                         for (DataSnapshot node1 : snapshot1.getChildren()) {
                                             Employee employee = node1.getValue(Employee.class);
-                                            if (employee.getAccountID().equals(temp.getId())) {
+                                            if (employee.getAccountID().equals(temp.getKey())) {
                                                 name = employee.getName();
                                                 role = employee.getPosition();
                                                 check = false;

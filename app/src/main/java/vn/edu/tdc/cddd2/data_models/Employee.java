@@ -1,7 +1,7 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Employee {
-    // Khai báo biến:
+    private String id;
     private String accountID;
     private String address;
     private int allowance;
@@ -12,6 +12,14 @@ public class Employee {
     private String name;
     private String position;
     private int salary;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getAccountID() {
         return accountID;
@@ -93,10 +101,8 @@ public class Employee {
         this.salary = salary;
     }
 
-    public Employee() {
-    }
+    public Employee( String accountID, String address, int allowance, String birthday, String created_at, String gender, String image, String name, String position, int salary) {
 
-    public Employee(String accountID, String address, int allowance, String birthday, String created_at, String gender, String image, String name, String position, int salary) {
         this.accountID = accountID;
         this.address = address;
         this.allowance = allowance;
@@ -107,5 +113,13 @@ public class Employee {
         this.name = name;
         this.position = position;
         this.salary = salary;
+    }
+
+    public Employee() {
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

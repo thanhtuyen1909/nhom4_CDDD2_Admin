@@ -10,14 +10,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
-    ArrayList<Product> listProducts;
-    private Context context;
+    ArrayList<Product> listProducts, list;
+    Context context;
     ItemClickListener itemClickListener;
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
@@ -27,6 +37,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public ProductAdapter(ArrayList<Product> listProducts, Context context) {
         this.listProducts = listProducts;
         this.context = context;
+        this.list = listProducts;
     }
 
     @NonNull
@@ -41,19 +52,38 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product item = listProducts.get(position);
-        holder.im_item.setImageResource(R.drawable.ic_baseline_laptop_mac_24);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference imageRef = storage.getReference("images/products/"+item.getName()+"/"+item.getImage());
+        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).fit().into(holder.im_item));
+
         holder.tv_name.setText(item.getName());
-        holder.tv_price.setText("Giá: " + String.valueOf(item.getPrice()));
-        //holder.tv_manu.setText("Hãng: " + item.getManu());
-        holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
-        holder.onClickListener = new View.OnClickListener() {
+        holder.tv_price.setText("Giá: " + formatPrice(item.getPrice()));
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Manufactures");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                if(itemClickListener != null) {
-                    itemClickListener.getInfor(item);
-                } else {
-                    return;
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Manufacture temp = node.getValue(Manufacture.class);
+                    if(node.getKey().equals(item.getManu_id())){
+                        holder.tv_manu.setText("Hãng: " + temp.getName());
+                    }
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        holder.tv_amount.setText("Số lượng: " + String.valueOf(item.getQuantity()));
+        holder.onClickListener = v -> {
+            if(itemClickListener != null) {
+                if (v == holder.im_delete) {
+                    itemClickListener.deleteProduct(item);
+                } else itemClickListener.editProduct(item);
+
+            } else {
+                return;
             }
         };
     }
@@ -62,6 +92,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public int getItemCount() {
         return listProducts.size();
     }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView im_item, im_edit, im_delete;
@@ -90,6 +122,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     public interface ItemClickListener {
-        void getInfor(Product item);
+        void deleteProduct(Product item);
+        void editProduct(Product item);
+    }
+
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 }

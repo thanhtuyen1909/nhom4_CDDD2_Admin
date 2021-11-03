@@ -17,15 +17,21 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParsePosition;
@@ -34,6 +40,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.Account;
+import vn.edu.tdc.cddd2.data_models.Notification;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class InformationPromoCodeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -165,14 +173,54 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
     public void onClick(View v) {
         if (v == btnSave) {
             name = edtName.getText().toString();
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
+                    .child(name + "." + getFileExtension(filePath));
             startDate = edtStartDate.getText().toString();
             endDate = edtEndDate.getText().toString();
             if(checkError() == 1) {
                 //upload ảnh
                 if (filePath != null) {
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
-                            .child(name + "." + getFileExtension(filePath));
-                    storageRef.putFile(filePath);
+                    storageRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //lưu thông báo
+                            DatabaseReference notiRef = FirebaseDatabase.getInstance().getReference("Notification");
+                            DatabaseReference accountRef = FirebaseDatabase.getInstance().getReference("Account");
+                            accountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot node : dataSnapshot.getChildren()){
+                                        Account account = node.getValue(Account.class);
+                                        if(account.getRole_id() == 1){
+                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+                                            Notification noti = new Notification();
+                                            noti.setTitle(name);
+                                            noti.setCreated_at(sdf.format(new Date()));
+                                            noti.setContent("Tưng bừng khuyến mãi từ ngày "+startDate+" đến "+endDate);
+                                            noti.setAccountID(node.getKey());
+                                            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    Log.d("TAG", "onSuccess: +"+uri.toString());
+                                                    noti.setImage(uri.toString());
+                                                    notiRef.push().setValue(noti);
+                                                    //get image uri
+                                                }
+                                            });
+
+                                        }
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    });
                     image = name + "." + getFileExtension(filePath);
                 }
                 PromoCode promoCode = new PromoCode();
@@ -185,6 +233,8 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
                 } else {
                     promoRef.child(key).setValue(promoCode).addOnSuccessListener(unused -> showSuccesDialog("Cập nhật khuyến mãi thành công!"));
                 }
+
+
             }
         } else if (v == btnCancel) {
             showErrorDialog();
