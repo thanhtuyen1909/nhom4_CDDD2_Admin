@@ -16,6 +16,7 @@
     <color name="background_color">#FF21254A</color>
     <color name="pink">#FFC638A6</color>
     <color name="red">#E10E0E</color>
+    <color name="colorError1">#FF6060</color>
 <!-- Dialog -->
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>

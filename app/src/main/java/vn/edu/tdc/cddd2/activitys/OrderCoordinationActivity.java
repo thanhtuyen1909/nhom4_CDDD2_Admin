@@ -60,6 +60,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     String tagA = "WillOrderWHM";
     ArrayList<Order> listOrder;
     ArrayList<Area> listArea;
+
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
     DatabaseReference orderDetailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
     DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
@@ -290,7 +291,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                     orderRef.child(order.getOrderID()).setValue(order);
                 } else {
                     orderRef.child(order.getOrderID()).setValue(order);
-                    if (order.getStatus() == 8 || order.getStatus() == 6) {
+                    if (order.getStatus() == 8) {
                         orderDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

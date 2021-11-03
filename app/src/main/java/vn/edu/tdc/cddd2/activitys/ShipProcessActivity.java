@@ -1,6 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,25 +24,23 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.fragments.FragmentCancelOrderOH;
 import vn.edu.tdc.cddd2.fragments.FragmentCancelOrderSP;
-import vn.edu.tdc.cddd2.fragments.FragmentListOrderOH;
 import vn.edu.tdc.cddd2.fragments.FragmentListOrderSP;
 import vn.edu.tdc.cddd2.fragments.FragmentOrderDeliveredSP;
 import vn.edu.tdc.cddd2.fragments.FragmentOrderingSP;
-import vn.edu.tdc.cddd2.fragments.FragmentWillOrderOH;
 
 public class ShipProcessActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến:
-    private BottomNavigationView bottomNavigationView;
+    BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
     private Spinner spinDate;
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar;
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
-    private Intent intent;
+    NavigationView navigationView;
+    Intent intent;
+    String tagA = "ListOrderSP";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,15 +66,7 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
         btnSave.setText("Lưu");
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        // Xử lý sự kiện click button "Lưu":
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ShipProcessActivity.this, "Lưu", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentListOrderSP()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentListOrderSP(), tagA).commit();
 
         // Xử lý sự kiện cho thanh bottomnavigationview
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -85,13 +75,27 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
                 int id = item.getItemId();
                 if (id == R.id.odering) {
                     selectedFragment = new FragmentListOrderSP();
+                    tagA = "ListOrderSP";
                 } else if(id == R.id.delivering){
                     selectedFragment = new FragmentOrderingSP();
+                    tagA = "OrderingSP";
                 } else if(id == R.id.delivered){
                     selectedFragment = new FragmentOrderDeliveredSP();
-                } else selectedFragment = new FragmentCancelOrderSP();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+                    tagA = "OrderDeliveredSP";
+                } else {
+                    selectedFragment = new FragmentCancelOrderSP();
+                    tagA = "CancelOrderSP";
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment, tagA).commit();
                 return true;
+            }
+        });
+
+        // Xử lý sự kiện click button "Lưu":
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ShipProcessActivity.this, "Lưu", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -107,7 +111,7 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

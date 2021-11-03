@@ -73,7 +73,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                         account.setPassword(String.valueOf(edtNewPassword.getText()));
                                         dao.update(node.getKey(),account).addOnSuccessListener(suc -> {
                                             showSuccesDialog("Đổi mật khẩu thành công!");
-                                            finish();
                                         }).addOnFailureListener(err ->{
                                             showWarningDialog("Đổi mật khẩu không thành công!");
                                         });
@@ -140,7 +139,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         final AlertDialog alertDialog = builder.create();
 
-        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
+        });
 
         if (alertDialog.getWindow() != null) {
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));

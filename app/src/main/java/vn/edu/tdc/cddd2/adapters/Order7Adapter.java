@@ -18,16 +18,16 @@ import java.util.ArrayList;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
 
-public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder> implements Filterable {
+public class Order7Adapter extends RecyclerView.Adapter<Order7Adapter.ViewHolder> implements Filterable {
     ArrayList<Order> listOrder, listOrderFilter, list;;
     Context context;
-    Order2Adapter.ItemClickListener itemClickListener;
+    Order7Adapter.ItemClickListener itemClickListener;
 
-    public void setItemClickListener(Order2Adapter.ItemClickListener itemClickListener) {
+    public void setItemClickListener(Order7Adapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public Order2Adapter(ArrayList<Order> listOrder, Context context) {
+    public Order7Adapter(ArrayList<Order> listOrder, Context context) {
         this.listOrder = listOrder;
         this.context = context;
         this.list = listOrder;
@@ -35,10 +35,10 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
 
     @NonNull
     @Override
-    public Order2Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public Order7Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_order_oh, parent, false);
-        Order2Adapter.ViewHolder viewHolder = new Order2Adapter.ViewHolder(itemView);
+        Order7Adapter.ViewHolder viewHolder = new Order7Adapter.ViewHolder(itemView);
         return viewHolder;
     }
 
@@ -74,7 +74,7 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
 
 
     @Override
-    public void onBindViewHolder(@NonNull Order2Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull Order7Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getOrderID());
         holder.tv_tong.setText("Tổng: " + item.getTotal());
@@ -87,6 +87,10 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
                 return;
             }
         };
+        if(item.getStatus() == 10) {
+            holder.cb_dagiao.setEnabled(false);
+            holder.cb_dagiao.setChecked(true);
+        }
     }
 
     @Override
@@ -108,8 +112,13 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
             im_detail = itemView.findViewById(R.id.btnDetail);
             cb_dagiao = itemView.findViewById(R.id.checksedat);
-            cb_dagiao.setText("Đã giao");
             cb_huy = itemView.findViewById(R.id.checkhuy);
+            cb_dagiao.setText("Đã hoàn hàng");
+            cb_huy.setText("Hoàn tác");
+
+            cb_dagiao.setEnabled(true);
+            cb_dagiao.setChecked(false);
+
             im_detail.setOnClickListener(this);
             cb_dagiao.setOnClickListener(this);
             cb_huy.setOnClickListener(this);

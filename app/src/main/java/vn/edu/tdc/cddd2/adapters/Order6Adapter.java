@@ -18,16 +18,16 @@ import java.util.ArrayList;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
 
-public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder> implements Filterable {
+public class Order6Adapter extends RecyclerView.Adapter<Order6Adapter.ViewHolder> implements Filterable {
     ArrayList<Order> listOrder, listOrderFilter, list;;
     Context context;
-    Order2Adapter.ItemClickListener itemClickListener;
+    Order6Adapter.ItemClickListener itemClickListener;
 
-    public void setItemClickListener(Order2Adapter.ItemClickListener itemClickListener) {
+    public void setItemClickListener(Order6Adapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
-    public Order2Adapter(ArrayList<Order> listOrder, Context context) {
+    public Order6Adapter(ArrayList<Order> listOrder, Context context) {
         this.listOrder = listOrder;
         this.context = context;
         this.list = listOrder;
@@ -35,11 +35,31 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
 
     @NonNull
     @Override
-    public Order2Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public Order6Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_order_oh, parent, false);
-        Order2Adapter.ViewHolder viewHolder = new Order2Adapter.ViewHolder(itemView);
+        Order6Adapter.ViewHolder viewHolder = new Order6Adapter.ViewHolder(itemView);
         return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull Order6Adapter.ViewHolder holder, int position) {
+        Order item = listOrder.get(position);
+        holder.tv_maDH.setText(item.getOrderID());
+        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_ngaydat.setText("Ngày đặt: " + item.getCreated_at());
+        holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                itemClickListener.getInfor(item);
+            } else {
+                return;
+            }
+        };
+        if(item.getStatus() == 7) {
+            holder.cb_dagiao.setEnabled(false);
+            holder.cb_dagiao.setChecked(true);
+        }
     }
 
     @Override
@@ -72,23 +92,6 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
         };
     }
 
-
-    @Override
-    public void onBindViewHolder(@NonNull Order2Adapter.ViewHolder holder, int position) {
-        Order item = listOrder.get(position);
-        holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
-        holder.tv_ngaydat.setText("Ngày đặt: " + item.getCreated_at());
-        holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
-        holder.onClickListener = v -> {
-            if (itemClickListener != null) {
-                itemClickListener.getInfor(item);
-            } else {
-                return;
-            }
-        };
-    }
-
     @Override
     public int getItemCount() {
         return listOrder.size();
@@ -108,8 +111,11 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
             im_detail = itemView.findViewById(R.id.btnDetail);
             cb_dagiao = itemView.findViewById(R.id.checksedat);
-            cb_dagiao.setText("Đã giao");
             cb_huy = itemView.findViewById(R.id.checkhuy);
+            cb_dagiao.setText("Đã giao tiền");
+            cb_huy.setText("Hoàn tác");
+            cb_dagiao.setEnabled(true);
+            cb_dagiao.setChecked(false);
             im_detail.setOnClickListener(this);
             cb_dagiao.setOnClickListener(this);
             cb_huy.setOnClickListener(this);

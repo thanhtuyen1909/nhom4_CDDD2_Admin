@@ -13,6 +13,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -60,10 +62,6 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         holder.tv_maDH.setText(item.getOrderID());
         holder.tv_tong.setText("Tổng: " + formatPrice(item.getTotal()));
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
-        holder.cb_hoanthanh.setChecked(false);
-        holder.cb_hoanthanh.setEnabled(false);
-        holder.cb_giaohang.setChecked(false);
-        holder.cb_giaohang.setEnabled(true);
         shiparea.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -166,7 +164,14 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         if (item.getStatus() == 5) {
             holder.cb_giaohang.setChecked(true);
             holder.cb_giaohang.setEnabled(false);
+        }
+        if(item.getStatus() == 7) {
             holder.cb_hoanthanh.setEnabled(true);
+        }
+        if(item.getStatus() == 9) {
+           holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorError1));
+        }
+        if(item.getStatus() == 10) {
             holder.rb_huynhan.setEnabled(true);
         }
     }
@@ -225,6 +230,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         RadioButton rb_huygiao, rb_huynhan;
         View.OnClickListener onClickListener;
         RadioGroup group;
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -238,6 +244,14 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             rb_huynhan = itemView.findViewById(R.id.checkhuynhan);
             im_detail = itemView.findViewById(R.id.btnDetail);
             group = itemView.findViewById(R.id.group);
+            cardView = itemView.findViewById(R.id.cardView);
+
+            cb_hoanthanh.setChecked(false);
+            cb_hoanthanh.setEnabled(false);
+            cb_giaohang.setChecked(false);
+            cb_giaohang.setEnabled(true);
+            cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
+
             im_detail.setOnClickListener(this);
             cb_giaohang.setOnClickListener(this);
             cb_hoanthanh.setOnClickListener(this);

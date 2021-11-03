@@ -8,8 +8,8 @@
     <SearchView
         android:id="@+id/editSearch"
         android:layout_width="0dp"
-        android:layout_margin="5dp"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:background="@drawable/rounded_border_edittext"
         android:iconifiedByDefault="false"
         android:queryHint="Mã đơn hàng"
