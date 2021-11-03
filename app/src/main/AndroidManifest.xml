@@ -38,7 +38,6 @@
         <activity
             android:name=".activitys.LoginActivity"
             android:screenOrientation="portrait">
-
         </activity>
         <activity
             android:name=".activitys.ListDiscountCodeActivity"
@@ -48,7 +47,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ChangePasswordActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activitys.DetailPromoCodeActivity"
             android:screenOrientation="portrait" />
