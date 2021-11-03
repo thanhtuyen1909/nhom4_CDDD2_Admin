@@ -119,10 +119,13 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_ordercoor.xml" value="0.12" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_warning_dialog.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/nav_header.xml" value="0.20416666666666666" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_detail_employee.xml" value="0.20416666666666666" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_info_promocode.xml" value="0.2" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_shipprocess.xml" value="0.25" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

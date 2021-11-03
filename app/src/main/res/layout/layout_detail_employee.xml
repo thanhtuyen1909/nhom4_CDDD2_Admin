@@ -45,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_margin="5dp"
             android:background="@drawable/bg_spinner"
-            android:entries="@array/loaisp"
+            android:entries="@array/position"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/edtMNV" />
@@ -76,14 +76,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edtTNV" />
 
-        <Spinner
-            android:id="@+id/spinner_ngaysinh"
-            style="@style/CustomSpinner"
+        <EditText
+            android:id="@+id/dtp_ngay_sinh"
             android:layout_width="0dp"
+            android:layout_height="48dp"
             android:layout_margin="5dp"
-            android:background="@drawable/bg_spinner"
-            android:entries="@array/loaisp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_border_edittext"
+            android:clickable="true"
+            android:ems="10"
+            android:focusable="false"
+            android:gravity="center"
+            android:hint="01/10/2021"
+            android:padding="5dp"
+            app:layout_constraintEnd_toEndOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edtDC" />
 
@@ -92,6 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+
             app:layout_constraintGuide_percent="0.5" />
 
         <Spinner
@@ -100,21 +107,27 @@
             android:layout_width="0dp"
             android:layout_margin="5dp"
             android:background="@drawable/bg_spinner"
-            android:entries="@array/hang"
+            android:entries="@array/gender"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/edtDC" />
 
-        <Spinner
-            android:id="@+id/spinner_ngayvao"
-            style="@style/CustomSpinner"
+        <EditText
+            android:id="@+id/dtp_ngayvao"
             android:layout_width="0dp"
+            android:layout_height="48dp"
             android:layout_margin="5dp"
-            android:background="@drawable/bg_spinner"
-            android:entries="@array/hang"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_border_edittext"
+            android:clickable="true"
+            android:ems="10"
+            android:focusable="false"
+            android:gravity="center"
+            android:hint="01/10/2021"
+            android:padding="5dp"
+            app:layout_constraintEnd_toEndOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_ngaysinh" />
+            app:layout_constraintTop_toBottomOf="@+id/dtp_ngay_sinh" />
 
         <EditText
             android:id="@+id/edtTGLV"
@@ -159,13 +172,25 @@
             android:id="@+id/btnXBL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Xem bảng lương"
-            android:textSize="18sp"
-            android:textColor="@color/pink"
             android:layout_margin="15dp"
+            android:text="Xem bảng lương"
+            android:textColor="@color/pink"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progess1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:indeterminateTint="@android:color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Left Menu -->

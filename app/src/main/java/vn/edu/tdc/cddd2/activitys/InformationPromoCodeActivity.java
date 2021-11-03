@@ -175,7 +175,6 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
             name = edtName.getText().toString();
             StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
                     .child(name + "." + getFileExtension(filePath));
-
             startDate = edtStartDate.getText().toString();
             endDate = edtEndDate.getText().toString();
             if(checkError() == 1) {
