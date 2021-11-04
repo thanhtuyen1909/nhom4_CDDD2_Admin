@@ -1,61 +1,104 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Order {
+    public Order() {
+    }
+
     // Khai báo biến
-    private String maDH;
-    private int tongTien;
-    private String diaChi;
-    private String nguoiGiao;
+    private String accountID,address,create_at,name,note,orderID,phone,shipperID;
+    private int status,total;
 
-    // Get - set:
-    public String getMaDH() {
-        return maDH;
+
+    public String getAccountID() {
+        return accountID;
     }
 
-    public void setMaDH(String maDH) {
-        this.maDH = maDH;
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
-    public int getTongTien() {
-        return tongTien;
+    public String getAddress() {
+        return address;
     }
 
-    public void setTongTien(int tongTien) {
-        this.tongTien = tongTien;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getDiaChi() {
-        return diaChi;
+    public String getCreate_at() {
+        return create_at;
     }
 
-    public void setDiaChi(String diaChi) {
-        this.diaChi = diaChi;
+    public void setCreate_at(String create_at) {
+        this.create_at = create_at;
     }
 
-    public String getNguoiGiao() {
-        return nguoiGiao;
+    public String getName() {
+        return name;
     }
 
-    public void setNguoiGiao(String nguoiGiao) {
-        this.nguoiGiao = nguoiGiao;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    // Contructor
-    public Order(String maDH, int tongTien, String diaChi, String nguoiGiao) {
-        this.maDH = maDH;
-        this.tongTien = tongTien;
-        this.diaChi = diaChi;
-        this.nguoiGiao = nguoiGiao;
+    public String getNote() {
+        return note;
     }
 
-    // toString
-    @Override
-    public String toString() {
-        return "Oder{" +
-                "maDH='" + maDH + '\'' +
-                ", tongTien=" + tongTien +
-                ", diaChi='" + diaChi + '\'' +
-                ", nguoiGiao='" + nguoiGiao + '\'' +
-                '}';
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getShipperID() {
+        return shipperID;
+    }
+
+    public void setShipperID(String shipperID) {
+        this.shipperID = shipperID;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public Order(String accountID, String address, String create_at, String name, String note, String orderID, String phone, String shipperID, int status, int total) {
+        this.accountID = accountID;
+        this.address = address;
+        this.create_at = create_at;
+        this.name = name;
+        this.note = note;
+        this.orderID = orderID;
+        this.phone = phone;
+        this.shipperID = shipperID;
+        this.status = status;
+        this.total = total;
     }
 }
