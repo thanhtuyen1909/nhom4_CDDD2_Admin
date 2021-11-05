@@ -15,24 +15,6 @@
             android:id="@+id/include"
             layout="@layout/appbar" />
 
-        <Spinner
-            android:id="@+id/spinner_date"
-            style="@style/CustomSpinner"
-            android:layout_width="0dp"
-            android:layout_margin="4dp"
-            android:background="@drawable/bg_spinner"
-            android:entries="@array/ngay"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
-
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
@@ -40,7 +22,9 @@
             android:layout_above="@id/bottom_navigation"
             android:layout_marginTop="5dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_date" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/include" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"

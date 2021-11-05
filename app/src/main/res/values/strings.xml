@@ -110,4 +110,15 @@
         <item>Quản lý kho</item>
     </string-array>
 
+    <!-- Dialog -->
+    <string name="titleUpdate">Cập nhật</string>
+    <string name="titleAdd">Thêm</string>
+    <string name="title">THÔNG BÁO</string>
+    <string name="okay">OK</string>
+    <string name="yes">XÁC NHẬN</string>
+    <string name="no">HUỶ</string>
+    <string name="title9">Chi tiết sản phẩm</string>
+    <string name="title10">Chi tiết mã giảm giá</string>
+    <string name="doimk">Đổi mật khẩu</string>
+
 </resources>

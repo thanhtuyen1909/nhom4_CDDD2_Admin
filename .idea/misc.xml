@@ -3,6 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/drawable/dialog_background.xml" value="0.1734375" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/drawable/ic_succes.xml" value="0.1734375" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/drawable/title_succes_background.xml" value="0.1734375" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/appbar.xml" value="0.11775362318840579" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/fragment_list.xml" value="0.1546875" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/item_order_sp.xml" value="0.159375" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_orderprocess_oh.xml" value="0.11775362318840579" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_shipprocess.xml" value="0.1" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_succes_dialog.xml" value="0.15625" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_green_circle.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_spinner.xml" value="0.21614583333333334" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_toolbar.xml" value="0.11510416666666666" />
