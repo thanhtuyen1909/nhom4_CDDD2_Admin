@@ -85,7 +85,7 @@ public class FragmentOrderingSP extends Fragment {
         }
     };
 
-    private void data(){
+    private void data() {
         empRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
@@ -122,5 +122,9 @@ public class FragmentOrderingSP extends Fragment {
 
             }
         });
+    }
+
+    public ArrayList<Order> getList() {
+        return listOrder;
     }
 }

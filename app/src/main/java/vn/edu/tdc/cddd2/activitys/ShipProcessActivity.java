@@ -33,14 +33,13 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
     // Khai báo biến:
     BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
-    private Spinner spinDate;
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
     Intent intent;
-    String tagA = "ListOrderSP";
+    String tagA = "ListOrderSP", username = "shipper";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,10 +75,10 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
                 if (id == R.id.odering) {
                     selectedFragment = new FragmentListOrderSP();
                     tagA = "ListOrderSP";
-                } else if(id == R.id.delivering){
+                } else if (id == R.id.delivering) {
                     selectedFragment = new FragmentOrderingSP();
                     tagA = "OrderingSP";
-                } else if(id == R.id.delivered){
+                } else if (id == R.id.delivered) {
                     selectedFragment = new FragmentOrderDeliveredSP();
                     tagA = "OrderDeliveredSP";
                 } else {
@@ -118,12 +117,13 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
         switch (id) {
             case R.id.nav_dmk:
                 intent = new Intent(ShipProcessActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                intent.putExtra("username", username);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ShipProcessActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ShipProcessActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
