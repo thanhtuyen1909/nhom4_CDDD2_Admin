@@ -24,8 +24,7 @@
             android:screenOrientation="portrait" />
 
         <!-- Warehouse Management -->
-        <activity android:name=".activitys.MainQLKActivity" >
-        </activity>
+        <activity android:name=".activitys.MainQLKActivity" />
         <activity
             android:name=".activitys.ListProductActivity"
             android:screenOrientation="portrait" />
@@ -62,7 +61,12 @@
         <!-- Salesman -->
         <activity
             android:name=".activitys.ListProductSMActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activitys.ListCartActivity"
             android:screenOrientation="portrait" />
@@ -77,10 +81,6 @@
         <activity
             android:name=".activitys.ShipProcessActivity"
             android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!-- Administrators -->
         <activity

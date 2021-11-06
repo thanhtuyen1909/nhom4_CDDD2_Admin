@@ -42,7 +42,7 @@ import vn.edu.tdc.cddd2.data_models.Product;
 public class DetailOrderActivity extends AppCompatActivity {
     // Khai báo biến
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar, txtMaDH, txtCreatedAt, txtStatus, txtNote, txtName, txtPhone, txtTotal;
+    TextView btnBack, subtitleAppbar, txtMaDH, txtCreatedAt, txtStatus, txtNote, txtName, txtPhone, txtTotal, txtAddress;
     RecyclerView recyclerView;
     ArrayList<Product> listProducts;
     Product5Adapter product5Adapter;
@@ -73,6 +73,7 @@ public class DetailOrderActivity extends AppCompatActivity {
         txtName = findViewById(R.id.txt_htkh);
         txtPhone = findViewById(R.id.txt_sdt);
         txtTotal = findViewById(R.id.txt_tongtien);
+        txtAddress = findViewById(R.id.txt_diachi);
 
         // Đổ dữ liệu
         if(item != null) {
@@ -97,6 +98,7 @@ public class DetailOrderActivity extends AppCompatActivity {
             txtNote.setText("Ghi chú: " + item.getNote());
             txtName.setText("Họ tên khách hàng: " + item.getName());
             txtTotal.setText("Tổng tiền: " + formatPrice(item.getTotal()));
+            txtAddress.setText("Địa chỉ: " + item.getAddress());
         }
 
         // Xử lý sự kiện click button "Trở lại":

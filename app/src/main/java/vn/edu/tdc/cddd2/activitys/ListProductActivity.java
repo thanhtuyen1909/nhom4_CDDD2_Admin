@@ -90,6 +90,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         totalProduct = findViewById(R.id.totalProduct);
         spinCate = findViewById(R.id.spinner_cata);
         spinManu = findViewById(R.id.spinner_manu);
+
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListProductActivity.this, MainQLKActivity.class);
@@ -125,6 +126,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
 
             }
         });
+
         spinManu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -135,8 +137,6 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                     listProduct.clear();
                     filterProduct(cate.getKey(), manu.getKey(), query, isFirst);
                 }, 200);
-                ;
-
             }
 
             @Override
@@ -165,7 +165,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         txtRole.setText(role);
 
 
-        // Xự kiện searchview:
+        // Sự kiện searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

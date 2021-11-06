@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,14 +23,11 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Product3Adapter;
 import vn.edu.tdc.cddd2.adapters.Product4Adapter;
-import vn.edu.tdc.cddd2.controls.InDecreaseViewControl;
 import vn.edu.tdc.cddd2.data_models.Product;
 
 public class CreateOrderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến:
-    InDecreaseViewControl inDecreaseViewControl;
     private Toolbar toolbar;
     private TextView btnBack;
     private Button btnXacNhan;
@@ -47,7 +43,6 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_payment_sm);
-        inDecreaseViewControl = (InDecreaseViewControl) findViewById(R.id.indecrease);
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);

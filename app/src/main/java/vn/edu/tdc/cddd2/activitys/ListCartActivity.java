@@ -1,13 +1,11 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,35 +19,42 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Product2Adapter;
-import vn.edu.tdc.cddd2.adapters.Product3Adapter;
-import vn.edu.tdc.cddd2.adapters.ProductAdapter;
-import vn.edu.tdc.cddd2.controls.InDecreaseViewControl;
+import vn.edu.tdc.cddd2.adapters.CartDetailAdapter;
+import vn.edu.tdc.cddd2.data_models.CartDetail;
 import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListCartActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến:
-    InDecreaseViewControl inDecreaseViewControl;
-    private Toolbar toolbar;
-    private TextView btnBack;
-    private Button btnIncrease, btnDecrease, btnThanhToan;
+    Toolbar toolbar;
+    TextView btnBack;
+    Button btnIncrease, btnDecrease, btnThanhToan;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
-    private NavigationView navigationView;
-    private Product3Adapter proAdapter;
+    RecyclerView recyclerView;
+    NavigationView navigationView;
+    CartDetailAdapter proAdapter;
     private Intent intent;
+    String accountID = "";
+    ArrayList<CartDetail> listCart;
+
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference proRef = db.getReference("Products");
+    DatabaseReference ref = db.getReference("Cart");
+    DatabaseReference detailRef = db.getReference("Cart_Detail");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_cart_sm);
-        inDecreaseViewControl = (InDecreaseViewControl) findViewById(R.id.indecrease);
+
+        intent = getIntent();
+        accountID = intent.getStringExtra("accountID");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -64,19 +69,14 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
         btnThanhToan = findViewById(R.id.buttonThanhToan);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "Thanh toán":
         btnThanhToan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(ListCartActivity.this, CreateOrderActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                //intent.putExtra();
                 startActivity(intent);
             }
         });
@@ -86,7 +86,7 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
         recyclerView.setHasFixedSize(true);
         listProduct = new ArrayList<>();
         data();
-        proAdapter = new Product3Adapter(listProduct,this);
+        proAdapter = new CartDetailAdapter(listProduct,this);
         proAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -103,13 +103,11 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void data(){
-//        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-//        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
     }
 
-    private Product3Adapter.ItemClickListener itemClickListener = new Product3Adapter.ItemClickListener() {
+    private CartDetailAdapter.ItemClickListener itemClickListener = new CartDetailAdapter.ItemClickListener() {
         @Override
-        public void getInfor(Product item) {
+        public void changeValue(Product item) {
             Toast.makeText(ListCartActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
         }
     };

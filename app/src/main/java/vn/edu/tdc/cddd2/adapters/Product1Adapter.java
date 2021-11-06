@@ -27,7 +27,7 @@ import vn.edu.tdc.cddd2.data_models.Product;
 
 public class Product1Adapter extends RecyclerView.Adapter<Product1Adapter.ViewHolder> {
     ArrayList<Product> listProducts;
-    private Context context;
+    Context context;
     Product1Adapter.ItemClickListener itemClickListener;
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Manufactures");
     FirebaseStorage storage = FirebaseStorage.getInstance();
