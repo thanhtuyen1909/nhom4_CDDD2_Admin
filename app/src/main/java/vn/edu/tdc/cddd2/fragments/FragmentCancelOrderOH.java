@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.Order3Adapter;
-import vn.edu.tdc.cddd2.adapters.Order6Adapter;
 import vn.edu.tdc.cddd2.data_models.Order;
 
 public class FragmentCancelOrderOH extends Fragment {
@@ -30,7 +28,7 @@ public class FragmentCancelOrderOH extends Fragment {
     // Khai báo biến:
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
-    private Order6Adapter orderAdapter;
+    private Order3Adapter orderAdapter;
     private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
 
     @Nullable
@@ -43,7 +41,7 @@ public class FragmentCancelOrderOH extends Fragment {
         recyclerView = view.findViewById(R.id.listOrder);
         recyclerView.setHasFixedSize(true);
         data();
-        orderAdapter = new Order6Adapter(listOrder, getActivity());
+        orderAdapter = new Order3Adapter(listOrder, getActivity());
 
         recyclerView.setAdapter(orderAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
