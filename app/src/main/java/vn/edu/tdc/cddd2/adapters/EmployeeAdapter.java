@@ -1,6 +1,10 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +15,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Employee;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHolder> {
     ArrayList<Employee> listEmployees;
@@ -43,10 +51,12 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull EmployeeAdapter.ViewHolder holder, int position) {
         Employee item = listEmployees.get(position);
-        holder.im_item.setImageResource(R.drawable.baseline_person_24);
-        holder.tv_name.setText(item.getHoTenNV());
+        holder.im_item.setImageURI(Uri.parse(item.getImage()));
+        holder.tv_name.setText(item.getName());
         holder.tv_manv.setText(item.getMaNV());
-        holder.tv_chucvu.setText(item.getChucVu());
+        holder.tv_chucvu.setText(item.getPosition());
+        Picasso.get().load(item.getImage()).into(holder.im_item);
+
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

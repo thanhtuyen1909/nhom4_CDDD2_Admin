@@ -8,8 +8,25 @@
         <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/drawable/title_succes_background.xml" value="0.1734375" />
         <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/appbar.xml" value="0.11775362318840579" />
         <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/fragment_list.xml" value="0.1546875" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/item_employee.xml" value="0.13677536231884058" />
         <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/item_order_sp.xml" value="0.159375" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/item_rating_product.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_changepassword.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_detail_discountcode.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_detail_employee.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_detail_infomation.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_detail_invoice.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_detail_salary.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_diemdanh_dialog.xml" value="0.264" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_historyactivity.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_info_promocode.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_list_employee.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_list_invoice.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_list_manu.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_list_product_sm.xml" value="0.15172101449275363" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_list_promocode.xml" value="0.15172101449275363" />
         <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_orderprocess_oh.xml" value="0.11775362318840579" />
+        <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_revenues.xml" value="0.15172101449275363" />
         <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_shipprocess.xml" value="0.1" />
         <entry key="..\:/Users/ACER/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_succes_dialog.xml" value="0.15625" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_green_circle.xml" value="0.2203125" />
