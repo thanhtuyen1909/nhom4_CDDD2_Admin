@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -10,12 +9,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -30,11 +29,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.ybq.android.spinkit.style.FoldingCube;
-import com.github.ybq.android.spinkit.style.RotatingPlane;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -50,12 +46,10 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Employee1Adapter;
 import vn.edu.tdc.cddd2.data_models.Employee;
 
 public class DetailEmployeeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -76,7 +70,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
             "Tên Là Danh", "Quản lý kho", 10000000);
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     static int SELECT_IMAGE_CODE = 1;
-    boolean check = true,check1 =true;
+    boolean check = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +103,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         empAllowance = findViewById(R.id.edtPC);
         empImage = findViewById(R.id.imageView);
         bar =findViewById(R.id.progess1);
+        bar.setIndeterminateDrawable(new FoldingCube());
 
         data();
         empDOB.setOnClickListener(new View.OnClickListener() {
@@ -144,13 +139,21 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkTrungID();
                 if (checkError() == 1) {
                     if(type.equals("add")){
-                        if (check == true) {
-                            saveEmployee();
-                        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (check == true) {
+                                    Log.d("TAG", "onClick: a");
+                                    saveEmployee();
+                                }
+                            }
+                        },200);
+
                     }
-                    if(type.equals("edit")){
+                    else if(type.equals("edit")){
                         saveEmployee();
                     }
                 }
@@ -161,7 +164,8 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         btnXemBangLuong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(DetailEmployeeActivity.this, "Xem bảng lương", Toast.LENGTH_SHORT).show();
+                intent = new Intent(DetailEmployeeActivity.this,DetailSalaryActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -174,7 +178,9 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
 
         employee.setAccountID("");
         employee.setAddress(empAddress.getText() + "");
-        employee.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
+        if(!String.valueOf(empAllowance.getText()).equals("")){
+            employee.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
+        }
         employee.setBirthday(empDOB.getText() + "");
         employee.setCreated_at(empCreated_at.getText() + "");
         employee.setGender((String) empGender.getSelectedItem());
@@ -245,6 +251,8 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
                 for (DataSnapshot node : dataSnapshot.getChildren()) {
                     if (node.getKey().equals(String.valueOf(empID.getText()))) {
                         check = false;
+                        showWarningDialog("Mã nhân viên không được trùng!");
+                        break;
                     }
                 }
             }

@@ -88,8 +88,19 @@
         <item>Khác</item>
     </string-array>
     <string-array name="thang">
+        <item>Tất cả</item>
+        <item>Tháng 1</item>
+        <item>Tháng 2</item>
+        <item>Tháng 3</item>
+        <item>Tháng 4</item>
+        <item>Tháng 5</item>
+        <item>Tháng 6</item>
+        <item>Tháng 7</item>
         <item>Tháng 8</item>
         <item>Tháng 9</item>
+        <item>Tháng 10</item>
+        <item>Tháng 11</item>
+        <item>Tháng 12</item>
     </string-array>
 
     <string-array name="loaikhachhang">
@@ -108,17 +119,6 @@
         <item>Thấp nhất</item>
     </string-array>
 
-    <string-array name="loaisp">
-        <item>Laptop</item>
-        <item>Máy tính</item>
-        <item>Điện thoại</item>
-    </string-array>
-
-    <string-array name="hang">
-        <item>Asus</item>
-        <item>Samsung</item>
-        <item>Apple</item>
-    </string-array>
 
     <string-array name="mau">
         <item></item>
@@ -148,25 +148,6 @@
         <item>10%</item>
         <item>20%</item>
         <item>30%</item>
-    </string-array>
-
-    <string-array name="sanpham">
-        <item>Asus Nitro N5</item>
-        <item>Iphone 13</item>
-        <item>Iphone X</item>
-    </string-array>
-
-    <string-array name="shipper">
-        <item>N.V.An - KV1</item>
-        <item>N.V.Bình - KV2</item>
-        <item>N.V.Tiến - KV3</item>
-    </string-array>
-
-    <string-array name="quyen">
-        <item>Tất cả</item>
-        <item>Nhân viên bán hàng</item>
-        <item>Nhân viên giao hàng</item>
-        <item>Quản lý kho</item>
     </string-array>
 
 </resources>

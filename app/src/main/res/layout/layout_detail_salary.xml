@@ -42,7 +42,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txt1" />
 
         <TextView
-            android:id="@+id/txt_htkh"
+            android:id="@+id/txt_name"
             android:textSize="16sp"
             android:layout_marginTop="5dp"
             style="@style/CustomTextViewQuantity"
@@ -54,7 +54,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view2" />
 
         <TextView
-            android:id="@+id/txt_diachi"
+            android:id="@+id/txt_position"
             android:textSize="16sp"
             android:layout_marginTop="5dp"
             style="@style/CustomTextViewQuantity"
@@ -63,10 +63,10 @@
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_htkh" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_name" />
 
         <TextView
-            android:id="@+id/txt_sdt"
+            android:id="@+id/txt_created"
             android:textSize="16sp"
             android:layout_marginTop="5dp"
             style="@style/CustomTextViewQuantity"
@@ -75,7 +75,7 @@
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_diachi" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_position" />
 
         <TextView
             android:id="@+id/txt1"
@@ -92,13 +92,30 @@
         <Spinner
             android:id="@+id/spinner_month"
             style="@style/CustomSpinner"
-            android:layout_height="35dp"
             android:layout_width="150dp"
+            android:layout_height="35dp"
             android:layout_margin="10dp"
             android:background="@drawable/bg_spinner"
             android:entries="@array/thang"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_sdt" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_created"
+            />
+
+        <Spinner
+            android:id="@+id/spinner_year"
+            style="@style/CustomSpinner"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:layout_margin="10dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_spinner"
+            android:entries="@array/thang"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.657"
+            app:layout_constraintRight_toRightOf="@+id/spinner_month"
+            app:layout_constraintStart_toStartOf="@+id/spinner_month"
+            app:layout_constraintTop_toBottomOf="@+id/txt_created"
+            />
 
         <TextView
             android:id="@+id/txt_songaylam"
@@ -132,6 +149,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txt_songaynghi" />
+        <TextView
+            android:id="@+id/txt_fine"
+            style="@style/CustomTextViewQuantity"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:text="Đóng phạt : 200.000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_luongcb" />
+
 
         <TextView
             android:id="@+id/txt_chuyencan"
@@ -142,7 +170,7 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_luongcb" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_fine" />
 
         <TextView
             android:id="@+id/txt_phucap"
@@ -156,7 +184,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txt_chuyencan" />
 
         <TextView
-            android:id="@+id/txt_tongtien"
+            android:id="@+id/txt_totalsalary"
             android:layout_height="35dp"
             android:layout_width="match_parent"
             android:text="Tổng lương: 4000000 VND"

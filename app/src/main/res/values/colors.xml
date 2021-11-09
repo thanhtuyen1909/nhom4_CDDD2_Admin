@@ -27,4 +27,5 @@
     <color name="colorError">#CC0000</color>
     <color name="colorTextPrimary">#212121</color>
 
+    <color name="colorChart">#0B8AEF</color>
 </resources>

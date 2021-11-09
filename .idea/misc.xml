@@ -119,8 +119,23 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_ordercoor.xml" value="0.12" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_warning_dialog.xml" value="0.1" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/nav_header.xml" value="0.20416666666666666" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/item_bestsell_product.xml" value="0.13425925925925927" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/item_product_1.xml" value="0.13425925925925927" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/item_product_2.xml" value="0.13425925925925927" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/item_product_3.xml" value="0.13425925925925927" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/item_willorder_whm.xml" value="0.1" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_detail_edit_product.xml" value="0.21553398058252426" />
         <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_detail_employee.xml" value="0.20416666666666666" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_detail_product.xml" value="0.16574074074074074" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_detail_promocode.xml" value="0.1" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_detail_salary.xml" value="0.3204903677758319" />
         <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_info_promocode.xml" value="0.2" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_list_account.xml" value="0.1" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_list_invoice.xml" value="0.1" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_list_product.xml" value="0.21470019342359767" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_list_product_sm.xml" value="0.1" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_orderhistory.xml" value="0.1" />
+        <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_revenues.xml" value="0.25" />
         <entry key="..\:/Zuke_admin/app/src/main/res/layout/layout_shipprocess.xml" value="0.25" />
       </map>
     </option>
