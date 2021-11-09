@@ -30,6 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.EmployeeAdapter;
@@ -128,6 +130,10 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         @Override
         public void getInfor(Employee item) {
             //Toast.makeText(AttendanceActivity.this, "Điểm danh", Toast.LENGTH_SHORT).show();
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("lydo", edtĐiemDanh.getText().toString());
+            myRef.child("DiemDanh").push().setValue(map);
             showSuccesDialog("Lý do vắng");
         }
     };
