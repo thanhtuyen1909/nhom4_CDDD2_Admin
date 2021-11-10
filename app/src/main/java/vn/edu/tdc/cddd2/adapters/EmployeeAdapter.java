@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -49,7 +50,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EmployeeAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EmployeeAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Employee item = listEmployees.get(position);
         holder.im_item.setImageURI(Uri.parse(item.getImage()));
         holder.tv_name.setText(item.getName());
@@ -62,6 +63,8 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
             public void onClick(View v) {
                 if(itemClickListener != null) {
                     itemClickListener.getInfor(item);
+
+
                 } else {
                     return;
                 }
@@ -100,5 +103,6 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
 
     public interface ItemClickListener {
         void getInfor(Employee item);
+
     }
 }

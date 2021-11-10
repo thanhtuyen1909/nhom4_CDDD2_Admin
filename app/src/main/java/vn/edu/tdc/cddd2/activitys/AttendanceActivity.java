@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.text.SimpleDateFormat;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,14 +34,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.EmployeeAdapter;
-import vn.edu.tdc.cddd2.adapters.InvoiceAdapter;
+
 import vn.edu.tdc.cddd2.data_models.Employee;
-import vn.edu.tdc.cddd2.data_models.Invoice;
+
 
 public class AttendanceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -51,6 +57,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
     private NavigationView navigationView;
     private EmployeeAdapter employeeAdapter;
     private Intent intent;
+
     private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
 
     @Override
@@ -130,11 +137,8 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         @Override
         public void getInfor(Employee item) {
             //Toast.makeText(AttendanceActivity.this, "Điểm danh", Toast.LENGTH_SHORT).show();
+            showSuccesDialog("Lý do vắng",item.getMaNV());
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("lydo", edtĐiemDanh.getText().toString());
-            myRef.child("DiemDanh").push().setValue(map);
-            showSuccesDialog("Lý do vắng");
         }
     };
 
@@ -165,7 +169,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
             super.onBackPressed();
         }
     }
-    private void showSuccesDialog(String message) {
+    private void showSuccesDialog(String message,String maNV) {
         AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(AttendanceActivity.this).inflate(
                 R.layout.layout_diemdanh_dialog,
@@ -176,7 +180,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         title.setText(R.string.title);
         mess = view.findViewById(R.id.textMessage);
         mess.setText(message);
-        edtĐiemDanh=findViewById(R.id.edtDiemDanh);
+        edtĐiemDanh=view.findViewById(R.id.edtDiemDanh);
 
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
@@ -184,6 +188,35 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
+            Map<String, Object> map = new HashMap<>();
+            myRef.child("Employees").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot DSEmployees:dataSnapshot.getChildren()){
+                        Employee employee=DSEmployees.getValue(Employee.class);
+                        employee.setMaNV(DSEmployees.getKey());
+                        //lay ra ngay thang hien tai
+                        String currentMoth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
+                        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+                            if(employee.getMaNV().equals(maNV)) {
+                                map.put("employeeID", employee.getMaNV());
+                                map.put("note", edtĐiemDanh.getText().toString());
+                                map.put("status","-1");
+                                map.put("date",currentDate);
+                                myRef.child("Attendance").child(currentMoth).push().setValue(map);
+                            }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
         });
 
         if (alertDialog.getWindow() != null) {

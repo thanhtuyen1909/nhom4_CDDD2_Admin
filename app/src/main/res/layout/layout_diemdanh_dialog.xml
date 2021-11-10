@@ -44,10 +44,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="12dp"
             android:textColor="@color/colorTextPrimary"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/edtDiemDanh"
             app:layout_constraintTop_toBottomOf="@+id/textTitle"
             app:layout_constraintVertical_bias="0.0"
             tools:layout_editor_absoluteX="-5dp" />
@@ -56,14 +56,14 @@
             android:id="@+id/edtDiemDanh"
             android:layout_width="331dp"
             android:layout_height="30dp"
-            android:layout_marginTop="34dp"
 
             android:layout_marginBottom="32dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textMessage" />
+
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
