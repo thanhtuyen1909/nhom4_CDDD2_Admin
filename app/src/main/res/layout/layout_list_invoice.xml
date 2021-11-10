@@ -14,7 +14,10 @@
 
         <include
             android:id="@+id/include"
-            layout="@layout/appbar" />
+            layout="@layout/appbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
             android:id="@+id/spinner_status"
@@ -36,8 +39,10 @@
 
         <SearchView
             android:id="@+id/editSearch"
-            android:layout_marginTop="5dp"
             style="@style/CustomSearchView"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/rounded_border_edittext"
             android:queryHint="Mã hoá đơn"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,10 +80,10 @@
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_height="3dp"
-            android:layout_marginEnd="5dp"
+            android:layout_height="1dp"
             android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:background="@android:color/darker_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
