@@ -3,6 +3,7 @@ package vn.edu.tdc.cddd2.activitys;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -15,36 +16,45 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CartDetailAdapter;
+import vn.edu.tdc.cddd2.data_models.Cart;
 import vn.edu.tdc.cddd2.data_models.CartDetail;
 import vn.edu.tdc.cddd2.data_models.Product;
+import vn.edu.tdc.cddd2.helper.RecyclerItemTouchHelper;
 
-public class ListCartActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ListCartActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     // Khai báo biến:
     Toolbar toolbar;
     TextView btnBack;
-    Button btnIncrease, btnDecrease, btnThanhToan;
+    Button btnIncrease, btnDecrease, btnPayment;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     RecyclerView recyclerView;
     NavigationView navigationView;
-    CartDetailAdapter proAdapter;
+    CartDetailAdapter cartAdapter;
     private Intent intent;
     String accountID = "";
     ArrayList<CartDetail> listCart;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
-    DatabaseReference proRef = db.getReference("Products");
     DatabaseReference ref = db.getReference("Cart");
     DatabaseReference detailRef = db.getReference("Cart_Detail");
 
@@ -66,13 +76,13 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
-        btnThanhToan = findViewById(R.id.buttonThanhToan);
+        btnPayment = findViewById(R.id.buttonThanhToan);
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "Thanh toán":
-        btnThanhToan.setOnClickListener(new View.OnClickListener() {
+        btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(ListCartActivity.this, CreateOrderActivity.class);
@@ -84,16 +94,37 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        listProduct = new ArrayList<>();
+        listCart = new ArrayList<>();
         data();
-        proAdapter = new CartDetailAdapter(listProduct,this);
-        proAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(proAdapter);
+        cartAdapter = new CartDetailAdapter(this, listCart);
+        cartAdapter.setItemClickListener(itemClickListener);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.setAdapter(cartAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Trượt xoá giỏ hàng
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof CartDetailAdapter.ViewHolder) {
+            // get the removed item name to display it in snack bar
+            String id = listCart.get(viewHolder.getAdapterPosition()).getProductID();
+
+            // backup of removed item for undo purpose
+            final CartDetail deletedItem = listCart.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+            // remove the item from recycler view
+            cartAdapter.removeItem(viewHolder.getAdapterPosition());
+        }
     }
 
     @Override
@@ -102,13 +133,77 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
+    private void data() {
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot node : snapshot.getChildren()) {
+                    Cart cart = node.getValue(Cart.class);
+                    cart.setCartID(node.getKey());
+                    if (cart.getAccountID().equals(accountID)) {
+                        detailRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                listCart.clear();
+                                for (DataSnapshot node1 : snapshot.getChildren()) {
+                                    CartDetail detail = node1.getValue(CartDetail.class);
+                                    detail.setKey(node1.getKey());
+                                    if (cart.getCartID().equals(detail.getCartID())) {
+                                        listCart.add(detail);
+                                    }
+                                }
+                                btnPayment.setText("Tổng tiền : " + formatPrice(cart.getTotal()));
+                                cartAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private CartDetailAdapter.ItemClickListener itemClickListener = new CartDetailAdapter.ItemClickListener() {
         @Override
-        public void changeValue(Product item) {
-            Toast.makeText(ListCartActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+        public void changeQuantity(String key, int value) {
+            detailRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    CartDetail cartDetail = snapshot.getValue(CartDetail.class);
+                    int amount = cartDetail.getAmount();
+                    detailRef.child(key).child("amount").setValue(value);
+                    ref.child(cartDetail.getCartID()).child("total").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (amount >= value) {
+                                ref.child(cartDetail.getCartID()).child("total").setValue(snapshot.getValue(Integer.class) - cartDetail.getPrice());
+                            } else {
+                                ref.child(cartDetail.getCartID()).child("total").setValue(snapshot.getValue(Integer.class) + cartDetail.getPrice());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
     };
 
@@ -135,10 +230,26 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
+    }
+
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
+    }
+
+    private int formatInt(String price) {
+        return Integer.parseInt(price.substring(0, price.length() - 2).replace(",", ""));
     }
 }

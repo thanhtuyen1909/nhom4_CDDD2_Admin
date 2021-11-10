@@ -49,6 +49,7 @@
     <string name="giaban">Giá bán</string>
     <string name="btnAll">Chọn tất cả</string>
     <string name="default_iamge">android.graphics.drawable.AdaptiveIconDrawable@f20e8ad</string>
+    <string name="delete">XOÁ</string>
 
     <!-- Dialog -->
     <string name="titleUpdate">Cập nhật</string>
@@ -61,7 +62,7 @@
     <string name="title10">Chi tiết mã giảm giá</string>
     <string name="doimk">Đổi mật khẩu</string>
 
-<!--  Dialog  -->
+    <!--  Dialog  -->
     <string name="titlePercent">Cập nhật</string>
     <string name="warning">warning</string>
     <string name="error">error</string>

@@ -5,15 +5,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -27,10 +37,9 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
     ItemClickListener itemClickListener;
     private static FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference proRef = db.getReference("Products");
-    DatabaseReference promoRef = db.getReference("Offer_Details");
     DatabaseReference cartRef = db.getReference("Cart");
     DatabaseReference cartDetailRef = db.getReference("Cart_Detail");
-    ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -53,9 +62,8 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CartDetail item = list.get(position);
-        holder.itemName.setText("");
-        holder.itemPrice.setText("");
-        holder.itemPriceDiscount.setText("");
+        holder.name.setText("");
+        holder.price.setText("");
         holder.edtValue.setText("");
         proRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -78,45 +86,13 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
                             });
                         } else {
                             //set name
-                            holder.itemName.setText(product.getName());
+                            holder.name.setText(product.getName());
                             //set gia san pham
-                            holder.itemPrice.setText(formatPrice(product.getPrice()));
-                            promoRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    int maxSale = 0;
-                                    for(DataSnapshot node1 : snapshot.getChildren()){
-                                        OfferDetail detail = node1.getValue(OfferDetail.class);
-                                        if(detail.getProductID().equals(item.getProductID())){
-                                            if(detail.getPercentSale() > maxSale){
-                                                maxSale = detail.getPercentSale();
-                                            }
-                                        }
-                                    }
-                                    if(maxSale != 0){
-                                        int discount = product.getPrice() /100 * (100-maxSale);
-                                        holder.itemPriceDiscount.setText(formatPrice(discount));
-                                        holder.itemPrice.setPaintFlags(holder.itemPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                    } else {
-                                        holder.itemPriceDiscount.setText(formatPrice(product.getPrice()));
-                                        holder.itemPrice.setVisibility(View.INVISIBLE);
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
+                            holder.price.setText(formatPrice(item.getPrice()));
                             holder.edtValue.setText(""+item.getAmount());
-                            //set hinh anh
-                            FirebaseStorage storage = FirebaseStorage.getInstance();
-                            final long ONE_MEGABYTE = 1024 * 1024;
                             StorageReference imageRef = storage.getReference("images/products/" + product.getName() + "/" + product.getImage());
-                            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-                                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                holder.itemImage.setImageBitmap(Bitmap.createScaledBitmap(bmp, holder.itemImage.getWidth(), holder.itemImage.getHeight(), false));
+                            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                Picasso.get().load(uri).fit().into(holder.thumbnail);
                             });
                         }
                     }
@@ -134,20 +110,17 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
                 if (v == holder.btnAdd) {
                     value++;
                     holder.edtValue.setText(String.valueOf(value));
-                    itemClickListener.changeQuantity(item, value);
+                    itemClickListener.changeQuantity(item.getKey(), value);
                 }
                 if (v == holder.btnMinus) {
                     value--;
                     holder.edtValue.setText(String.valueOf(value));
-                    itemClickListener.changeQuantity(item, value);
+                    itemClickListener.changeQuantity(item.getKey(), value);
                 }
-                if (v == holder.cardView) itemClickListener.delete(item.getKey(), formatInt(holder.itemPriceDiscount.getText().toString()));
-
             } else {
                 return;
             }
         };
-        viewBinderHelper.bind(holder.swipeRevealLayout, item.getKey());
     }
 
     @Override
@@ -155,30 +128,50 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
         return list.size();
     }
 
+    public void removeItem(int position) {
+        cartRef.child(list.get(position).getCartID()).child("total").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                cartRef.child(list.get(position).getCartID()).child("total").setValue(snapshot.getValue(Integer.class) - list.get(position).getPrice() * list.get(position).getAmount()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        cartDetailRef.child(list.get(position).getKey()).removeValue();
+                        list.remove(position);
+                        // notify the item removed by position
+                        // to perform recycler view delete animations
+                        // NOTE: don't call notifyDataSetChanged()
+                        notifyItemRemoved(position);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        SwipeRevealLayout swipeRevealLayout;
-        CardView cardView;
-        ImageView itemImage;
-        TextView itemName, itemPrice, itemPriceDiscount;
-        Button btnAdd,btnMinus;
-        EditText edtValue;
+        public TextView name, price;
+        public ImageView thumbnail;
+        public EditText edtValue;
+        public Button btnMinus, btnAdd;
+        public RelativeLayout viewBackground, viewForeground;
         View.OnClickListener onClickListener;
 
         public ViewHolder(View view) {
             super(view);
-            swipeRevealLayout = view.findViewById(R.id.swipelayout);
-            cardView = view.findViewById(R.id.cardView);
-            itemImage = view.findViewById(R.id.img);
-            itemName = view.findViewById(R.id.txt_name);
-            itemPrice = view.findViewById(R.id.txt_price);
-            itemPriceDiscount = view.findViewById(R.id.txtPriceDiscount);
-            itemPriceDiscount.setText("");
-            btnAdd = view.findViewById(R.id.plusButton);
-            btnMinus = view.findViewById(R.id.minusButton);
+            name = view.findViewById(R.id.name);
+            price = view.findViewById(R.id.price);
+            thumbnail = view.findViewById(R.id.thumbnail);
             edtValue = view.findViewById(R.id.valueAmount);
-            btnMinus.setOnClickListener(this);
+            btnMinus = view.findViewById(R.id.minusButton);
+            btnAdd = view.findViewById(R.id.plusButton);
+            viewBackground = view.findViewById(R.id.view_background);
+            viewForeground = view.findViewById(R.id.view_foreground);
             btnAdd.setOnClickListener(this);
-            cardView.setOnClickListener(this);
+            btnMinus.setOnClickListener(this);
         }
 
         @Override
@@ -190,8 +183,7 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
     }
 
     public interface ItemClickListener {
-        void changeQuantity(CartDetail item, int value);
-        void delete(String id, int price);
+        void changeQuantity(String key, int value);
     }
 
     private String formatPrice(int price) {
@@ -205,9 +197,5 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
             stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
         }
         return stmp + " ₫";
-    }
-
-    private int formatInt(String price) {
-        return Integer.parseInt(price.substring(0, price.length() - 2).replace(",", ""));
     }
 }

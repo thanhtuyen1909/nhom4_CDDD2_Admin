@@ -28,21 +28,25 @@ import vn.edu.tdc.cddd2.data_models.Product;
 
 public class CreateOrderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến:
-    private Toolbar toolbar;
-    private TextView btnBack;
-    private Button btnXacNhan;
+    Toolbar toolbar;
+    TextView btnBack;
+    Button btnXacNhan;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
-    private NavigationView navigationView;
-    private Product4Adapter proAdapter;
+    RecyclerView recyclerView;
+    ArrayList<Product> listProduct;
+    NavigationView navigationView;
+    Product4Adapter proAdapter;
     private Intent intent;
+    String accountID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_payment_sm);
+
+        intent = getIntent();
+        accountID = intent.getStringExtra("accountID");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
