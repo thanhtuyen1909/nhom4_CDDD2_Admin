@@ -23,8 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.DiscountCodeAdapter;
-import vn.edu.tdc.cddd2.data_models.DiscountCode;
 
 public class ListDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -35,8 +33,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     private NavigationView navigationView;
     private Intent intent;
     private RecyclerView recyclerView;
-    private ArrayList<DiscountCode> listDiscountCode;
-    private DiscountCodeAdapter discountCodeAdapter;
+
     private Button btnAdd;
 
     @Override
@@ -60,7 +57,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
-        listDiscountCode = new ArrayList<>();
+
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -83,26 +80,8 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         //RecycleView
         recyclerView = findViewById(R.id.listDiscount);
         recyclerView.setHasFixedSize(true);
-        listDiscountCode = new ArrayList<>();
-        data();
-        discountCodeAdapter = new DiscountCodeAdapter(listDiscountCode,this);
-        discountCodeAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(discountCodeAdapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private DiscountCodeAdapter.ItemClickListener itemClickListener = new DiscountCodeAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(DiscountCode item) {
-            Toast.makeText(ListDiscountCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private void data(){
-        listDiscountCode.add(new DiscountCode("13102021DC001"));
-        listDiscountCode.add(new DiscountCode("13102021DC002"));
-        listDiscountCode.add(new DiscountCode("13102021DC003"));
-        listDiscountCode.add(new DiscountCode("13102021DC004"));
     }
 
     @Override

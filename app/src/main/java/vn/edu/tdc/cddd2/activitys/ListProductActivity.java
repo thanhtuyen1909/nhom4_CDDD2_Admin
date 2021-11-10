@@ -24,8 +24,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.ProductAdapter;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến
@@ -36,9 +34,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
     private NavigationView navigationView;
-    private ProductAdapter proAdapter;
     private Intent intent;
 
     @Override
@@ -77,11 +73,6 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        listProduct = new ArrayList<>();
-        data();
-        proAdapter = new ProductAdapter(listProduct,this);
-        proAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -95,20 +86,6 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
-        listProduct.add(new Product("Laptop 4", 16000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 5", 12000000, "Asus", 10));
-    }
-
-    private ProductAdapter.ItemClickListener itemClickListener = new ProductAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Product item) {
-            Toast.makeText(ListProductActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

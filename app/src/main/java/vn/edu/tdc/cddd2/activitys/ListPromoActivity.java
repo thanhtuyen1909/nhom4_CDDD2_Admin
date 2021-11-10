@@ -23,8 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.PromoCodeAdapter;
-import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class ListPromoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến
@@ -34,9 +32,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<PromoCode> listPromoCode;
     private NavigationView navigationView;
-    private PromoCodeAdapter promoCodeAdapter;
     private Intent intent;
 
     @Override
@@ -79,11 +75,6 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         //RecycleView
         recyclerView = findViewById(R.id.listPromoCode);
         recyclerView.setHasFixedSize(true);
-        listPromoCode = new ArrayList<>();
-        data();
-        promoCodeAdapter = new PromoCodeAdapter(listPromoCode,this);
-        promoCodeAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(promoCodeAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -97,27 +88,8 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-        listPromoCode.add(new PromoCode("Back to school", "13/08/2021", "13/09/2021"));
-    }
 
-    private PromoCodeAdapter.ItemClickListener itemClickListener = new PromoCodeAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(PromoCode item) {
-            Toast.makeText(ListPromoActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
 
-        @Override
-        public void getLayoutAddDetailPromoCode() {
-            intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

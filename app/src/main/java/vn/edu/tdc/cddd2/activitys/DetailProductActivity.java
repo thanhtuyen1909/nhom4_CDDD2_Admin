@@ -24,8 +24,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Product1Adapter;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailProductActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -36,9 +34,7 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
     private NavigationView navigationView;
     private Intent intent;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
     private Spinner spinCata, spinManu;
-    private Product1Adapter proAdapter;
     private Button btnAdd;
 
     @Override
@@ -63,7 +59,6 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         btnSave = findViewById(R.id.txtSave);
         btnCancel = findViewById(R.id.txtCancel);
         btnAdd = findViewById(R.id.btnAdd);
-        listProduct = new ArrayList<>();
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -77,8 +72,6 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                data();
-                proAdapter.notifyDataSetChanged();
             }
         });
 
@@ -92,25 +85,11 @@ public class DetailProductActivity extends AppCompatActivity implements Navigati
 
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
-        proAdapter = new Product1Adapter(listProduct,this);
-        proAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(proAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
     }
 
-    private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
-        @Override
-        public void getInfor(Product item) {
-            Toast.makeText(DetailProductActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private void data(){
-        listProduct.add(new Product("Laptop 1 - Đen - 16GB ram", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2 - Đen - 8GB ram", 14000000, "Acer", 11));
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

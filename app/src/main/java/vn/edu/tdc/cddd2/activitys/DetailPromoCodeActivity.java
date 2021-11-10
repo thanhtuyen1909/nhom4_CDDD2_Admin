@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -25,11 +24,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.CustomerAdapter;
-import vn.edu.tdc.cddd2.adapters.Product1Adapter;
-import vn.edu.tdc.cddd2.adapters.ProductAdapter;
-import vn.edu.tdc.cddd2.data_models.Customer;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailPromoCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -40,9 +34,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
     private NavigationView navigationView;
     private Intent intent;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
     private Spinner spinProduct, spinGiamGia;
-    private Product1Adapter productAdapter;
     private Button btnAdd;
 
     @Override
@@ -68,7 +60,6 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         btnSave = findViewById(R.id.txtSave);
         btnCancel = findViewById(R.id.txtCancel);
         btnAdd = findViewById(R.id.btnAdd);
-        listProduct = new ArrayList<>();
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -82,8 +73,6 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                data();
-                productAdapter.notifyDataSetChanged();
             }
         });
 
@@ -98,26 +87,10 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements Naviga
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        productAdapter = new Product1Adapter(listProduct,this);
-        productAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(productAdapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private Product1Adapter.ItemClickListener itemClickListener = new Product1Adapter.ItemClickListener() {
-        @Override
-        public void getInfor(Product item) {
-            Toast.makeText(DetailPromoCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
-        listProduct.add(new Product("Laptop 4", 16000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 5", 12000000, "Asus", 10));
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

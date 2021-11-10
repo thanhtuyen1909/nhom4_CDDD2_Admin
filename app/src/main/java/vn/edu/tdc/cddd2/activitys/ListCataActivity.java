@@ -23,8 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.CataAdapter;
-import vn.edu.tdc.cddd2.data_models.Catagory;
 
 public class ListCataActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -33,8 +31,6 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Catagory> lisCata;
-    private CataAdapter cataAdapter;
     private NavigationView navigationView;
     private Intent intent;
     private Button btnAdd;
@@ -77,11 +73,7 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
         //RecycleView
         recyclerView = findViewById(R.id.listManu);
         recyclerView.setHasFixedSize(true);
-        lisCata = new ArrayList<>();
-        data();
-        cataAdapter = new CataAdapter(lisCata,this);
-        cataAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(cataAdapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -95,20 +87,6 @@ public class ListCataActivity extends AppCompatActivity implements NavigationVie
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
-        lisCata.add(new Catagory("Tivi"));
-        lisCata.add(new Catagory("Tủ lạnh"));
-        lisCata.add(new Catagory("Laptop"));
-        lisCata.add(new Catagory("Máy tính bảng"));
-        lisCata.add(new Catagory("Điện thoại"));
-    }
-
-    private CataAdapter.ItemClickListener itemClickListener = new CataAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Catagory item) {
-            Toast.makeText(ListCataActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

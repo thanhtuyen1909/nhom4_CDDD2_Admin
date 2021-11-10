@@ -1,12 +1,10 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,13 +22,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.AccountAdapter;
-import vn.edu.tdc.cddd2.adapters.Order5Adapter;
-import vn.edu.tdc.cddd2.adapters.Product1Adapter;
-import vn.edu.tdc.cddd2.adapters.Product5Adapter;
-import vn.edu.tdc.cddd2.data_models.Account;
-import vn.edu.tdc.cddd2.data_models.Order;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailOrderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -39,9 +30,7 @@ public class DetailOrderActivity extends AppCompatActivity implements Navigation
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listProducts;
     private NavigationView navigationView;
-    private Product5Adapter product5Adapter;
     private Intent intent;
 
     @Override
@@ -73,10 +62,6 @@ public class DetailOrderActivity extends AppCompatActivity implements Navigation
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        listProducts = new ArrayList<>();
-        data();
-        product5Adapter = new Product5Adapter(listProducts, this);
-        recyclerView.setAdapter(product5Adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -90,10 +75,6 @@ public class DetailOrderActivity extends AppCompatActivity implements Navigation
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data() {
-        listProducts.add(new Product("Laptop 1", 15000000, "Asus", 2));
-        listProducts.add(new Product("Laptop 2", 14000000, "Acer", 1));
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

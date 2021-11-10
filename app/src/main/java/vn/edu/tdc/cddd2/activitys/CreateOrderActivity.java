@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,10 +23,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Product3Adapter;
-import vn.edu.tdc.cddd2.adapters.Product4Adapter;
 import vn.edu.tdc.cddd2.controls.InDecreaseViewControl;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class CreateOrderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến:
@@ -38,9 +34,7 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
     private NavigationView navigationView;
-    private Product4Adapter proAdapter;
     private Intent intent;
 
     @Override
@@ -82,10 +76,8 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        listProduct = new ArrayList<>();
-        data();
-        proAdapter = new Product4Adapter(listProduct,this);
-        recyclerView.setAdapter(proAdapter);
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -99,10 +91,7 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 1));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 1));
-    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

@@ -23,8 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.ManuAdapter;
-import vn.edu.tdc.cddd2.data_models.Manufacturer;
 
 public class ListManuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -33,8 +31,6 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Manufacturer> listManu;
-    private ManuAdapter manuAdapter;
     private NavigationView navigationView;
     private Intent intent;
     private Button btnAdd;
@@ -77,11 +73,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         //RecycleView
         recyclerView = findViewById(R.id.listManu);
         recyclerView.setHasFixedSize(true);
-        listManu = new ArrayList<>();
-        data();
-        manuAdapter = new ManuAdapter(listManu,this);
-        manuAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(manuAdapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -95,20 +87,6 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
-        listManu.add(new Manufacturer("Asus"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Apple"));
-        listManu.add(new Manufacturer("Acer"));
-        listManu.add(new Manufacturer("Asus"));
-    }
-
-    private ManuAdapter.ItemClickListener itemClickListener = new ManuAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Manufacturer item) {
-            Toast.makeText(ListManuActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

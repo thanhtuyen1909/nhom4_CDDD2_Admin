@@ -1,12 +1,10 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.CustomerAdapter;
-import vn.edu.tdc.cddd2.adapters.Product1Adapter;
-import vn.edu.tdc.cddd2.data_models.Customer;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailDiscountCodeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -39,9 +33,7 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
     private NavigationView navigationView;
     private Intent intent;
     private RecyclerView recyclerView;
-    private ArrayList<Customer> listCustomer;
     private Spinner spinCus;
-    private CustomerAdapter customerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +58,7 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
         btnSave = findViewById(R.id.txtSave);
         btnCancel = findViewById(R.id.txtCancel);
         btnAll = findViewById(R.id.btnAll);
-        listCustomer = new ArrayList<>();
+
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -95,24 +87,12 @@ public class DetailDiscountCodeActivity extends AppCompatActivity implements Nav
         //RecycleView
         recyclerView = findViewById(R.id.listCustomer);
         recyclerView.setHasFixedSize(true);
-        data();
-        customerAdapter = new CustomerAdapter(listCustomer,this);
-        customerAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(customerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private CustomerAdapter.ItemClickListener itemClickListener = new CustomerAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Customer item) {
-            Toast.makeText(DetailDiscountCodeActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
-    private void data(){
-        listCustomer.add(new Customer("Nguyễn Vân Anh"));
-        listCustomer.add(new Customer("Trần Bình"));
-    }
+
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

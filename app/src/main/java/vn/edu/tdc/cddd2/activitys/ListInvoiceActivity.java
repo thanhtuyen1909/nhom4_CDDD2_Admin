@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -23,10 +22,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.InvoiceAdapter;
-import vn.edu.tdc.cddd2.adapters.Order5Adapter;
-import vn.edu.tdc.cddd2.data_models.Invoice;
-import vn.edu.tdc.cddd2.data_models.Order;
 
 public class ListInvoiceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -35,9 +30,7 @@ public class ListInvoiceActivity extends AppCompatActivity implements Navigation
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Invoice> listInvoices;
     private NavigationView navigationView;
-    private InvoiceAdapter invoiceAdapter;
     private Intent intent;
 
     @Override
@@ -69,11 +62,6 @@ public class ListInvoiceActivity extends AppCompatActivity implements Navigation
         //RecycleView
         recyclerView = findViewById(R.id.listInvoice);
         recyclerView.setHasFixedSize(true);
-        listInvoices = new ArrayList<>();
-        data();
-        invoiceAdapter = new InvoiceAdapter(listInvoices, this);
-        invoiceAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(invoiceAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -86,23 +74,6 @@ public class ListInvoiceActivity extends AppCompatActivity implements Navigation
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
-
-    private void data() {
-        listInvoices.add(new Invoice("HD001", 15000000, "12/10/2021"));
-        listInvoices.add(new Invoice("HD002", 14000000, "12/10/2021"));
-        listInvoices.add(new Invoice("HD003", 12000000, "12/10/2021"));
-        listInvoices.add(new Invoice("HD004", 16000000, "12/10/2021"));
-        listInvoices.add(new Invoice("HD005", 12000000, "12/10/2021"));
-    }
-
-    private InvoiceAdapter.ItemClickListener itemClickListener = new InvoiceAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Invoice item) {
-            intent = new Intent(ListInvoiceActivity.this, DetailInvoiceActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

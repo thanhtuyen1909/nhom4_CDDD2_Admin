@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -10,30 +9,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.CommentAdapter;
-import vn.edu.tdc.cddd2.adapters.InvoiceAdapter;
-import vn.edu.tdc.cddd2.data_models.Comment;
-import vn.edu.tdc.cddd2.data_models.Invoice;
-import vn.edu.tdc.cddd2.fragments.FragmentCancelOrderOH;
-import vn.edu.tdc.cddd2.fragments.FragmentListOrderOH;
-import vn.edu.tdc.cddd2.fragments.FragmentWillOrderOH;
 
 public class DetailRatingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -42,9 +30,7 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Comment> listComments;
     private NavigationView navigationView;
-    private CommentAdapter commentAdapter;
     private Intent intent;
 
     @Override
@@ -76,11 +62,6 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
         //RecycleView
         recyclerView = findViewById(R.id.listComment);
         recyclerView.setHasFixedSize(true);
-        listComments = new ArrayList<>();
-        data();
-        commentAdapter = new CommentAdapter(listComments, this);
-        commentAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(commentAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -94,17 +75,7 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data() {
-        listComments.add(new Comment("username1", "Sản phẩm tuyệt vời", "12/10/2021"));
-        listComments.add(new Comment("username2", "Sản phẩm rất tốt", "12/10/2021"));
-    }
 
-    private CommentAdapter.ItemClickListener itemClickListener = new CommentAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Comment item) {
-            Toast.makeText(DetailRatingActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

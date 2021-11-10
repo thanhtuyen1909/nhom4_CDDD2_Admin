@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -23,10 +22,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.EmployeeAdapter;
-import vn.edu.tdc.cddd2.adapters.InvoiceAdapter;
-import vn.edu.tdc.cddd2.data_models.Employee;
-import vn.edu.tdc.cddd2.data_models.Invoice;
 
 public class AttendanceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -35,9 +30,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Employee> listEmployees;
     private NavigationView navigationView;
-    private EmployeeAdapter employeeAdapter;
     private Intent intent;
 
     @Override
@@ -66,14 +59,9 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
             }
         });
 
-        //RecycleView
-        recyclerView = findViewById(R.id.listEmployee);
+
         recyclerView.setHasFixedSize(true);
-        listEmployees = new ArrayList<>();
-        data();
-        employeeAdapter = new EmployeeAdapter(listEmployees, this);
-        employeeAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(employeeAdapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -87,20 +75,9 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data() {
-        listEmployees.add(new Employee("NV001", "Nguyễn Văn A", "Nhân viên bán hàng"));
-        listEmployees.add(new Employee("QLK001", "Trương Thị Bình", "Quản ly kho"));
-        listEmployees.add(new Employee("XL001", "La Văn Tiến", "Xử lý đơn hàng"));
-        listEmployees.add(new Employee("GH001", "Nguyễn Bình", "Nhân viên giao hàng"));
-        listEmployees.add(new Employee("QTV001", "Lê Danh", "Quản trị viên"));
-    }
 
-    private EmployeeAdapter.ItemClickListener itemClickListener = new EmployeeAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Employee item) {
-            Toast.makeText(AttendanceActivity.this, "Điểm danh", Toast.LENGTH_SHORT).show();
-        }
-    };
+
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

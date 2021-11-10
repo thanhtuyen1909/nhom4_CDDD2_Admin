@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,10 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.AccountAdapter;
-import vn.edu.tdc.cddd2.adapters.PromoCodeAdapter;
-import vn.edu.tdc.cddd2.data_models.Account;
-import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class ListAccountActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -37,9 +32,7 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Account> listAccount;
     private NavigationView navigationView;
-    private AccountAdapter accountAdapter;
     private Intent intent;
 
     @Override
@@ -80,11 +73,6 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         //RecycleView
         recyclerView = findViewById(R.id.listAccount);
         recyclerView.setHasFixedSize(true);
-        listAccount = new ArrayList<>();
-        data();
-        accountAdapter = new AccountAdapter(listAccount, this);
-        accountAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(accountAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -98,27 +86,8 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data() {
-        listAccount.add(new Account("qlk-1", "Quản lý kho"));
-        listAccount.add(new Account("xldh-1", "Nhân viên xử lý đơn hàng"));
-        listAccount.add(new Account("nvbh-1", "Nhân viên bán hàng"));
-        listAccount.add(new Account("nvgh-1", "Nhân viên giao hàng"));
-        listAccount.add(new Account("qlns-1", "Quản lý nhân sự"));
-    }
 
-    private AccountAdapter.ItemClickListener itemClickListener = new AccountAdapter.ItemClickListener() {
-        @Override
-        public void getInfor(Account item) {
-            Toast.makeText(ListAccountActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
 
-        @Override
-        public void getLayoutHistory() {
-            intent = new Intent(ListAccountActivity.this, ListHistoryActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

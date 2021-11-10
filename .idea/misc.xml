@@ -97,10 +97,40 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view_oh.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view_pm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/menu/drawer_view_sm.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/drawable/ic_arrow_next.xml" value="0.13854166666666667" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/drawable/ic_delete.xml" value="0.1" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/appbar.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/appbar_1.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/card_history_cart.xml" value="0.12239583333333333" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/card_manage_employees.xml" value="0.1" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/item_employee_1.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/item_product_2.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/item_willorder_whm.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_detail_employee.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_detail_infomation.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_detail_invoice.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_detail_salary.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_historyactivity.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_info_promocode.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_account.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_cart_sm.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_catagory.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_discountcode.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_employee.xml" value="0.24444444444444444" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_invoice.xml" value="0.22" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_manu.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_product.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_product_sm.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_promocode.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_list_rating.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_main_1.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_main_2.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_ordercoor.xml" value="0.175" />
+        <entry key="..\:/Users/BorderAdmin/app/src/main/res/layout/layout_orderhistory.xml" value="0.1" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,13 +1,11 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,11 +23,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Product2Adapter;
-import vn.edu.tdc.cddd2.adapters.Product3Adapter;
-import vn.edu.tdc.cddd2.adapters.ProductAdapter;
 import vn.edu.tdc.cddd2.controls.InDecreaseViewControl;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListCartActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     // Khai báo biến:
@@ -40,9 +34,7 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
     private NavigationView navigationView;
-    private Product3Adapter proAdapter;
     private Intent intent;
 
     @Override
@@ -84,12 +76,7 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
         //RecycleView
         recyclerView = findViewById(R.id.listProduct);
         recyclerView.setHasFixedSize(true);
-        listProduct = new ArrayList<>();
-        data();
-        proAdapter = new Product3Adapter(listProduct,this);
-        proAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(proAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
@@ -102,17 +89,6 @@ public class ListCartActivity extends AppCompatActivity implements NavigationVie
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data(){
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
-    }
-
-    private Product3Adapter.ItemClickListener itemClickListener = new Product3Adapter.ItemClickListener() {
-        @Override
-        public void getInfor(Product item) {
-            Toast.makeText(ListCartActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

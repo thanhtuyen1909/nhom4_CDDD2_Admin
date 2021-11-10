@@ -1,61 +1,62 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Order {
-    // Khai báo biến
-    private String maDH;
-    private int tongTien;
-    private String diaChi;
-    private String nguoiGiao;
+    private String keyOrder, accountID,address,created_at,name,note,phone,shipperID;
+    private int status, total;
 
-    // Get - set:
-    public String getMaDH() {
-        return maDH;
+    public Order() {
     }
 
-    public void setMaDH(String maDH) {
-        this.maDH = maDH;
+    public Order(String keyOrder, String accountID, String address, String created_at, String name, String note, String phone, String shipperID, int status, int total) {
+        this.keyOrder = keyOrder;
+        this.accountID = accountID;
+        this.address = address;
+        this.created_at = created_at;
+        this.name = name;
+        this.note = note;
+        this.phone = phone;
+        this.shipperID = shipperID;
+        this.status = status;
+        this.total = total;
     }
 
-    public int getTongTien() {
-        return tongTien;
+    public String getKeyOrder() {
+        return keyOrder;
     }
 
-    public void setTongTien(int tongTien) {
-        this.tongTien = tongTien;
+    public String getAccountID() {
+        return accountID;
     }
 
-    public String getDiaChi() {
-        return diaChi;
+    public String getAddress() {
+        return address;
     }
 
-    public void setDiaChi(String diaChi) {
-        this.diaChi = diaChi;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public String getNguoiGiao() {
-        return nguoiGiao;
+    public String getName() {
+        return name;
     }
 
-    public void setNguoiGiao(String nguoiGiao) {
-        this.nguoiGiao = nguoiGiao;
+    public String getNote() {
+        return note;
     }
 
-    // Contructor
-    public Order(String maDH, int tongTien, String diaChi, String nguoiGiao) {
-        this.maDH = maDH;
-        this.tongTien = tongTien;
-        this.diaChi = diaChi;
-        this.nguoiGiao = nguoiGiao;
+    public String getPhone() {
+        return phone;
     }
 
-    // toString
-    @Override
-    public String toString() {
-        return "Oder{" +
-                "maDH='" + maDH + '\'' +
-                ", tongTien=" + tongTien +
-                ", diaChi='" + diaChi + '\'' +
-                ", nguoiGiao='" + nguoiGiao + '\'' +
-                '}';
+    public String getShipperID() {
+        return shipperID;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public int getTotal() {
+        return total;
     }
 }

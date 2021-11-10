@@ -1,6 +1,5 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,10 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.AccountAdapter;
-import vn.edu.tdc.cddd2.adapters.Product6Adapter;
-import vn.edu.tdc.cddd2.data_models.Account;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListRatingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -37,9 +32,7 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
     private NavigationView navigationView;
-    private Product6Adapter product6Adapter;
     private Intent intent;
 
     @Override
@@ -80,11 +73,6 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         //RecycleView
         recyclerView = findViewById(R.id.listRating);
         recyclerView.setHasFixedSize(true);
-        listProduct = new ArrayList<>();
-        data();
-        product6Adapter = new Product6Adapter(listProduct, this);
-        product6Adapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(product6Adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
@@ -97,19 +85,6 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
-
-    private void data() {
-        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
-        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
-    }
-
-    private Product6Adapter.ItemClickListener itemClickListener = new Product6Adapter.ItemClickListener() {
-        @Override
-        public void getInfor(Product item) {
-            Toast.makeText(ListRatingActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
