@@ -49,7 +49,7 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
     @Override
     public Product2Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.item_product_3,parent,false);
+        View itemView = inflater.inflate(R.layout.item_product_3, parent, false);
         Product2Adapter.ViewHolder viewHolder = new Product2Adapter.ViewHolder(itemView);
         return viewHolder;
     }
@@ -113,7 +113,7 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(itemClickListener != null) {
+                if (itemClickListener != null) {
                     itemClickListener.addCart(item.getKey(), formatInt(holder.tv_price.getText().toString()));
                 } else {
                     return;
@@ -127,7 +127,7 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
         return listProducts.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView im_item;
         TextView tv_name, tv_price, tv_pricemain, tv_amount, tv_manu;
         Button bt_muahang;
@@ -147,7 +147,7 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
 
         @Override
         public void onClick(View v) {
-            if(onClickListener != null) {
+            if (onClickListener != null) {
                 onClickListener.onClick(v);
             }
         }
@@ -172,5 +172,4 @@ public class Product2Adapter extends RecyclerView.Adapter<Product2Adapter.ViewHo
     private int formatInt(String price) {
         return Integer.parseInt(price.substring(0, price.length() - 2).replace(",", ""));
     }
-
 }

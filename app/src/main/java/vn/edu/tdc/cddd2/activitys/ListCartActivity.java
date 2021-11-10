@@ -51,7 +51,7 @@ public class ListCartActivity extends AppCompatActivity
     NavigationView navigationView;
     CartDetailAdapter cartAdapter;
     private Intent intent;
-    String accountID = "";
+    String accountID = "", username = "";
     ArrayList<CartDetail> listCart;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -65,6 +65,7 @@ public class ListCartActivity extends AppCompatActivity
 
         intent = getIntent();
         accountID = intent.getStringExtra("accountID");
+        username = intent.getStringExtra("username");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -79,16 +80,21 @@ public class ListCartActivity extends AppCompatActivity
         btnPayment = findViewById(R.id.buttonThanhToan);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            intent = new Intent(ListCartActivity.this, ListProductSMActivity.class);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("username", username);
+            startActivity(intent);
+            finish();
+        });
 
         // Xử lý sự kiện click button "Thanh toán":
-        btnPayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListCartActivity.this, CreateOrderActivity.class);
-                //intent.putExtra();
-                startActivity(intent);
-            }
+        btnPayment.setOnClickListener(v -> {
+            intent = new Intent(ListCartActivity.this, CreateOrderActivity.class);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("username", username);
+            startActivity(intent);
+            finish();
         });
 
         //RecycleView
@@ -115,13 +121,6 @@ public class ListCartActivity extends AppCompatActivity
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof CartDetailAdapter.ViewHolder) {
-            // get the removed item name to display it in snack bar
-            String id = listCart.get(viewHolder.getAdapterPosition()).getProductID();
-
-            // backup of removed item for undo purpose
-            final CartDetail deletedItem = listCart.get(viewHolder.getAdapterPosition());
-            final int deletedIndex = viewHolder.getAdapterPosition();
-
             // remove the item from recycler view
             cartAdapter.removeItem(viewHolder.getAdapterPosition());
         }
@@ -213,12 +212,13 @@ public class ListCartActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_dmk:
                 intent = new Intent(ListCartActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ListCartActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListCartActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
@@ -247,9 +247,5 @@ public class ListCartActivity extends AppCompatActivity
             stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
         }
         return stmp + " ₫";
-    }
-
-    private int formatInt(String price) {
-        return Integer.parseInt(price.substring(0, price.length() - 2).replace(",", ""));
     }
 }

@@ -62,7 +62,7 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
     Handler handler = new Handler();
     int isFirst = 0;
     ArrayAdapter manuAdapter, cateAdapter;
-    String cartID = "", accountID = "Account3";
+    String cartID = "", accountID = "Account3", username = "";
     boolean check = true;
 
     private static FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -76,6 +76,11 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_product_sm);
+
+//        intent = getIntent();
+//        accountID = intent.getStringExtra("accountID");
+//        username = intent.getStringExtra("username");
+
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -104,6 +109,7 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
         btnCart.setOnClickListener(v -> {
             intent = new Intent(ListProductSMActivity.this, ListCartActivity.class);
             intent.putExtra("accountID", accountID);
+            intent.putExtra("username", username);
             startActivity(intent);
         });
 
@@ -393,12 +399,13 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
         switch (id) {
             case R.id.nav_dmk:
                 intent = new Intent(ListProductSMActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ListProductSMActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListProductSMActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

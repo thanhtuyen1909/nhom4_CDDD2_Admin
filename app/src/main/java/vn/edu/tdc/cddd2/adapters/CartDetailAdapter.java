@@ -71,7 +71,7 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
                 for (DataSnapshot node : snapshot.getChildren()) {
                     Product product = node.getValue(Product.class);
                     if (node.getKey().equals(item.getProductID())) {
-                        if(product.getStatus() == -1) {
+                        if (product.getStatus() == -1) {
                             cartDetailRef.child(item.getKey()).removeValue();
                             cartRef.child(item.getCartID()).child("total").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -89,7 +89,7 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
                             holder.name.setText(product.getName());
                             //set gia san pham
                             holder.price.setText(formatPrice(item.getPrice()));
-                            holder.edtValue.setText(""+item.getAmount());
+                            holder.edtValue.setText("" + item.getAmount());
                             StorageReference imageRef = storage.getReference("images/products/" + product.getName() + "/" + product.getImage());
                             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                 Picasso.get().load(uri).fit().into(holder.thumbnail);
@@ -105,7 +105,7 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
             }
         });
         holder.onClickListener = v -> {
-            if(itemClickListener != null) {
+            if (itemClickListener != null) {
                 int value = Integer.parseInt(String.valueOf(holder.edtValue.getText()));
                 if (v == holder.btnAdd) {
                     value++;
@@ -152,7 +152,7 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
         });
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView name, price;
         public ImageView thumbnail;
         public EditText edtValue;
@@ -176,7 +176,7 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
 
         @Override
         public void onClick(View v) {
-            if(onClickListener != null) {
+            if (onClickListener != null) {
                 onClickListener.onClick(v);
             }
         }
@@ -189,11 +189,10 @@ public class CartDetailAdapter extends RecyclerView.Adapter<CartDetailAdapter.Vi
     private String formatPrice(int price) {
         String stmp = String.valueOf(price);
         int amount;
-        amount = (int)(stmp.length() / 3);
+        amount = (int) (stmp.length() / 3);
         if (stmp.length() % 3 == 0)
             amount--;
-        for (int i = 1; i <= amount; i++)
-        {
+        for (int i = 1; i <= amount; i++) {
             stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
         }
         return stmp + " ₫";

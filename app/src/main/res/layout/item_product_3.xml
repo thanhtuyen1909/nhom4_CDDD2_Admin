@@ -43,7 +43,7 @@
             android:text="Title"
             android:textColor="@color/colorError"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txt_pricemain"
