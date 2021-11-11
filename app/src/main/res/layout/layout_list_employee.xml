@@ -16,9 +16,10 @@
             android:id="@+id/include"
             layout="@layout/appbar" />
 
-        <Spinner
+        <EditText
             android:id="@+id/spinner_date"
             style="@style/CustomSpinner"
+            android:layout_centerHorizontal="true"
             android:layout_width="0dp"
             android:layout_margin="4dp"
             android:background="@drawable/bg_spinner"

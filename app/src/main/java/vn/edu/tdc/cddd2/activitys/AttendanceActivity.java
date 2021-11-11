@@ -1,17 +1,21 @@
 package vn.edu.tdc.cddd2.activitys;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -42,14 +47,15 @@ import java.util.Map;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.EmployeeAdapter;
 
+import vn.edu.tdc.cddd2.data_models.Attendance;
 import vn.edu.tdc.cddd2.data_models.Employee;
 
 
 public class AttendanceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar,title,mess;
-    private EditText edtĐiemDanh;
+    private TextView btnBack,subtitleAppbar,title,mess;
+    private EditText edtĐiemDanh,spinerDate;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
@@ -57,6 +63,9 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
     private NavigationView navigationView;
     private EmployeeAdapter employeeAdapter;
     private Intent intent;
+    private DatePickerDialog datePickerDialog;
+    private SearchView searchView;
+
 
     private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
 
@@ -74,8 +83,68 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+        spinerDate=findViewById(R.id.spinner_date);
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        spinerDate.setText(currentDate);
 
+        spinerDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                datePickerDialog = new DatePickerDialog(AttendanceActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
 
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+                                String day=dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year;
+                                spinerDate.setText(day);
+//                                myRef.child("Employees").addValueEventListener(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                        for (DataSnapshot DSEmployee:dataSnapshot.getChildren()){
+//                                            Employee employee=DSEmployee.getValue(Employee.class);
+//                                            employee.setMaNV(DSEmployee.getKey());
+//
+//                                            myRef.child("Attendance").child((monthOfYear + 1) + "-" + year).addValueEventListener(new ValueEventListener() {
+//                                                @Override
+//                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                                    for (DataSnapshot DSAttendance:dataSnapshot.getChildren()){
+//                                                        Attendance attendance=DSAttendance.getValue(Attendance.class);
+//                                                        attendance.setAttendanceID(DSAttendance.getKey());
+//                                                        if(attendance.getEmployeeID().equals(employee.getMaNV())&&attendance.getDate()==day){
+//                                                            listEmployees.add(employee);
+//                                                        }
+//                                                    }
+//                                                    //employeeAdapter.notifyDataSetChanged();
+//                                                }
+//
+//                                                @Override
+//                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                                }
+//                                            });
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                    }
+//                                });
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+
+            }
+        });
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
@@ -101,6 +170,21 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //search
+        searchView=findViewById(R.id.editSearch);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                employeeAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                employeeAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     @Override

@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,8 +28,9 @@ import java.util.ArrayList;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Employee;
 
-public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHolder> {
+public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHolder> implements Filterable {
     ArrayList<Employee> listEmployees;
+    ArrayList<Employee> listEmployees1;
     private Context context;
     EmployeeAdapter.ItemClickListener itemClickListener;
 
@@ -38,6 +41,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     public EmployeeAdapter(ArrayList<Employee> listEmployees, Context context) {
         this.listEmployees = listEmployees;
         this.context = context;
+        this.listEmployees1=listEmployees;
     }
 
     @NonNull
@@ -75,6 +79,36 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     @Override
     public int getItemCount() {
         return listEmployees.size();
+    }
+    //seach
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String search= constraint.toString();
+                if(search.isEmpty()){
+                    listEmployees=listEmployees1;
+                }else {
+                    ArrayList<Employee> list=new ArrayList<>();
+                    for (Employee employee:listEmployees1){
+                        if(employee.getMaNV().toLowerCase().contains(search.toLowerCase())){
+                            list.add(employee);
+                        }
+                    }
+                    listEmployees=list;
+                }
+                FilterResults filterResults=new FilterResults();
+                filterResults.values=listEmployees;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                listEmployees =(ArrayList<Employee>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
