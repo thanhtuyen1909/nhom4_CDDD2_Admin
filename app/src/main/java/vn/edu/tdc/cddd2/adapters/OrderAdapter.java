@@ -38,6 +38,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     public void setItemClickListener(OrderAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
+
     public OrderAdapter(ArrayList<Order> listOrder, Context context) {
         this.listOrder = listOrder;
         this.context = context;

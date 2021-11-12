@@ -59,6 +59,12 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull Order1Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
+        holder.group.clearCheck();
+        holder.cb_hoanthanh.setChecked(false);
+        holder.cb_hoanthanh.setEnabled(false);
+        holder.cb_giaohang.setChecked(false);
+        holder.cb_giaohang.setEnabled(true);
+        holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
         holder.tv_maDH.setText(item.getOrderID());
         holder.tv_tong.setText("Tổng: " + formatPrice(item.getTotal()));
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
@@ -91,87 +97,62 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         });
         int stt = item.getStatus();
         holder.onClickListener = v -> {
-            holder.group.clearCheck();
             if (itemClickListener != null) {
-                if(v == holder.cb_giaohang) {
-                    if(((CheckBox) v).isChecked()) {
+                if (v == holder.cb_giaohang) {
+                    if (((CheckBox) v).isChecked()) {
                         item.setStatus(4);
-                    }
-                    else {
+                    } else {
                         item.setStatus(stt);
                     }
-                }
-                else if (v == holder.cb_hoanthanh) {
-                    if(((CheckBox) v).isChecked()) {
+                } else if (v == holder.cb_hoanthanh) {
+                    if (((CheckBox) v).isChecked()) {
                         item.setStatus(8);
-                        holder.rb_huygiao.setEnabled(false);
-                        holder.rb_huynhan.setEnabled(false);
-                    }
-                    else {
+                    } else {
                         item.setStatus(stt);
-                        holder.rb_huynhan.setEnabled(true);
-                        holder.rb_huygiao.setEnabled(true);
                     }
-                }
-                else if (v == holder.rb_huygiao) {
-                    if(v.isSelected()) {
+                } else if (v == holder.rb_huygiao) {
+                    if (v.isSelected()) {
                         item.setStatus(stt);
                         holder.rb_huygiao.setSelected(false);
                         holder.rb_huygiao.setChecked(false);
-                        if(stt >= 5) {
-                            holder.rb_huynhan.setEnabled(true);
-                            holder.cb_hoanthanh.setEnabled(true);
-                        }
-                    }
-                    else {
+                    } else {
                         item.setStatus(2);
                         item.setShipperID("null");
                         holder.rb_huygiao.setSelected(true);
                         holder.rb_huygiao.setChecked(true);
-                        if(stt >= 5) {
-                            holder.rb_huynhan.setEnabled(false);
-                            holder.cb_hoanthanh.setEnabled(false);
-                        }
                     }
-                }
-                else if (v == holder.rb_huynhan) {
-                    if(v.isSelected()) {
+                } else if (v == holder.rb_huynhan) {
+                    if (v.isSelected()) {
                         item.setStatus(stt);
-                        holder.cb_hoanthanh.setEnabled(true);
-                        holder.rb_huygiao.setEnabled(true);
-                        holder.rb_huynhan.setSelected(false);
-                        holder.rb_huynhan.setChecked(false);
                     } else {
                         item.setStatus(0);
-                        holder.cb_hoanthanh.setEnabled(false);
-                        holder.rb_huygiao.setEnabled(false);
-                        holder.rb_huynhan.setSelected(true);
-                        holder.rb_huynhan.setChecked(true);
                     }
-                }
-                else if(v == holder.im_detail) {
+                } else if (v == holder.im_detail) {
                     itemClickListener.getInfor(item);
                 }
-            }
-            else {
+            } else {
                 return;
             }
         };
-        if (item.getStatus() == 4) {
+        if (item.getStatus() >= 4) {
             holder.cb_giaohang.setChecked(true);
             holder.cb_giaohang.setEnabled(false);
+            holder.rb_huynhan.setEnabled(false);
+            holder.rb_huygiao.setEnabled(true);
         }
-        if (item.getStatus() == 5) {
-            holder.cb_giaohang.setChecked(true);
-            holder.cb_giaohang.setEnabled(false);
+        if(item.getStatus() >= 5) {
+            holder.rb_huygiao.setEnabled(false);
         }
-        if(item.getStatus() == 7) {
+        if (item.getStatus() == 7) {
             holder.cb_hoanthanh.setEnabled(true);
+            holder.rb_huygiao.setEnabled(false);
+            holder.rb_huynhan.setEnabled(false);
         }
-        if(item.getStatus() == 9) {
-           holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorError1));
+        if (item.getStatus() >= 9) {
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorError1));
+            holder.rb_huygiao.setEnabled(false);
         }
-        if(item.getStatus() == 10) {
+        if (item.getStatus() == 10) {
             holder.rb_huynhan.setEnabled(true);
         }
     }
@@ -245,12 +226,6 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             im_detail = itemView.findViewById(R.id.btnDetail);
             group = itemView.findViewById(R.id.group);
             cardView = itemView.findViewById(R.id.cardView);
-
-            cb_hoanthanh.setChecked(false);
-            cb_hoanthanh.setEnabled(false);
-            cb_giaohang.setChecked(false);
-            cb_giaohang.setEnabled(true);
-            cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
 
             im_detail.setOnClickListener(this);
             cb_giaohang.setOnClickListener(this);

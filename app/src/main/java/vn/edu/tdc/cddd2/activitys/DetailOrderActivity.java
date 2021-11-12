@@ -108,7 +108,7 @@ public class DetailOrderActivity extends AppCompatActivity {
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
-            if(!from.equals("") && from.equals("PaymentSM")) {
+            if(from != null && from.equals("PaymentSM")) {
                 intent = new Intent(DetailOrderActivity.this, ListProductSMActivity.class);
                 intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
@@ -141,7 +141,6 @@ public class DetailOrderActivity extends AppCompatActivity {
         order_detailRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listProducts.clear();
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     OrderDetail orderDetail = snapshot.getValue(OrderDetail.class);
                     if(orderDetail.getOrderID().equals(item.getOrderID())) {
@@ -149,6 +148,7 @@ public class DetailOrderActivity extends AppCompatActivity {
                             @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                listProducts.clear();
                                 for(DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                     Product product = snapshot1.getValue(Product.class);
                                     product.setPrice(orderDetail.getPrice());
