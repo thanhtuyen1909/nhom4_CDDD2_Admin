@@ -383,10 +383,9 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
                 if(String.valueOf(txt_giamgia.getText()).length() > 2) {
                     discount = formatInt(txt_giamgia.getText() + "");
                 }
-                if(!String.valueOf(txt_giamgia.getText()).equals("")) {
+                if(!String.valueOf(txt_giamgia.getText()).isEmpty()) {
                     paid = Integer.parseInt(edtDaThanhToan.getText() + "");
                 }
-
                 txt_conlai.setText(formatPrice(total - discount - paid));
             }
 
