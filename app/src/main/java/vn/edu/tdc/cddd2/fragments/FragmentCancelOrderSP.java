@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,21 +22,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.activitys.DetailOrderActivity;
-import vn.edu.tdc.cddd2.adapters.Order2Adapter;
-import vn.edu.tdc.cddd2.adapters.Order3Adapter;
-import vn.edu.tdc.cddd2.adapters.Order6Adapter;
+import vn.edu.tdc.cddd2.adapters.Order7Adapter;
 import vn.edu.tdc.cddd2.data_models.Order;
 
 public class FragmentCancelOrderSP extends Fragment {
-
     // Khai báo biến:
     RecyclerView recyclerView;
     SearchView searchView;
     ArrayList<Order> listOrder;
-    Order6Adapter orderAdapter;
+    Order7Adapter orderAdapter;
     Intent intent;
     String accountID = "Account6";
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
@@ -55,7 +52,7 @@ public class FragmentCancelOrderSP extends Fragment {
         recyclerView = view.findViewById(R.id.listOrder);
         recyclerView.setHasFixedSize(true);
         data();
-        orderAdapter = new Order6Adapter(listOrder, getActivity());
+        orderAdapter = new Order7Adapter(listOrder, getActivity());
         orderAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(orderAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -79,7 +76,7 @@ public class FragmentCancelOrderSP extends Fragment {
         return view;
     }
 
-    private Order6Adapter.ItemClickListener itemClickListener = new Order6Adapter.ItemClickListener() {
+    private Order7Adapter.ItemClickListener itemClickListener = new Order7Adapter.ItemClickListener() {
         @Override
         public void getInfor(Order item) {
             intent = new Intent(getActivity(), DetailOrderActivity.class);
@@ -96,19 +93,21 @@ public class FragmentCancelOrderSP extends Fragment {
                 for (DataSnapshot snapshot1 : dataSnapshot1.getChildren()) {
                     if (snapshot1.child("accountID").getValue(String.class).equals(accountID) &&
                             snapshot1.child("position").getValue(String.class).equals("Nhân viên giao hàng")) {
-                        orderRef.addValueEventListener(new ValueEventListener() {
+                        orderRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
                             @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 listOrder.clear();
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     if (snapshot.child("shipperID").getValue(String.class).equals(snapshot1.getKey()) &&
-                                            snapshot.child("status").getValue(Integer.class) == 9) {
+                                            (snapshot.child("status").getValue(Integer.class) == 9 ||
+                                                    snapshot.child("status").getValue(Integer.class) == 10)) {
                                         Order order = snapshot.getValue(Order.class);
                                         order.setOrderID(snapshot.getKey());
                                         listOrder.add(order);
                                     }
                                 }
+                                Collections.reverse(listOrder);
                                 orderAdapter.notifyDataSetChanged();
                             }
 

@@ -93,7 +93,7 @@ public class FragmentListOrderSP extends Fragment {
                 for (DataSnapshot snapshot1 : dataSnapshot1.getChildren()) {
                     if (snapshot1.child("accountID").getValue(String.class).equals(accountID) &&
                             snapshot1.child("position").getValue(String.class).equals("Nhân viên giao hàng")) {
-                        orderRef.addValueEventListener(new ValueEventListener() {
+                        orderRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
                             @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

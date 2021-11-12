@@ -21,7 +21,7 @@ import vn.edu.tdc.cddd2.data_models.Order;
 
 public class Order4Adapter extends RecyclerView.Adapter<Order4Adapter.ViewHolder> implements Filterable {
     ArrayList<Order> listOrder, listOrderFilter, list;
-    private Context context;
+    Context context;
     Order4Adapter.ItemClickListener itemClickListener;
 
     public void setItemClickListener(Order4Adapter.ItemClickListener itemClickListener) {
@@ -39,8 +39,7 @@ public class Order4Adapter extends RecyclerView.Adapter<Order4Adapter.ViewHolder
     public Order4Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_order_sp, parent, false);
-        Order4Adapter.ViewHolder viewHolder = new Order4Adapter.ViewHolder(itemView);
-        return viewHolder;
+        return new ViewHolder(itemView);
     }
 
     @Override
@@ -77,12 +76,22 @@ public class Order4Adapter extends RecyclerView.Adapter<Order4Adapter.ViewHolder
     public void onBindViewHolder(@NonNull Order4Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
         holder.tv_ngaydat.setText("Ngày đặt: " + item.getCreated_at());
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
-                itemClickListener.getInfor(item);
+                if(v == holder.im_detail) itemClickListener.getInfor(item);
+                else {
+                    if(item.getStatus() == 4) {
+                        item.setStatus(5);
+                        holder.bt_xacnhan.setBackground(holder.bt_xacnhan.getContext().getResources().getDrawable(R.drawable.button_confirm));
+                    }
+                    else {
+                        item.setStatus(4);
+                        holder.bt_xacnhan.setBackground(holder.bt_xacnhan.getContext().getResources().getDrawable(R.drawable.button_login));
+                    }
+                }
             } else {
                 return;
             }
@@ -91,6 +100,18 @@ public class Order4Adapter extends RecyclerView.Adapter<Order4Adapter.ViewHolder
             holder.cb_danhanhang.setChecked(true);
             holder.bt_xacnhan.setEnabled(true);
         }
+    }
+
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 
     @Override
@@ -114,10 +135,10 @@ public class Order4Adapter extends RecyclerView.Adapter<Order4Adapter.ViewHolder
             cb_danhanhang = itemView.findViewById(R.id.checkdanhanhang);
             bt_xacnhan = itemView.findViewById(R.id.buttonXacNhan);
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
+
             cb_danhanhang.setEnabled(false);
             bt_xacnhan.setEnabled(false);
             im_detail.setOnClickListener(this);
-            cb_danhanhang.setOnClickListener(this);
             bt_xacnhan.setOnClickListener(this);
         }
 

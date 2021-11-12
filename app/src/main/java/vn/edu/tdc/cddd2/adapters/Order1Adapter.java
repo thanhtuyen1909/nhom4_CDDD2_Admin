@@ -66,7 +66,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
         holder.cb_giaohang.setEnabled(true);
         holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + formatPrice(item.getTotal()));
+        holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
         shiparea.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -96,6 +96,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             }
         });
         int stt = item.getStatus();
+        int remain = item.getRemain();
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
                 if (v == holder.cb_giaohang) {
@@ -107,8 +108,10 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
                 } else if (v == holder.cb_hoanthanh) {
                     if (((CheckBox) v).isChecked()) {
                         item.setStatus(8);
+                        item.setRemain(0);
                     } else {
                         item.setStatus(stt);
+                        item.setRemain(remain);
                     }
                 } else if (v == holder.rb_huygiao) {
                     if (v.isSelected()) {
@@ -140,7 +143,7 @@ public class Order1Adapter extends RecyclerView.Adapter<Order1Adapter.ViewHolder
             holder.rb_huynhan.setEnabled(false);
             holder.rb_huygiao.setEnabled(true);
         }
-        if(item.getStatus() >= 5) {
+        if(item.getStatus() > 5) {
             holder.rb_huygiao.setEnabled(false);
         }
         if (item.getStatus() == 7) {

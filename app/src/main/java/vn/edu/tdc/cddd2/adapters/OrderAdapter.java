@@ -58,7 +58,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull OrderAdapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + formatPrice(item.getTotal()));
+        holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
         // lấy dữ liệu cho spinner:
         ArrayList<ShipArea> list = new ArrayList<>();

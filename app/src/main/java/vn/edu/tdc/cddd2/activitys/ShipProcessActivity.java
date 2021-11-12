@@ -110,10 +110,10 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(v -> {
             listOrder = new ArrayList<>();
-            FragmentWaitShipWHM fragmentListOrderSP = (FragmentWaitShipWHM) getSupportFragmentManager().findFragmentByTag("ListOrderSP");
-            FragmentWillOrderWHM fragmentOrderingSP = (FragmentWillOrderWHM) getSupportFragmentManager().findFragmentByTag("OrderingSP");
-            FragmentWaitShipWHM fragmentOrderDeliveredSP = (FragmentWaitShipWHM) getSupportFragmentManager().findFragmentByTag("OrderDeliveredSP");
-            FragmentWillOrderWHM fragmentCancelOrderSP = (FragmentWillOrderWHM) getSupportFragmentManager().findFragmentByTag("CancelOrderSP");
+            FragmentListOrderSP fragmentListOrderSP = (FragmentListOrderSP) getSupportFragmentManager().findFragmentByTag("ListOrderSP");
+            FragmentOrderingSP fragmentOrderingSP = (FragmentOrderingSP) getSupportFragmentManager().findFragmentByTag("OrderingSP");
+            FragmentOrderDeliveredSP fragmentOrderDeliveredSP = (FragmentOrderDeliveredSP) getSupportFragmentManager().findFragmentByTag("OrderDeliveredSP");
+            FragmentCancelOrderSP fragmentCancelOrderSP = (FragmentCancelOrderSP) getSupportFragmentManager().findFragmentByTag("CancelOrderSP");
             if (fragmentListOrderSP != null && fragmentListOrderSP.isVisible()) {
                 listOrder = fragmentListOrderSP.getList();
             } else if (fragmentOrderingSP != null && fragmentOrderingSP.isVisible()) {

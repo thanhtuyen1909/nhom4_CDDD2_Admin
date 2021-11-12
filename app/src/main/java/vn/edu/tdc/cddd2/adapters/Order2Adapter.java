@@ -19,7 +19,7 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
 
 public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder> implements Filterable {
-    ArrayList<Order> listOrder, listOrderFilter, list;;
+    ArrayList<Order> listOrder, listOrderFilter, list;
     Context context;
     Order2Adapter.ItemClickListener itemClickListener;
 
@@ -38,8 +38,7 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
     public Order2Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_order_oh, parent, false);
-        Order2Adapter.ViewHolder viewHolder = new Order2Adapter.ViewHolder(itemView);
-        return viewHolder;
+        return new ViewHolder(itemView);
     }
 
     @Override
@@ -76,17 +75,51 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull Order2Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
+
+        holder.cb_dagiao.setEnabled(true);
+        holder.cb_huy.setEnabled(true);
+        holder.cb_huy.setChecked(false);
+        holder.cb_dagiao.setChecked(false);
+
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
         holder.tv_ngaydat.setText("Ngày đặt: " + item.getCreated_at());
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
+        int stt = item.getStatus();
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
-                itemClickListener.getInfor(item);
+                if(v == holder.im_detail) itemClickListener.getInfor(item);
+                else if(v == holder.cb_dagiao) {
+                    holder.cb_huy.setChecked(false);
+                    if (((CheckBox) v).isChecked()) {
+                        item.setStatus(6);
+                    } else {
+                        item.setStatus(stt);
+                    }
+                } else {
+                    holder.cb_dagiao.setChecked(false);
+                    if (((CheckBox) v).isChecked()) {
+                        item.setStatus(9);
+                    } else {
+                        item.setStatus(stt);
+                    }
+                }
             } else {
                 return;
             }
         };
+    }
+
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 
     @Override
@@ -108,8 +141,10 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
             im_detail = itemView.findViewById(R.id.btnDetail);
             cb_dagiao = itemView.findViewById(R.id.checksedat);
+
             cb_dagiao.setText("Đã giao");
             cb_huy = itemView.findViewById(R.id.checkhuy);
+
             im_detail.setOnClickListener(this);
             cb_dagiao.setOnClickListener(this);
             cb_huy.setOnClickListener(this);

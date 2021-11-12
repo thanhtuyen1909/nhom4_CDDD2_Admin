@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.activitys.DetailOrderActivity;
@@ -96,19 +97,21 @@ public class FragmentOrderDeliveredSP extends Fragment {
                 for (DataSnapshot snapshot1 : dataSnapshot1.getChildren()) {
                     if (snapshot1.child("accountID").getValue(String.class).equals(accountID) &&
                             snapshot1.child("position").getValue(String.class).equals("Nhân viên giao hàng")) {
-                        orderRef.addValueEventListener(new ValueEventListener() {
+                        orderRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
                             @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 listOrder.clear();
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     if (snapshot.child("shipperID").getValue(String.class).equals(snapshot1.getKey()) &&
-                                            (snapshot.child("status").getValue(Integer.class) == 6 || snapshot.child("status").getValue(Integer.class) == 7)) {
+                                            (snapshot.child("status").getValue(Integer.class) == 6 ||
+                                                    snapshot.child("status").getValue(Integer.class) == 7)) {
                                         Order order = snapshot.getValue(Order.class);
                                         order.setOrderID(snapshot.getKey());
                                         listOrder.add(order);
                                     }
                                 }
+                                Collections.reverse(listOrder);
                                 orderAdapter.notifyDataSetChanged();
                             }
 

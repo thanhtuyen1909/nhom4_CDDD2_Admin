@@ -72,6 +72,7 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
     DatabaseReference orderRef = db.getReference("Order");
     DatabaseReference orderDetailRef = db.getReference("Order_Details");
     DatabaseReference accHistoryRef = db.getReference("AccountHistory");
+    DatabaseReference proRef = db.getReference("Products");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +185,40 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
                         }
                     });
 
-                    // Tính tổng thanh toán cho khách hàng:
+                    // Tính lại số lượng sản phẩm tồn kho:
+                    orderDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                OrderDetail orderDetail = snapshot.getValue(OrderDetail.class);
+                                if (key.equals(orderDetail.getOrderID())) {
+                                    proRef.child(orderDetail.getProductID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            Product product = dataSnapshot.getValue(Product.class);
+                                            int sold = product.getSold() + orderDetail.getAmount();
+                                            int quantity = product.getQuantity() - orderDetail.getAmount();
+                                            proRef.child(orderDetail.getProductID()).child("quantity").setValue(quantity);
+                                            proRef.child(orderDetail.getProductID()).child("sold").setValue(sold);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                    // Tính tổng thanh toán + set lại loại khách hàng cho khách hàng:
                     accountRef.orderByChild("username").equalTo(String.valueOf(edtSDT.getText())).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -264,6 +298,7 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
                     orderDetail.setProductID(detail.getProductID());
                     orderDetailRef.push().setValue(orderDetail);
                 }
+
                 //Clear Cart
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -478,6 +513,7 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
             accountHistory.setDetail("Mã đơn hàng: " + item.getOrderID() + "\nTổng tiền: " + item.getTotal());
             accountHistory.setDate(item.getCreated_at());
             accHistoryRef.push().setValue(accountHistory);
+
             // Điều hướng về lại màn hình chi tiết đơn hàng
             startActivity(new Intent(CreateOrderActivity.this, DetailOrderActivity.class)
                     .putExtra("item", item)

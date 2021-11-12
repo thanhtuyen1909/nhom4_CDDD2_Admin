@@ -19,7 +19,7 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
 
 public class Order7Adapter extends RecyclerView.Adapter<Order7Adapter.ViewHolder> implements Filterable {
-    ArrayList<Order> listOrder, listOrderFilter, list;;
+    ArrayList<Order> listOrder, listOrderFilter, list;
     Context context;
     Order7Adapter.ItemClickListener itemClickListener;
 
@@ -38,8 +38,7 @@ public class Order7Adapter extends RecyclerView.Adapter<Order7Adapter.ViewHolder
     public Order7Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_order_oh, parent, false);
-        Order7Adapter.ViewHolder viewHolder = new Order7Adapter.ViewHolder(itemView);
-        return viewHolder;
+        return new ViewHolder(itemView);
     }
 
     @Override
@@ -77,20 +76,49 @@ public class Order7Adapter extends RecyclerView.Adapter<Order7Adapter.ViewHolder
     public void onBindViewHolder(@NonNull Order7Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
         holder.tv_ngaydat.setText("Ngày đặt: " + item.getCreated_at());
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
+        int stt = item.getStatus();
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
-                itemClickListener.getInfor(item);
+                if(v == holder.im_detail) itemClickListener.getInfor(item);
+                else if(v == holder.cb_dahoanhang) {
+                    holder.cb_hoantac.setChecked(false);
+                    if (((CheckBox) v).isChecked()) {
+                        item.setStatus(10);
+                    } else {
+                        item.setStatus(stt);
+                    }
+                } else {
+                    holder.cb_dahoanhang.setChecked(false);
+                    if (((CheckBox) v).isChecked()) {
+                        item.setStatus(5);
+                    } else {
+                        item.setStatus(stt);
+                    }
+                }
             } else {
                 return;
             }
         };
         if(item.getStatus() == 10) {
-            holder.cb_dagiao.setEnabled(false);
-            holder.cb_dagiao.setChecked(true);
+            holder.cb_dahoanhang.setEnabled(false);
+            holder.cb_dahoanhang.setChecked(true);
+            holder.cb_hoantac.setEnabled(false);
         }
+    }
+
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 
     @Override
@@ -101,7 +129,7 @@ public class Order7Adapter extends RecyclerView.Adapter<Order7Adapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView im_detail;
         TextView tv_maDH, tv_tong, tv_ngaydat, tv_diachi;
-        CheckBox cb_dagiao, cb_huy;
+        CheckBox cb_dahoanhang, cb_hoantac;
         View.OnClickListener onClickListener;
 
         public ViewHolder(@NonNull View itemView) {
@@ -111,17 +139,17 @@ public class Order7Adapter extends RecyclerView.Adapter<Order7Adapter.ViewHolder
             tv_ngaydat = itemView.findViewById(R.id.txt_ngaydat);
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
             im_detail = itemView.findViewById(R.id.btnDetail);
-            cb_dagiao = itemView.findViewById(R.id.checksedat);
-            cb_huy = itemView.findViewById(R.id.checkhuy);
-            cb_dagiao.setText("Đã hoàn hàng");
-            cb_huy.setText("Hoàn tác");
+            cb_dahoanhang = itemView.findViewById(R.id.checksedat);
+            cb_hoantac = itemView.findViewById(R.id.checkhuy);
+            cb_dahoanhang.setText("Đã hoàn hàng");
+            cb_hoantac.setText("Hoàn tác");
 
-            cb_dagiao.setEnabled(true);
-            cb_dagiao.setChecked(false);
+            cb_dahoanhang.setEnabled(true);
+            cb_dahoanhang.setChecked(false);
 
             im_detail.setOnClickListener(this);
-            cb_dagiao.setOnClickListener(this);
-            cb_huy.setOnClickListener(this);
+            cb_dahoanhang.setOnClickListener(this);
+            cb_hoantac.setOnClickListener(this);
         }
 
         @Override

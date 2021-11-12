@@ -19,7 +19,7 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
 
 public class Order6Adapter extends RecyclerView.Adapter<Order6Adapter.ViewHolder> implements Filterable {
-    ArrayList<Order> listOrder, listOrderFilter, list;;
+    ArrayList<Order> listOrder, listOrderFilter, list;
     Context context;
     Order6Adapter.ItemClickListener itemClickListener;
 
@@ -38,27 +38,50 @@ public class Order6Adapter extends RecyclerView.Adapter<Order6Adapter.ViewHolder
     public Order6Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_order_oh, parent, false);
-        Order6Adapter.ViewHolder viewHolder = new Order6Adapter.ViewHolder(itemView);
-        return viewHolder;
+        return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Order6Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
+
+        holder.cb_dahoantien.setEnabled(true);
+        holder.cb_hoantac.setEnabled(true);
+        holder.cb_hoantac.setChecked(false);
+        holder.cb_dahoantien.setChecked(false);
+
         holder.tv_maDH.setText(item.getOrderID());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
         holder.tv_ngaydat.setText("Ngày đặt: " + item.getCreated_at());
         holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
+        int stt = item.getStatus();
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
-                itemClickListener.getInfor(item);
+                if(v == holder.im_detail) itemClickListener.getInfor(item);
+                else if(v == holder.cb_dahoantien) {
+                    holder.cb_hoantac.setChecked(false);
+                    if (((CheckBox) v).isChecked()) {
+                        item.setStatus(7);
+                    } else {
+                        item.setStatus(stt);
+                    }
+                } else {
+                    holder.cb_dahoantien.setChecked(false);
+                    if (((CheckBox) v).isChecked()) {
+                        item.setStatus(5);
+                    } else {
+                        item.setStatus(stt);
+                    }
+                }
             } else {
                 return;
             }
         };
+
         if(item.getStatus() == 7) {
-            holder.cb_dagiao.setEnabled(false);
-            holder.cb_dagiao.setChecked(true);
+            holder.cb_dahoantien.setEnabled(false);
+            holder.cb_dahoantien.setChecked(true);
+            holder.cb_hoantac.setEnabled(false);
         }
     }
 
@@ -92,6 +115,18 @@ public class Order6Adapter extends RecyclerView.Adapter<Order6Adapter.ViewHolder
         };
     }
 
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
+    }
+
     @Override
     public int getItemCount() {
         return listOrder.size();
@@ -100,7 +135,7 @@ public class Order6Adapter extends RecyclerView.Adapter<Order6Adapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView im_detail;
         TextView tv_maDH, tv_tong, tv_ngaydat, tv_diachi;
-        CheckBox cb_dagiao, cb_huy;
+        CheckBox cb_dahoantien, cb_hoantac;
         View.OnClickListener onClickListener;
 
         public ViewHolder(@NonNull View itemView) {
@@ -110,15 +145,18 @@ public class Order6Adapter extends RecyclerView.Adapter<Order6Adapter.ViewHolder
             tv_ngaydat = itemView.findViewById(R.id.txt_ngaydat);
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
             im_detail = itemView.findViewById(R.id.btnDetail);
-            cb_dagiao = itemView.findViewById(R.id.checksedat);
-            cb_huy = itemView.findViewById(R.id.checkhuy);
-            cb_dagiao.setText("Đã giao tiền");
-            cb_huy.setText("Hoàn tác");
-            cb_dagiao.setEnabled(true);
-            cb_dagiao.setChecked(false);
+            cb_dahoantien = itemView.findViewById(R.id.checksedat);
+            cb_hoantac = itemView.findViewById(R.id.checkhuy);
+
+            cb_dahoantien.setText("Đã giao tiền");
+            cb_hoantac.setText("Hoàn tác");
+
+            cb_dahoantien.setEnabled(true);
+            cb_dahoantien.setChecked(false);
+
             im_detail.setOnClickListener(this);
-            cb_dagiao.setOnClickListener(this);
-            cb_huy.setOnClickListener(this);
+            cb_dahoantien.setOnClickListener(this);
+            cb_hoantac.setOnClickListener(this);
         }
 
         @Override
