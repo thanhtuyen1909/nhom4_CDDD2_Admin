@@ -1,6 +1,8 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Customer {
+
+    // Properties:
     private String key;
     private String accountID;
     private String created_at;
@@ -10,7 +12,9 @@ public class Customer {
     private String status;
     private String type_id;
     private String email;
+    private int totalPayment;
 
+    // Get - set:
     public String getKey() {
         return key;
     }
@@ -83,6 +87,15 @@ public class Customer {
         this.email = email;
     }
 
+    public int getTotalPayment() {
+        return totalPayment;
+    }
+
+    public void setTotalPayment(int totalPayment) {
+        this.totalPayment = totalPayment;
+    }
+
+    // Constructors:
     public Customer() {
     }
 

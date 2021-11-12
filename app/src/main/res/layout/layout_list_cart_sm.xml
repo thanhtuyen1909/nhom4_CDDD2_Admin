@@ -31,6 +31,7 @@
             android:background="@drawable/bg_toolbar"
             android:text="Tổng tiền: 40,000,000 VND"
             android:textStyle="bold"
+            android:layout_margin="5dp"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -48,6 +48,8 @@ public class DetailOrderActivity extends AppCompatActivity {
     Product5Adapter product5Adapter;
     Intent intent;
     Order item = null;
+    String from = "", accountID = "", username = "";
+
     DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("Status");
     DatabaseReference order_detailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
     DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
@@ -57,6 +59,9 @@ public class DetailOrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_order);
         item = (Order) getIntent().getParcelableExtra("item");
+        from = getIntent().getStringExtra("from");
+        accountID = getIntent().getStringExtra("accountID");
+        username = getIntent().getStringExtra("username");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -102,7 +107,15 @@ public class DetailOrderActivity extends AppCompatActivity {
         }
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            if(!from.equals("") && from.equals("PaymentSM")) {
+                intent = new Intent(DetailOrderActivity.this, ListProductSMActivity.class);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("username", username);
+                startActivity(intent);
+            }
+            finish();
+        });
 
         // Xử lý sự kiện click phone:
         txtPhone.setOnClickListener(v -> {

@@ -15,6 +15,7 @@ public class Order implements Parcelable {
     private int total;
     private String phone;
     private String name;
+    private int remain;
 
     protected Order(Parcel in) {
         orderID = in.readString();
@@ -25,6 +26,7 @@ public class Order implements Parcelable {
         shipperID = in.readString();
         status = in.readInt();
         total = in.readInt();
+        remain = in.readInt();
         phone = in.readString();
         name = in.readString();
     }
@@ -39,6 +41,7 @@ public class Order implements Parcelable {
         dest.writeString(shipperID);
         dest.writeInt(status);
         dest.writeInt(total);
+        dest.writeInt(remain);
         dest.writeString(phone);
         dest.writeString(name);
     }
@@ -141,11 +144,19 @@ public class Order implements Parcelable {
         this.name = name;
     }
 
-    // Contructor
+    public int getRemain() {
+        return remain;
+    }
+
+    public void setRemain(int remain) {
+        this.remain = remain;
+    }
+
+    // Contructors
     public Order() {
     }
 
-    public Order(String orderID, String accountID, String address, String created_at, String note, String shipperID, int status, int total) {
+    public Order(String orderID, String accountID, String address, String created_at, String note, String shipperID, int status, int total, String phone, String name, int remain) {
         this.orderID = orderID;
         this.accountID = accountID;
         this.address = address;
@@ -154,5 +165,8 @@ public class Order implements Parcelable {
         this.shipperID = shipperID;
         this.status = status;
         this.total = total;
+        this.phone = phone;
+        this.name = name;
+        this.remain = remain;
     }
 }

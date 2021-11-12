@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AreaAdapter;
 import vn.edu.tdc.cddd2.data_models.Area;
+import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.Order;
 import vn.edu.tdc.cddd2.data_models.OrderDetail;
 import vn.edu.tdc.cddd2.data_models.Product;
@@ -306,6 +307,30 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                                                 int quantity = product.getQuantity() - orderDetail.getAmount();
                                                 proRef.child(orderDetail.getProductID()).child("quantity").setValue(quantity);
                                                 proRef.child(orderDetail.getProductID()).child("sold").setValue(sold);
+                                                    cusRef.orderByChild("accountID").equalTo(order.getAccountID()).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                                                Customer customer = dataSnapshot1.getValue(Customer.class);
+                                                                int totalPaymentNew = customer.getTotalPayment() + order.getTotal();
+                                                                String typeID = "";
+                                                                if (totalPaymentNew >= 15000000) {
+                                                                    typeID = "Type1";
+                                                                } else if (totalPaymentNew > 100000000) {
+                                                                    typeID = "Type2";
+                                                                } else if (totalPaymentNew > 200000000) {
+                                                                    typeID = "Type3";
+                                                                } else typeID = "Type";
+                                                                cusRef.child(dataSnapshot1.getKey()).child("totalPayment").setValue(totalPaymentNew);
+                                                                cusRef.child(dataSnapshot1.getKey()).child("type_id").setValue(typeID);
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+                                                    });
                                             }
 
                                             @Override
@@ -315,46 +340,6 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                                         });
                                     }
                                 }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                        orderRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                int iSum = 0, iDem = 0;
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    Order od = snapshot.getValue(Order.class);
-                                    if (od.getAccountID().equals(order.getAccountID())) {
-                                        iSum += order.getTotal();
-                                        iDem++;
-                                    }
-                                }
-                                String typeID = "";
-                                if (iSum >= 15000000) {
-                                    typeID = "Type1";
-                                } else if (iSum > 100000000) {
-                                    typeID = "Type2";
-                                } else if (iSum > 200000000) {
-                                    typeID = "Type3";
-                                } else typeID = "Type";
-                                String finalTypeID = typeID;
-                                cusRef.orderByChild("accountID").equalTo(order.getAccountID()).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                            cusRef.child(dataSnapshot1.getKey()).child("type_id").setValue(finalTypeID);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
                             }
 
                             @Override
