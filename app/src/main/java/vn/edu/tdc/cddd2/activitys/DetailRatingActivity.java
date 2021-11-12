@@ -6,6 +6,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,14 +41,19 @@ import vn.edu.tdc.cddd2.fragments.FragmentWillOrderOH;
 
 public class DetailRatingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar, txt_rating, txt_totalrating, txtReply;
+    RatingBar ratingBar;
+    ProgressBar progressBar5, progressBar4, progressBar3, progressBar2, progressBar1;
+    EditText edtReply;
+    Button btnAdd;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private RecyclerView recyclerView;
+    RecyclerView recyclerView;
     private ArrayList<Comment> listComments;
-    private NavigationView navigationView;
-    private CommentAdapter commentAdapter;
+    NavigationView navigationView;
+    CommentAdapter commentAdapter;
+    String accountID = "Account2", username = "", productID = "-MmNx4YnTO674tYPalu9";
     private Intent intent;
 
     @Override
@@ -64,6 +73,17 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
+        txt_rating = findViewById(R.id.txt_rating);
+        ratingBar = findViewById(R.id.ratingBar);
+        txt_totalrating = findViewById(R.id.txt_totalrating);
+        progressBar5 = findViewById(R.id.progressBar5);
+        progressBar4 = findViewById(R.id.progressBar4);
+        progressBar3 = findViewById(R.id.progressBar3);
+        progressBar2 = findViewById(R.id.progressBar2);
+        progressBar1 = findViewById(R.id.progressBar1);
+        txtReply = findViewById(R.id.txtReply);
+        edtReply = findViewById(R.id.edtReply);
+        btnAdd = findViewById(R.id.btnAdd);
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(new View.OnClickListener() {
