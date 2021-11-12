@@ -31,6 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="TextView"
                 android:textColor="#151515" />
 
@@ -39,14 +40,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="TextView"
-                android:textColor="#151515" />
+                android:textColor="#F47070" />
 
             <TextView
                 android:id="@+id/tvCardHistoryOrderDate"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="TextView"
                 android:textColor="#151515" />
         </LinearLayout>

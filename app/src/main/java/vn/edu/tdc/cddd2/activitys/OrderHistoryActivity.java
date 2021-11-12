@@ -47,6 +47,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -337,8 +338,8 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
                         shipperID = o.getValue(Order.class).getShipperID();
                         status = o.getValue(Order.class).getStatus();
                         total = o.getValue(Order.class).getTotal();
-                        order = new Order(keyOrder, accountID, address, created_at, name, note, phone,
-                                shipperID, status, total);
+                        order = new Order(keyOrder, accountID, address, created_at, note, shipperID,status,
+                                total, phone, name);
 
                         arrOrder.add(order);
                         arrOrderFilter.add(order);
@@ -454,7 +455,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
             for (int i = 0; i < arrOrder.size(); i++) {
                 //Filter order by name, keyOrder, accountId and phoneNumber
                 if (arrOrder.get(i).getName().toLowerCase(Locale.getDefault()).contains(s)
-                        || arrOrder.get(i).getKeyOrder().toLowerCase(Locale.getDefault()).contains(s)
+                        || arrOrder.get(i).getOrderID().toLowerCase(Locale.getDefault()).contains(s)
                         || arrOrder.get(i).getAccountID().toLowerCase(Locale.getDefault()).contains(s)
                         || arrOrder.get(i).getPhone().toLowerCase(Locale.getDefault()).contains(s)) {
                     arrOrderFilter.add(arrOrder.get(i));
@@ -556,8 +557,8 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
 
     private void setRowTitleResult() {
         //Title tong ket
-        setShowTitleMain(arrOrder.size() + 4, 0, "TỔNG KẾT");
-        row = sheet.createRow(arrOrder.size() + 5);
+        setShowTitleMain(arrOrderFilter.size() + 4, 0, "TỔNG KẾT");
+        row = sheet.createRow(arrOrderFilter.size() + 5);
         setCellTitleResult(row, "STT", 0);
         setCellTitleResult(row, "Trạng thái", 1);
         setCellTitleResult(row, "Tổng số lượng", 2);
@@ -566,77 +567,77 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
     private void setRowValueResult(){
         caculatorReportExcelTotal();
         //load status 0
-        row = sheet.createRow(arrOrder.size() + 6);
+        row = sheet.createRow(arrOrderFilter.size() + 6);
         setCellValueResult(row,  "1", 0);
         setCellValueResult(row,  "Huỷ", 1);
         setCellValueResult(row,  reportOrder.getAmount0()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal0()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal0()), 3);
         //load status 1
-        row = sheet.createRow(arrOrder.size() + 6+1);
+        row = sheet.createRow(arrOrderFilter.size() + 6+1);
         setCellValueResult(row,  "2", 0);
         setCellValueResult(row,  "Chờ xử lý", 1);
         setCellValueResult(row,  reportOrder.getAmount1()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal1()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal1()), 3);
         //load status 2
-        row = sheet.createRow(arrOrder.size() + 6+2);
+        row = sheet.createRow(arrOrderFilter.size() + 6+2);
         setCellValueResult(row,  "3", 0);
         setCellValueResult(row,  "Đang xử lý", 1);
         setCellValueResult(row,  reportOrder.getAmount2()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal2()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal2()), 3);
         //load status 3
-        row = sheet.createRow(arrOrder.size() + 6+3);
+        row = sheet.createRow(arrOrderFilter.size() + 6+3);
         setCellValueResult(row,  "4", 0);
         setCellValueResult(row,  "Chờ giao", 1);
         setCellValueResult(row,  reportOrder.getAmount3()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal3()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal3()), 3);
         //load status 4
-        row = sheet.createRow(arrOrder.size() + 6+4);
+        row = sheet.createRow(arrOrderFilter.size() + 6+4);
         setCellValueResult(row,  "5", 0);
         setCellValueResult(row,  "Giao hàng cho shipper", 1);
         setCellValueResult(row,  reportOrder.getAmount4()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal4()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal4()), 3);
         //load status 5
-        row = sheet.createRow(arrOrder.size() + 6+5);
+        row = sheet.createRow(arrOrderFilter.size() + 6+5);
         setCellValueResult(row,  "6", 0);
         setCellValueResult(row,  "Shipper nhận hàng", 1);
         setCellValueResult(row,  reportOrder.getAmount5()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal5()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal5()), 3);
         //load status 6
-        row = sheet.createRow(arrOrder.size() + 6+6);
+        row = sheet.createRow(arrOrderFilter.size() + 6+6);
         setCellValueResult(row,  "7", 0);
         setCellValueResult(row,  "Đơn hàng đã giao", 1);
         setCellValueResult(row,  reportOrder.getAmount6()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal6()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal6()), 3);
         //load status 7
-        row = sheet.createRow(arrOrder.size() + 6+7);
+        row = sheet.createRow(arrOrderFilter.size() + 6+7);
         setCellValueResult(row,  "8", 0);
         setCellValueResult(row,  "Đơn hàng đã giao tiền", 1);
         setCellValueResult(row,  reportOrder.getAmount7()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal7()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal7()), 3);
         //load status 8
-        row = sheet.createRow(arrOrder.size() + 6+8);
+        row = sheet.createRow(arrOrderFilter.size() + 6+8);
         setCellValueResult(row,  "9", 0);
         setCellValueResult(row,  "Đơn hàng hoàn thành", 1);
         setCellValueResult(row,  reportOrder.getAmount8()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal8()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal8()), 3);
         //load status 9
-        row = sheet.createRow(arrOrder.size() + 6+9);
+        row = sheet.createRow(arrOrderFilter.size() + 6+9);
         setCellValueResult(row,  "10", 0);
         setCellValueResult(row,  "Báo huỷ", 1);
         setCellValueResult(row,  reportOrder.getAmount9()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal9()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal9()), 3);
         //load status 10
-        row = sheet.createRow(arrOrder.size() + 6+10);
+        row = sheet.createRow(arrOrderFilter.size() + 6+10);
         setCellValueResult(row,  "11", 0);
         setCellValueResult(row,  "Đã hoàn hàng", 1);
         setCellValueResult(row,  reportOrder.getAmount10()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotal10()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotal10()), 3);
         //load status total
-        row = sheet.createRow(arrOrder.size() + 6+11);
+        row = sheet.createRow(arrOrderFilter.size() + 6+11);
         setCellValueResult(row,  "12", 0);
         setCellValueResult(row,  "Tổng", 1);
         setCellValueResult(row,  reportOrder.getAmountTotal()+"", 2);
-        setCellValueResult(row,  reportOrder.getTotalTotal()+"", 3);
+        setCellValueResult(row,  formatPrice(reportOrder.getTotalTotal()), 3);
     }
 
     private void caculatorReportExcelTotal() {
@@ -761,16 +762,16 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
 
     private void setRowDataValue() {
         String valueStatus=null;
-        for (int i = 0; i < arrOrder.size(); i++) {
-            valueStatus= getStrStatusById(arrOrder.get(i).getStatus()+"");
+        for (int i = 0; i < arrOrderFilter.size(); i++) {
+            valueStatus= getStrStatusById(arrOrderFilter.get(i).getStatus()+"");
             row = sheet.createRow(i + 2);
-            setCellValue(arrOrder.get(i).getKeyOrder(), 0);
-            setCellValue(arrOrder.get(i).getAccountID(), 1);
-            setCellValue(arrOrder.get(i).getShipperID(), 2);
-            setCellValue(arrOrder.get(i).getAddress(), 3);
-            setCellValue(arrOrder.get(i).getNote(), 4);
+            setCellValue(arrOrderFilter.get(i).getOrderID(), 0);
+            setCellValue(arrOrderFilter.get(i).getAccountID(), 1);
+            setCellValue(arrOrderFilter.get(i).getShipperID(), 2);
+            setCellValue(arrOrderFilter.get(i).getAddress(), 3);
+            setCellValue(arrOrderFilter.get(i).getNote(), 4);
             setCellValue( valueStatus, 5);
-            setCellValue(arrOrder.get(i).getTotal() + "đ", 6);
+            setCellValue(formatPrice(arrOrderFilter.get(i).getTotal()), 6);
         }
     }
     private String getStrStatusById(String idStatus){
@@ -834,5 +835,8 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
             super.onBackPressed();
         }
     }
-
+    private String formatPrice(int price) {
+        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
+                .format(price);
+    }
 }
