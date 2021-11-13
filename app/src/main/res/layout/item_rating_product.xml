@@ -45,16 +45,6 @@
             android:rating="5"
             android:stepSize="0.1" />
 
-        <ImageView
-            android:id="@+id/btnDelete"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginRight="15dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/baseline_info_24"
-            android:text="" />
-
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

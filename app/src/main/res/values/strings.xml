@@ -96,10 +96,10 @@
         <item>Sinh nhật khách hàng</item>
     </string-array>
 
-    <string-array name="ngay1">
+    <string-array name="spinrating">
+        <item>Cao nhất</item>
         <item>Mới nhất</item>
         <item>Cũ nhất</item>
-        <item>Cao nhất</item>
         <item>Thấp nhất</item>
     </string-array>
 

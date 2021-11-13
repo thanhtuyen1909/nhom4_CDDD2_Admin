@@ -17,15 +17,13 @@
 
         <activity
             android:name=".activitys.LoginActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activitys.ChangePasswordActivity"
             android:screenOrientation="portrait" />
 
         <!-- Warehouse Management -->
-        <activity android:name=".activitys.MainQLKActivity" >
-        </activity>
+        <activity android:name=".activitys.MainQLKActivity"></activity>
         <activity
             android:name=".activitys.ListProductActivity"
             android:screenOrientation="portrait" />
@@ -62,8 +60,7 @@
         <!-- Salesman -->
         <activity
             android:name=".activitys.ListProductSMActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activitys.ListCartActivity"
             android:screenOrientation="portrait" />
@@ -77,8 +74,7 @@
         <!-- Shipper -->
         <activity
             android:name=".activitys.ShipProcessActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <!-- Administrators -->
         <activity
             android:name=".activitys.MainADMActivity"
@@ -106,14 +102,15 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListRatingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activitys.DetailRatingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activitys.DetailRatingActivity"
+            android:screenOrientation="portrait">
         </activity>
         <!-- HR -->
         <activity
@@ -121,12 +118,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListEmployeeActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activitys.DetailEmployeeActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activitys.DetailSalaryActivity"
             android:screenOrientation="portrait" />

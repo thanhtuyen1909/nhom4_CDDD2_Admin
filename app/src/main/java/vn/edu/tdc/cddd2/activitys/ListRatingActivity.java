@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +21,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AccountAdapter;
@@ -31,16 +38,21 @@ import vn.edu.tdc.cddd2.data_models.Product;
 
 public class ListRatingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
-    private Button btnAdd;
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private RecyclerView recyclerView;
-    private ArrayList<Product> listProduct;
-    private NavigationView navigationView;
-    private Product6Adapter product6Adapter;
-    private Intent intent;
+    RecyclerView recyclerView;
+    ArrayList<Product> listProduct;
+    NavigationView navigationView;
+    Product6Adapter product6Adapter;
+    Intent intent;
+    Spinner spinner_filterrating;
+    String accountID = "Account2", name = "", role = "";
+
+
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference proRef = db.getReference("Products");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,22 +71,16 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
-        btnAdd = findViewById(R.id.btnAdd);
+        spinner_filterrating = findViewById(R.id.spinner_filterrating);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ListRatingActivity.this, "Thêm tài khoản", Toast.LENGTH_SHORT).show();
-            }
+        btnBack.setOnClickListener(v -> {
+            intent = new Intent(ListRatingActivity.this, MainQLKActivity.class);
+            intent.putExtra("username", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            startActivity(intent);
+            finish();
         });
 
         //RecycleView
@@ -99,15 +105,36 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
     }
 
     private void data() {
-//        listProduct.add(new Product("Laptop 1", 15000000, "Asus", 10));
-//        listProduct.add(new Product("Laptop 2", 14000000, "Acer", 11));
-//        listProduct.add(new Product("Laptop 3", 12000000, "Apple", 12));
+        proRef.orderByChild("rating").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listProduct.clear();
+                for (DataSnapshot node : snapshot.getChildren()) {
+                    Product product = node.getValue(Product.class);
+                    product.setKey(node.getKey());
+                    if(product.getStatus() != -1) listProduct.add(product);
+                }
+                Collections.reverse(listProduct);
+                product6Adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private Product6Adapter.ItemClickListener itemClickListener = new Product6Adapter.ItemClickListener() {
         @Override
-        public void getInfor(Product item) {
-            Toast.makeText(ListRatingActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+        public void getInfor(String key) {
+            intent = new Intent(ListRatingActivity.this, DetailRatingActivity.class);
+            intent.putExtra("username", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            intent.putExtra("productID", key);
+            startActivity(intent);
+            finish();
         }
     };
 

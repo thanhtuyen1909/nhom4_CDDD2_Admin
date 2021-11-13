@@ -15,7 +15,7 @@ public class Product implements Parcelable {
     private String description;
     private int import_price;
     private int price;
-    private int rating;
+    private float rating;
     private int status;
 
     protected Product(Parcel in) {
@@ -29,7 +29,7 @@ public class Product implements Parcelable {
         description = in.readString();
         import_price = in.readInt();
         price = in.readInt();
-        rating = in.readInt();
+        rating = in.readFloat();
         status = in.readInt();
         sold = in.readInt();
         created_at = in.readString();
@@ -55,11 +55,11 @@ public class Product implements Parcelable {
         this.status = status;
     }
 
-    public int getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
@@ -206,7 +206,7 @@ public class Product implements Parcelable {
         dest.writeString(description);
         dest.writeInt(import_price);
         dest.writeInt(price);
-        dest.writeInt(rating);
+        dest.writeFloat(rating);
         dest.writeInt(status);
         dest.writeInt(sold);
         dest.writeString(created_at);

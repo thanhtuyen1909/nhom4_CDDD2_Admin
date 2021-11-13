@@ -188,9 +188,10 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         recyclerView.setAdapter(discountCodeAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-    private void pushNotification(String code,String accountID){
+
+    private void pushNotification(String code, String accountID) {
         DatabaseReference notiRef = FirebaseDatabase.getInstance().getReference("Notification");
-        Log.d("TAG", "pushNotification: "+code);
+        Log.d("TAG", "pushNotification: " + code);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         if (!code.equals("")) {
             Notification noti = new Notification();
@@ -204,7 +205,6 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
             String path = MediaStore.Images.Media.insertImage(ListDiscountCodeActivity.this.getContentResolver(), bitmap, "Title", null);
             Uri imageUri = Uri.parse(path);
-            Log.d("TAG", "pushNotification: "+imageUri);
             FirebaseStorage.getInstance().getReference("images/promocodes").child("discount_code").putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -212,7 +212,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                         @Override
                         public void onSuccess(Uri uri) {
                             noti.setImage(uri.toString());
-                            Log.d("TAG", "pushNotification: "+"success");
+                            Log.d("TAG", "pushNotification: " + "success");
                             notiRef.push().setValue(noti);
                         }
                     });
@@ -220,6 +220,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             });
         }
     }
+
     private void createCodeCustomer(String code, String event) {
         DatabaseReference cusRef = db.getReference("Customer");
         DatabaseReference ref = db.getReference("DiscountCode_Customer");
@@ -234,7 +235,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                             DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                             ref.push().setValue(discus);
                             Customer customer = node.getValue(Customer.class);
-                           pushNotification(code,customer.getAccountID());
+                            pushNotification(code, customer.getAccountID());
                         }
                     }
 
@@ -254,7 +255,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
                                 Customer customer = node.getValue(Customer.class);
-                                pushNotification(code,customer.getAccountID());
+                                pushNotification(code, customer.getAccountID());
                             }
 
                         }
@@ -276,7 +277,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
                                 Customer customer = node.getValue(Customer.class);
-                                pushNotification(code,customer.getAccountID());
+                                pushNotification(code, customer.getAccountID());
                             }
 
                         }
@@ -298,7 +299,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
                                 Customer customer = node.getValue(Customer.class);
-                                pushNotification(code,customer.getAccountID());
+                                pushNotification(code, customer.getAccountID());
                             }
 
                         }
@@ -320,7 +321,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
                                 Customer customer = node.getValue(Customer.class);
-                                pushNotification(code,customer.getAccountID());
+                                pushNotification(code, customer.getAccountID());
                             }
 
                         }
@@ -347,7 +348,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                                 DiscountCode_Customer discus = new DiscountCode_Customer(code, node.getKey());
                                 ref.push().setValue(discus);
                                 Customer customer = node.getValue(Customer.class);
-                                pushNotification(code,customer.getAccountID());
+                                pushNotification(code, customer.getAccountID());
                             }
 
                         }

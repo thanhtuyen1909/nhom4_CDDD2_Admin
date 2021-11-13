@@ -94,7 +94,6 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
             edtStartDate.setText(startDate);
             edtEndDate.setText(endDate);
             imageRef = FirebaseStorage.getInstance().getReference("images/promocodes/" + image);
-            Log.d("TAG", "onCreate: " + imageRef);
             imageRef.getBytes(1024 * 1024).addOnSuccessListener(bytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 img.setImageBitmap(Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), false));
@@ -121,7 +120,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
 
         //Check chưa chọn image
         if (filePath == null && item.getImage().equals("")) {
-            showWarningDialog("Vui lòng chọn ảnh cho sản phẩm!");
+            showWarningDialog("Vui lòng chọn ảnh cho chương trình khuyến mãi!");
             return -1;
         }
 

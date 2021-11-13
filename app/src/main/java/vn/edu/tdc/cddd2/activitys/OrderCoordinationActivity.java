@@ -62,11 +62,12 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     ArrayList<Order> listOrder;
     ArrayList<Area> listArea;
 
-    DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
-    DatabaseReference orderDetailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
-    DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
-    DatabaseReference areaRef = FirebaseDatabase.getInstance().getReference("Area");
-    DatabaseReference cusRef = FirebaseDatabase.getInstance().getReference("Customer");
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference orderRef = db.getReference("Order");
+    DatabaseReference orderDetailRef = db.getReference("Order_Details");
+    DatabaseReference proRef = db.getReference("Products");
+    DatabaseReference areaRef = db.getReference("Area");
+    DatabaseReference cusRef = db.getReference("Customer");
 
     private GestureDetector gestureDetector;
 

@@ -17,12 +17,12 @@
             layout="@layout/appbar" />
 
         <Spinner
-            android:id="@+id/spinner_time"
+            android:id="@+id/spinner_filterrating"
             style="@style/CustomSpinner"
             android:layout_width="0dp"
             android:layout_margin="4dp"
             android:background="@drawable/bg_spinner"
-            android:entries="@array/ngay1"
+            android:entries="@array/spinrating"
             app:layout_constraintTop_toBottomOf="@+id/include"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,8 +41,9 @@
             android:background="@drawable/rounded_border_edittext"
             android:queryHint="Tên sản phẩm"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_time" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_filterrating" />
 
         <TextView
             android:id="@+id/textView2"
@@ -74,12 +75,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
-
-        <Button
-            android:id="@+id/btnAdd"
-            style="@style/CustomButtonAdd"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Left Menu -->
     <com.google.android.material.navigation.NavigationView

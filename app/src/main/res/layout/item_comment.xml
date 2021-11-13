@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:layout_width="match_parent"
-    card_view:cardUseCompatPadding="true"
-    android:layout_height="wrap_content">
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    card_view:cardUseCompatPadding="true">
 
-    <RelativeLayout android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="6dp">
 
         <ImageView
             android:id="@+id/img"
@@ -38,10 +38,10 @@
             android:layout_below="@+id/txt_name"
             android:layout_marginStart="20dp"
             android:layout_toEndOf="@+id/img"
-            android:text="Title"
-            android:minLines="1"
-            android:maxLines="4"
             android:ellipsize="end"
+            android:maxLines="4"
+            android:minLines="1"
+            android:text="Title"
             android:textSize="18sp" />
 
         <TextView
@@ -58,11 +58,11 @@
 
         <TextView
             android:id="@+id/txt_time"
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_donhang"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/img"
             android:text="29/09/2021"
             android:textSize="12sp" />
@@ -91,6 +91,48 @@
             android:text="Trả lời"
             android:textSize="13dp"
             android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/reply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_time"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/img"
+            android:background="@color/gray2"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/txt_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="account"
+                android:visibility="gone"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_replyname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phản hồi từ: admin001"
+                android:textSize="15dp"
+                android:textColor="@color/pink"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_replycomment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_replyname"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:minLines="1"
+                android:text="Title"
+                android:textSize="15dp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
