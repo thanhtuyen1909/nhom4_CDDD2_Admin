@@ -1,6 +1,7 @@
 package vn.edu.tdc.cddd2.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.Order1Adapter;
@@ -31,6 +36,7 @@ public class FragmentListOrderOH extends Fragment {
     // Khai báo biến:
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
+    private ArrayList<Order> listOrder1;
     private Order2Adapter orderAdapter;
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
 
@@ -64,20 +70,37 @@ public class FragmentListOrderOH extends Fragment {
         //listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
         //listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "12/10/2021"));
         //listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
-
-        myRef.child("Order").addValueEventListener(new ValueEventListener() {
+        myRef.child("Account").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listOrder.clear();
-                for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
-                    Order order = DSOrder.getValue(Order.class);
-                    order.setOrderID(DSOrder.getKey());
-                    if (order.getStatus() == 1) {
-                        listOrder.add(order);
+                for (DataSnapshot node : dataSnapshot.getChildren()) {
+                    Account account = node.getValue(Account.class);
+                    account.setAccountID(node.getKey());
+                    myRef.child("Order").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            listOrder.clear();
+                            int a = 0;
+                            for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
+                                Order order = DSOrder.getValue(Order.class);
+                                order.setOrderID(DSOrder.getKey());
+                                if (order.getStatus() == 0 && order.getAccountID().equals(account.getAccountID())) {
+                                    a += 1;
+                                    Log.d("TAG", "onDataChange: "+a);
+                                }
+                                if(order.getStatus()==1&&a<3){
+                                    listOrder.add(order);
+                                }
+                            }
+                            orderAdapter.notifyDataSetChanged();
+                        }
 
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
-                orderAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -85,9 +108,17 @@ public class FragmentListOrderOH extends Fragment {
 
             }
         });
+
     }
-    public ArrayList<Order> getListOrder(){
+
+    public ArrayList<Order> getListOrder() {
         return listOrder;
+    }
+
+    private void Swap(int a, int b) {
+        int temp = a;
+        a = b;
+        b = temp;
     }
 }
 
