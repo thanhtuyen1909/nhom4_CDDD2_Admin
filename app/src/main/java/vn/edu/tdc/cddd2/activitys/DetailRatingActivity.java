@@ -240,7 +240,7 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
                 ratingTotal = (float) (ra5 * 5 + ra4 * 4 + ra3 * 3 + ra2 * 2 + ra1 * 1) / total;
 
                 // Set dữ liệu:
-                txt_rating.setText(ratingTotal + "");
+                if(ratingTotal > 0) txt_rating.setText(ratingTotal + "");
                 txt_totalrating.setText(total + "");
                 ratingBar.setRating(ratingTotal);
                 progressBar1.setMax(total);

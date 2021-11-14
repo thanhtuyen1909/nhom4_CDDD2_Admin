@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -20,9 +22,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.Order;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class Product6Adapter extends RecyclerView.Adapter<Product6Adapter.ViewHolder> {
+public class Product6Adapter extends RecyclerView.Adapter<Product6Adapter.ViewHolder>{
     ArrayList<Product> listProducts;
     private Context context;
     Product6Adapter.ItemClickListener itemClickListener;

@@ -51,7 +51,6 @@
     <!-- Custom text quantity -->
     <style name="CustomTextViewQuantity">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">15dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginLeft">15dp</item>
         <item name="android:textColor">@color/black</item>
