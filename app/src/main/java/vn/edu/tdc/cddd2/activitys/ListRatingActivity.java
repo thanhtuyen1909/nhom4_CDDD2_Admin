@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -153,10 +154,85 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                                         product.setKey(node.getKey());
                                         if (product.getStatus() != -1 && product.getKey().equals(dataSnapshot.child("productID").getValue(String.class))
                                                 && !listProduct.contains(product)) {
-                                            listProduct.add(product);
+                                            if(checkExists(product.getKey())) listProduct.add(product);
                                         }
                                     }
                                     Collections.reverse(listProduct);
+                                    product6Adapter.notifyDataSetChanged();
+                                    totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+            else {
+                ratRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        listProduct.clear();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            proRef.addValueEventListener(new ValueEventListener() {
+                                @SuppressLint("NotifyDataSetChanged")
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot node : snapshot.getChildren()) {
+                                        Product product = node.getValue(Product.class);
+                                        product.setKey(node.getKey());
+                                        if (product.getStatus() != -1 && product.getKey().equals(dataSnapshot.child("productID").getValue(String.class))
+                                                && product.getName().toLowerCase().contains(query.toLowerCase())) {
+                                            if(checkExists(product.getKey())) listProduct.add(product);
+                                        }
+                                    }
+                                    Collections.reverse(listProduct);
+                                    product6Adapter.notifyDataSetChanged();
+                                    totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        }
+        else if (criteria.equals("Mới nhất")) {
+            if (query.isEmpty()) {
+                ratRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        listProduct.clear();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            proRef.addValueEventListener(new ValueEventListener() {
+                                @SuppressLint("NotifyDataSetChanged")
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot node : snapshot.getChildren()) {
+                                        Product product = node.getValue(Product.class);
+                                        product.setKey(node.getKey());
+                                        if (product.getStatus() != -1 && product.getKey().equals(dataSnapshot.child("productID").getValue(String.class))) {
+                                            if(checkExists(product.getKey())) listProduct.add(product);
+                                        }
+                                    }
                                     product6Adapter.notifyDataSetChanged();
                                     totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
                                 }
@@ -189,11 +265,10 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                                         Product product = node.getValue(Product.class);
                                         product.setKey(node.getKey());
                                         if (product.getStatus() != -1 && product.getKey().equals(dataSnapshot.child("productID").getValue(String.class))
-                                                && !listProduct.contains(product) && product.getName().toLowerCase().contains(query.toLowerCase())) {
-                                            listProduct.add(product);
+                                                && product.getName().toLowerCase().contains(query.toLowerCase())) {
+                                            if(checkExists(product.getKey())) listProduct.add(product);
                                         }
                                     }
-                                    Collections.reverse(listProduct);
                                     product6Adapter.notifyDataSetChanged();
                                     totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
                                 }
@@ -212,35 +287,23 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                     }
                 });
             }
-        } else if (criteria.equals("Mới nhất")) {
+        }
+        else if (criteria.equals("Thấp nhất")) {
             if (query.isEmpty()) {
-                ratRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
+                proRef.orderByChild("rating").addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         listProduct.clear();
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            proRef.addValueEventListener(new ValueEventListener() {
-                                @SuppressLint("NotifyDataSetChanged")
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for (DataSnapshot node : snapshot.getChildren()) {
-                                        Product product = node.getValue(Product.class);
-                                        product.setKey(node.getKey());
-                                        if (product.getStatus() != -1 && product.getKey().equals(dataSnapshot.child("productID").getValue(String.class))
-                                                && !listProduct.contains(product)) {
-                                            listProduct.add(product);
-                                        }
-                                    }
-                                    product6Adapter.notifyDataSetChanged();
-                                    totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Product product = node.getValue(Product.class);
+                            product.setKey(node.getKey());
+                            if (product.getStatus() != -1 && product.getName().toLowerCase().contains(query.toLowerCase())) {
+                                listProduct.add(product);
+                            }
                         }
+                        product6Adapter.notifyDataSetChanged();
+                        totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
                     }
 
                     @Override
@@ -250,65 +313,6 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                 });
             }
             else {
-                ratRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        listProduct.clear();
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            proRef.addValueEventListener(new ValueEventListener() {
-                                @SuppressLint("NotifyDataSetChanged")
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for (DataSnapshot node : snapshot.getChildren()) {
-                                        Product product = node.getValue(Product.class);
-                                        product.setKey(node.getKey());
-                                        if (product.getStatus() != -1 && product.getKey().equals(dataSnapshot.child("productID").getValue(String.class))
-                                                && !listProduct.contains(product) && product.getName().toLowerCase().contains(query.toLowerCase())) {
-                                            listProduct.add(product);
-                                        }
-                                    }
-                                    product6Adapter.notifyDataSetChanged();
-                                    totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-        } else if (criteria.equals("Thấp nhất")) {
-            if (query.isEmpty()) {
-                proRef.orderByChild("rating").addValueEventListener(new ValueEventListener() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        listProduct.clear();
-                        for (DataSnapshot node : snapshot.getChildren()) {
-                            Product product = node.getValue(Product.class);
-                            product.setKey(node.getKey());
-                            if (product.getStatus() != -1 && product.getName().toLowerCase().contains(query.toLowerCase())) {
-                                listProduct.add(product);
-                            }
-                        }
-                        product6Adapter.notifyDataSetChanged();
-                        totalRating.setText(recyclerView.getAdapter().getItemCount() + " đánh giá từ " + size);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            } else {
                 proRef.orderByChild("rating").addValueEventListener(new ValueEventListener() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
@@ -331,7 +335,8 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                     }
                 });
             }
-        } else {
+        }
+        else {
             if (query.isEmpty()) {
                 data();
             } else {
@@ -359,6 +364,15 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                 });
             }
         }
+    }
+
+    private boolean checkExists(String key) {
+        for(int i = 0; i < listProduct.size(); i++) {
+            if(listProduct.get(i).getKey().equals(key)){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

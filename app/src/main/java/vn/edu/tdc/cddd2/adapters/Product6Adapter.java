@@ -52,6 +52,7 @@ public class Product6Adapter extends RecyclerView.Adapter<Product6Adapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull Product6Adapter.ViewHolder holder, int position) {
         Product item = listProducts.get(position);
+        holder.ratingBar.setRating(0.0F);
         StorageReference imageRef = storage.getReference("images/products/" + item.getName() + "/" + item.getImage());
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).fit().into(holder.im_item));
         holder.tv_name.setText(item.getName());
