@@ -2,11 +2,19 @@ package vn.edu.tdc.cddd2.activitys;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -27,11 +35,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.Product5Adapter;
@@ -50,7 +64,19 @@ public class DetailOrderActivity extends AppCompatActivity {
     Order item = null;
     DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("Status");
     DatabaseReference order_detailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
+    Query queryOrderDetail;
     DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
+    //Map value pdf
+    Order order;
+    ArrayList<OrderDetail> arrOrderDetail;
+    PdfDocument myPdfDocument;
+    int startXPosition = 10;
+    PdfDocument.PageInfo myPageInfo1;
+    int endXPosition;
+    int startYPosition = 80;
+    Paint myPaint;
+    Canvas canvas;
+    PdfDocument.Page myPage1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +84,20 @@ public class DetailOrderActivity extends AppCompatActivity {
         setContentView(R.layout.layout_detail_order);
         item = (Order) getIntent().getParcelableExtra("item");
 
+        order = new Order();
+        arrOrderDetail = new ArrayList<>();
+        myPdfDocument = new PdfDocument();
+        myPaint = new Paint();
+
+        myPageInfo1 = new PdfDocument.
+                PageInfo.Builder(280, 500, 1).create();
+        myPage1 = myPdfDocument.startPage(myPageInfo1);
+        canvas = myPage1.getCanvas();
+        endXPosition = myPageInfo1.getPageWidth() - 10;
+
+         queryOrderDetail  = FirebaseDatabase.getInstance().getReference()
+                 .child("Order_Details").orderByChild("orderID").equalTo(item.getOrderID());
+         loadDataOrderDetail();
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -76,15 +116,15 @@ public class DetailOrderActivity extends AppCompatActivity {
         txtAddress = findViewById(R.id.txt_diachi);
 
         // Đổ dữ liệu
-        if(item != null) {
+        if (item != null) {
             txtPhone.setText(item.getPhone());
             txtMaDH.setText(item.getOrderID());
             txtCreatedAt.setText("Ngày tạo: " + item.getCreated_at());
             statusRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if(Integer.parseInt(snapshot.getKey()) == item.getStatus()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (Integer.parseInt(snapshot.getKey()) == item.getStatus()) {
                             txtStatus.setText("Trạng thái: " + snapshot.getValue(String.class));
                         }
                     }
@@ -124,26 +164,53 @@ public class DetailOrderActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    private void loadDataOrderDetail() {
+        arrOrderDetail.clear();
+        queryOrderDetail.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot snapshot1 :dataSnapshot.getChildren()){
+                        //add data
+                        String orderID = snapshot1.getKey();
+                        String productID = snapshot1.getValue(OrderDetail.class).getProductID();
+                        int amount = snapshot1.getValue(OrderDetail.class).getAmount();
+                        int price = snapshot1.getValue(OrderDetail.class).getPrice();
+                        OrderDetail orderDetail = new OrderDetail(orderID, amount, productID, price);
+                        arrOrderDetail.add(orderDetail);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void data() {
         order_detailRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listProducts.clear();
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     OrderDetail orderDetail = snapshot.getValue(OrderDetail.class);
-                    if(orderDetail.getOrderID().equals(item.getOrderID())) {
+                    if (orderDetail.getOrderID().equals(item.getOrderID())) {
                         proRef.addValueEventListener(new ValueEventListener() {
                             @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for(DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                     Product product = snapshot1.getValue(Product.class);
                                     product.setPrice(orderDetail.getPrice());
                                     product.setKey(snapshot1.getKey());
                                     product.setQuantity(orderDetail.getAmount());
-                                    if(product.getKey().equals(orderDetail.getProductID())) {
+                                    if (product.getKey().equals(orderDetail.getProductID())) {
                                         listProducts.add(product);
                                     }
+
+
                                 }
                                 product5Adapter.notifyDataSetChanged();
                             }
@@ -168,4 +235,108 @@ public class DetailOrderActivity extends AppCompatActivity {
         return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
                 .format(price);
     }
+
+    public void clickPrintfPdf(View view) {
+
+
+
+        myPaint.setTypeface(Typeface.create("Times New Roman", Typeface.NORMAL));
+        myPaint.setTextAlign(Paint.Align.CENTER);
+        myPaint.setTextSize(12.0f);
+        canvas.drawText("Cửa hàng zuke", myPageInfo1.getPageWidth() / 2, 30, myPaint);
+
+        myPaint.setTextSize(6.0f);
+        myPaint.setColor(Color.rgb(122, 119, 119));
+        canvas.drawText("54 Lê văn chí, Linh Trung, Thủ Đức, TP.HCM", myPageInfo1.getPageWidth() / 2, 40, myPaint);
+        myPaint.setTextScaleX(1.2f);
+
+        myPaint.setTextAlign(Paint.Align.LEFT);
+        myPaint.setTextSize(8.0f);
+        myPaint.setColor(Color.rgb(122, 119, 119));
+        canvas.drawText("Thông tin khách hàng", 10, 60, myPaint);
+
+        myPaint.setTextAlign(Paint.Align.LEFT);
+        myPaint.setTextSize(7.0f);
+        myPaint.setColor(Color.rgb(51, 43, 43));
+
+       pdfDataCustomerItem("Mã đơn hàng: ",item.getOrderID());
+       pdfDataCustomerItem("Họ và tên: ",item.getName());
+       pdfDataCustomerItem("Số điện thoại: ",item.getPhone());
+       pdfDataCustomerItem("Địa chỉ: ",item.getAddress());
+       pdfDataCustomerItem("Ghi chú: ",item.getNote());
+
+        //Border end start
+        startYPosition += 10;
+        canvas.drawLine(startXPosition, startYPosition, endXPosition, startYPosition, myPaint);
+        startYPosition += 20;
+        //Tổng số lượng sản phẩm
+        //Xuat hien
+        canvas.drawText("Tổng loại sản phẩm: " + arrOrderDetail.size(), startXPosition, startYPosition, myPaint);
+        for (int i = 0; i < arrOrderDetail.size(); i++) {
+            String nameProduct = getNameByIdProduct(arrOrderDetail.get(i).getProductID());
+            startYPosition += 20;
+            String printfData = "   " + (i+1) + ". " + nameProduct  + ", SL: " + arrOrderDetail.get(i).getAmount()
+                    + ", " + formatPrice(arrOrderDetail.get(i).getPrice());
+            canvas.drawText(printfData, startXPosition, startYPosition, myPaint);
+        }
+        //Border end
+        startYPosition += 15;
+        canvas.drawLine(startXPosition, startYPosition, endXPosition, startYPosition, myPaint);
+        startYPosition += 20;
+        //Chữ ký
+        canvas.drawText("Chữ ký người nhận", myPageInfo1.getPageWidth() / 2 + 10, startYPosition, myPaint);
+
+        myPdfDocument.finishPage(myPage1);
+
+
+        String filePath ="DonHang_"+ item.getOrderID()+".pdf";
+
+        File file = new File(getExternalFilesDir(null),filePath);
+        FileOutputStream outputStream =null;
+
+        try {
+            outputStream=new FileOutputStream(file);
+            myPdfDocument.writeTo(outputStream);
+            showDialog("In file excel thành công");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+
+            showDialog("In file excel thành công");
+            try {
+                outputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        myPdfDocument.close();
+    }
+
+    private void pdfDataCustomerItem(String name, String value){
+        canvas.drawText(name + value + "", startXPosition, startYPosition, myPaint);
+        startYPosition += 20;
+    }
+    private void showDialog(String title) {
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle(title);
+        b.setNegativeButton("Xác nhận", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog al = b.create();
+        al.show();
+    }
+
+    private String getNameByIdProduct(String productID) {
+        String nameProduct = null;
+        for (int i = 0; i < listProducts.size(); i++) {
+            if (listProducts.get(i).getKey().equals(productID)) {
+                nameProduct = listProducts.get(i).getName();
+            }
+        }
+        return nameProduct;
+    }
+
+
+
 }
