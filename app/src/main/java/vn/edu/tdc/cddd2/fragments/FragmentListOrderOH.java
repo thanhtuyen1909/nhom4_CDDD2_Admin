@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +37,6 @@ public class FragmentListOrderOH extends Fragment {
     // Khai báo biến:
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
-    private ArrayList<Order> listOrder1;
     private Order2Adapter orderAdapter;
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
 
@@ -77,6 +77,7 @@ public class FragmentListOrderOH extends Fragment {
                     Account account = node.getValue(Account.class);
                     account.setAccountID(node.getKey());
                     myRef.child("Order").addValueEventListener(new ValueEventListener() {
+                        @SuppressLint("ResourceAsColor")
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             listOrder.clear();
@@ -84,11 +85,14 @@ public class FragmentListOrderOH extends Fragment {
                             for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
                                 Order order = DSOrder.getValue(Order.class);
                                 order.setOrderID(DSOrder.getKey());
-                                if (order.getStatus() == 0 && order.getAccountID().equals(account.getAccountID())) {
-                                    a += 1;
-                                    Log.d("TAG", "onDataChange: "+a);
-                                }
-                                if(order.getStatus()==1&&a<3){
+//                                if (order.getStatus() == 0 && order.getAccountID().equals(account.getAccountID())) {
+//                                    a += 1;
+//                                    if(a==1){
+//
+//                                    }
+//                                    Log.d("TAG", "onDataChange: "+a);
+//                                }
+                                if(order.getStatus()==1){
                                     listOrder.add(order);
                                 }
                             }

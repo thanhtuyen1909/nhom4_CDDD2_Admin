@@ -9,7 +9,11 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -32,10 +37,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -65,9 +72,11 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
     private Intent intent;
     private DatePickerDialog datePickerDialog;
     private SearchView searchView;
+    private DatabaseReference myDB= FirebaseDatabase.getInstance().getReference();
 
-
-    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference("Attendance");
+    DatabaseReference empRef= FirebaseDatabase.getInstance().getReference("Employees");
+    boolean check = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +93,82 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
         spinerDate=findViewById(R.id.spinner_date);
-        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        spinerDate.setText(currentDate);
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+        String[] temp = currentDate.split("/");
+        String key = temp[1]+"-"+temp[2];
 
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                check = true;
+                myRef.child(key).addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Attendance attendance = dataSnapshot.getValue(Attendance.class);
+                        if(attendance.getDate().equals(currentDate)){
+                            check = false;
+                            Log.d("TAG", "onDataChange: "+check);
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+        }},200);
+
+        if(check){
+            empRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot node : dataSnapshot.getChildren()){
+                        Attendance attendance = new Attendance(currentDate,node.getKey(),"",0);
+                        myRef.child(key).push().setValue(attendance);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        spinerDate.setText(currentDate);
+        spinerDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         spinerDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,39 +188,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                                 String day=dayOfMonth + "-"
                                         + (monthOfYear + 1) + "-" + year;
                                 spinerDate.setText(day);
-//                                myRef.child("Employees").addValueEventListener(new ValueEventListener() {
-//                                    @Override
-//                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                        for (DataSnapshot DSEmployee:dataSnapshot.getChildren()){
-//                                            Employee employee=DSEmployee.getValue(Employee.class);
-//                                            employee.setMaNV(DSEmployee.getKey());
-//
-//                                            myRef.child("Attendance").child((monthOfYear + 1) + "-" + year).addValueEventListener(new ValueEventListener() {
-//                                                @Override
-//                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                                    for (DataSnapshot DSAttendance:dataSnapshot.getChildren()){
-//                                                        Attendance attendance=DSAttendance.getValue(Attendance.class);
-//                                                        attendance.setAttendanceID(DSAttendance.getKey());
-//                                                        if(attendance.getEmployeeID().equals(employee.getMaNV())&&attendance.getDate()==day){
-//                                                            listEmployees.add(employee);
-//                                                        }
-//                                                    }
-//                                                    //employeeAdapter.notifyDataSetChanged();
-//                                                }
-//
-//                                                @Override
-//                                                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                                }
-//                                            });
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                    }
-//                                });
+
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
@@ -199,7 +249,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         //listEmployees.add(new Employee("XL001", "La Văn Tiến", "Xử lý đơn hàng"));
         //listEmployees.add(new Employee("GH001", "Nguyễn Bình", "Nhân viên giao hàng"));
         //listEmployees.add(new Employee("QTV001", "Lê Danh", "Quản trị viên"));
-        myRef.child("Employees").addListenerForSingleValueEvent(new ValueEventListener() {
+        myDB.child("Employees").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot DSEmployee:dataSnapshot.getChildren()){
@@ -273,7 +323,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
             Map<String, Object> map = new HashMap<>();
-            myRef.child("Employees").addListenerForSingleValueEvent(new ValueEventListener() {
+            myDB.child("Employees").addListenerForSingleValueEvent(new ValueEventListener() {
 
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -288,7 +338,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                                 map.put("note", edtĐiemDanh.getText().toString());
                                 map.put("status","-1");
                                 map.put("date",currentDate);
-                                myRef.child("Attendance").child(currentMoth).push().setValue(map);
+                                myDB.child("Attendance").child(currentMoth).push().setValue(map);
                             }
 
                     }
