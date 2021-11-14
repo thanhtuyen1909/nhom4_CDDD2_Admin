@@ -1,8 +1,7 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Order {
-    public Order() {
-    }
+
 
     // Khai báo biến
     private String accountID,address,create_at,name,note,orderID,phone,shipperID;
@@ -88,7 +87,8 @@ public class Order {
     public void setTotal(int total) {
         this.total = total;
     }
-
+    public Order() {
+    }
     public Order(String accountID, String address, String create_at, String name, String note, String orderID, String phone, String shipperID, int status, int total) {
         this.accountID = accountID;
         this.address = address;
