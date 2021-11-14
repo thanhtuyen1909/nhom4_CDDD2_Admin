@@ -90,7 +90,7 @@ public class DetailOrderActivity extends AppCompatActivity {
         myPaint = new Paint();
 
         myPageInfo1 = new PdfDocument.
-                PageInfo.Builder(280, 500, 1).create();
+                PageInfo.Builder(250, 500, 1).create();
         myPage1 = myPdfDocument.startPage(myPageInfo1);
         canvas = myPage1.getCanvas();
         endXPosition = myPageInfo1.getPageWidth() - 10;
@@ -238,8 +238,6 @@ public class DetailOrderActivity extends AppCompatActivity {
 
     public void clickPrintfPdf(View view) {
 
-
-
         myPaint.setTypeface(Typeface.create("Times New Roman", Typeface.NORMAL));
         myPaint.setTextAlign(Paint.Align.CENTER);
         myPaint.setTextSize(12.0f);
@@ -262,8 +260,34 @@ public class DetailOrderActivity extends AppCompatActivity {
        pdfDataCustomerItem("Mã đơn hàng: ",item.getOrderID());
        pdfDataCustomerItem("Họ và tên: ",item.getName());
        pdfDataCustomerItem("Số điện thoại: ",item.getPhone());
-       pdfDataCustomerItem("Địa chỉ: ",item.getAddress());
-       pdfDataCustomerItem("Ghi chú: ",item.getNote());
+       String address = item.getAddress();
+       if(item.getAddress().length()+9<=54){
+           pdfDataCustomerItem("Địa chỉ: ",address);
+       }else{
+           String itemAddress1=null, itemAddress2=null;
+           int positionSpace=0;
+              //Tra ve vi tri bat dau tu so 52
+              positionSpace=address.indexOf(' ',49);
+              itemAddress1=address.substring(0,positionSpace);
+              itemAddress2=address.substring(positionSpace, address.length());
+              pdfDataCustomerItem("Địa chỉ: ", itemAddress1);
+              pdfDataCustomerItem("         ",itemAddress2);
+       }
+
+       //Note
+        if(item.getNote().length()+4<=54){
+            pdfDataCustomerItem("Ghi chú: ",item.getNote());
+        }else{
+            String itemNote1=null, itemNote2=null;
+            int positionSpace=0;
+            //Tra ve vi tri bat dau tu so 52
+            positionSpace=item.getNote().indexOf(' ',49);
+            itemNote1=item.getNote().substring(0,positionSpace);
+            itemNote2=item.getNote().substring(positionSpace, item.getNote().length());
+            pdfDataCustomerItem("Ghi chú: ", itemNote1);
+            pdfDataCustomerItem("         ",itemNote2);
+        }
+
 
         //Border end start
         startYPosition += 10;
@@ -277,7 +301,25 @@ public class DetailOrderActivity extends AppCompatActivity {
             startYPosition += 20;
             String printfData = "   " + (i+1) + ". " + nameProduct  + ", SL: " + arrOrderDetail.get(i).getAmount()
                     + ", " + formatPrice(arrOrderDetail.get(i).getPrice());
-            canvas.drawText(printfData, startXPosition, startYPosition, myPaint);
+            if(printfData.length()<=52){
+                canvas.drawText(printfData, startXPosition, startYPosition, myPaint);
+            }else{
+                int positionSpace=0;
+                positionSpace=printfData.indexOf(' ',45);
+                try{
+                    String itemData1=null, itemData2=null;
+                    //Tra ve vi tri bat dau tu so 52
+
+                    itemData1=printfData.substring(0,positionSpace);
+                    itemData2=printfData.substring(positionSpace, printfData.length());
+                    canvas.drawText(itemData1, startXPosition, startYPosition, myPaint);
+                    startYPosition += 20;
+                    canvas.drawText("   "+itemData2, startXPosition, startYPosition, myPaint);
+                    showDialog(positionSpace);
+                }catch (Exception e){
+                    showDialog(printfData.length()+"/"+positionSpace);
+                }
+            }
         }
         //Border end
         startYPosition += 15;

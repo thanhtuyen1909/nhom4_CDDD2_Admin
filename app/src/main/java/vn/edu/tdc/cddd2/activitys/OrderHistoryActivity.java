@@ -213,7 +213,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         }
 
         setShowTitleMain(0,3,"THỐNG KÊ HOÁ ĐƠN TỪ NGÀY "+tvHistoryCartPickerTo.getText().toString()
-                        +"-"+tvHistoryCartPickerFrom.getText().toString());
+                +"-"+tvHistoryCartPickerFrom.getText().toString());
         //SET ROW 1 TITLE
         setCellDataTitle();
         //SET VALUE
@@ -235,7 +235,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         } catch (java.io.IOException e) {
             e.printStackTrace();
 
-         showDialog("In file excel thành công");
+            showDialog("In file excel thành công");
             try {
                 outputStream.close();
             } catch (IOException ex) {
