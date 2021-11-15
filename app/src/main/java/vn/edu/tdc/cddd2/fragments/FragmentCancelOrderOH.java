@@ -29,7 +29,7 @@ public class FragmentCancelOrderOH extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
     private Order3Adapter orderAdapter;
-    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
+    private final DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
 
     @Nullable
     @Override

@@ -69,19 +69,9 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
-            android:id="@+id/totalProduct"
-            style="@style/CustomTextViewQuantity"
-            android:text="@string/amountSP"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
 
-        <Button
-            android:id="@+id/btnAdd"
-            style="@style/CustomButtonAdd"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Left Menu -->
     <com.google.android.material.navigation.NavigationView

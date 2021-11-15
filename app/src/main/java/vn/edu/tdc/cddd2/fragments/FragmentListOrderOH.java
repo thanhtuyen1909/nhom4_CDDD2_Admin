@@ -70,14 +70,14 @@ public class FragmentListOrderOH extends Fragment {
         //listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
         //listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "12/10/2021"));
         //listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
-        myRef.child("Account").addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.child("Account").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot node : dataSnapshot.getChildren()) {
                     Account account = node.getValue(Account.class);
                     account.setAccountID(node.getKey());
                     myRef.child("Order").addValueEventListener(new ValueEventListener() {
-                        @SuppressLint("ResourceAsColor")
+
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             listOrder.clear();
@@ -85,16 +85,21 @@ public class FragmentListOrderOH extends Fragment {
                             for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
                                 Order order = DSOrder.getValue(Order.class);
                                 order.setOrderID(DSOrder.getKey());
-//                                if (order.getStatus() == 0 && order.getAccountID().equals(account.getAccountID())) {
-//                                    a += 1;
-//                                    if(a==1){
-//
-//                                    }
-//                                    Log.d("TAG", "onDataChange: "+a);
-//                                }
-                                if(order.getStatus()==1){
+                                if (order.getStatus() == 0 && order.getAccountID().equals(account.getAccountID())) {
+                                    a += 1;
+                                    for (int i = 0; i < listOrder.size(); i++) {
+                                        for (int j = i+1; j < listOrder.size(); j++) {
+                                            if (a > 3) {
+                                                Log.d("TAG", "onDataChange: " + j);
+                                               Collections.swap(listOrder,i,j);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (order.getStatus() == 1) {
                                     listOrder.add(order);
                                 }
+
                             }
                             orderAdapter.notifyDataSetChanged();
                         }
@@ -119,8 +124,8 @@ public class FragmentListOrderOH extends Fragment {
         return listOrder;
     }
 
-    private void Swap(int a, int b) {
-        int temp = a;
+    private void Swap(Order a, Order b) {
+        Order temp = a;
         a = b;
         b = temp;
     }
