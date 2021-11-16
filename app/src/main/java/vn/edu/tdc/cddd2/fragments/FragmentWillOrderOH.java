@@ -12,6 +12,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
@@ -24,6 +30,8 @@ public class FragmentWillOrderOH extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
     private Order3Adapter orderAdapter;
+    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,7 +57,31 @@ public class FragmentWillOrderOH extends Fragment {
     };
 
     private void data(){
-//        listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "11/10/2021"));
-//        listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "11/10/2021"));
+        //listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "11/10/2021"));
+        //listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "11/10/2021"));
+
+        myRef.child("Order").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listOrder.clear();
+                for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
+                    Order order = DSOrder.getValue(Order.class);
+                    order.setOrderID(DSOrder.getKey());
+                    if (order.getStatus() == 2) {
+                        listOrder.add(order);
+
+                    }
+                }
+                orderAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    public ArrayList<Order> getListOrder(){
+        return listOrder;
     }
 }

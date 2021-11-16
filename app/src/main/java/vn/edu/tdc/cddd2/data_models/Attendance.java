@@ -1,17 +1,15 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Attendance {
-    private String employeeID;
-    private String date;
-    private String note;
+    private String key,date,employeeID,note;
     private int status;
 
-    public String getEmployeeID() {
-        return employeeID;
+    public String getKey() {
+        return key;
     }
 
-    public void setEmployeeID(String employeeID) {
-        this.employeeID = employeeID;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getDate() {
@@ -20,6 +18,14 @@ public class Attendance {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getEmployeeID() {
+        return employeeID;
+    }
+
+    public void setEmployeeID(String employeeID) {
+        this.employeeID = employeeID;
     }
 
     public String getNote() {
@@ -41,9 +47,9 @@ public class Attendance {
     public Attendance() {
     }
 
-    public Attendance(String employeeID, String date, String note, int status) {
-        this.employeeID = employeeID;
+    public Attendance(String date, String employeeID, String note, int status) {
         this.date = date;
+        this.employeeID = employeeID;
         this.note = note;
         this.status = status;
     }

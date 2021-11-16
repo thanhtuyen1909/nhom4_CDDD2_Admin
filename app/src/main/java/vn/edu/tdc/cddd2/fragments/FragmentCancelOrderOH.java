@@ -4,13 +4,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -24,6 +29,8 @@ public class FragmentCancelOrderOH extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
     private Order3Adapter orderAdapter;
+    private final DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -35,21 +42,40 @@ public class FragmentCancelOrderOH extends Fragment {
         recyclerView.setHasFixedSize(true);
         data();
         orderAdapter = new Order3Adapter(listOrder, getActivity());
-        orderAdapter.setItemClickListener(itemClickListener);
+
         recyclerView.setAdapter(orderAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
 
-    private Order3Adapter.ItemClickListener itemClickListener = new Order3Adapter.ItemClickListener() {
-        @Override
-        public void getInfor(Order item) {
-            Toast.makeText(getActivity(), item.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
+
 
     private void data(){
-        //listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "09/10/2021"));
-        //listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "10/10/2021"));
+       // listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "09/10/2021"));
+       // listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "10/10/2021"));
+
+        myRef.child("Order").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listOrder.clear();
+                for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
+                    Order order = DSOrder.getValue(Order.class);
+                    order.setOrderID(DSOrder.getKey());
+                    if (order.getStatus() == 0) {
+                        listOrder.add(order);
+
+                    }
+                }
+                orderAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    public ArrayList<Order> getListOrder(){
+        return listOrder;
     }
 }

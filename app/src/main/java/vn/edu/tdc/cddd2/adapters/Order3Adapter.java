@@ -11,15 +11,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Order;
 
 public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder> {
-    ArrayList<Order> listOrder;
+    private ArrayList<Order> listOrder;
     private Context context;
-    Order3Adapter.ItemClickListener itemClickListener;
+    private Order3Adapter.ItemClickListener itemClickListener;
+    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
 
     public void setItemClickListener(Order3Adapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -42,9 +51,9 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull Order3Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
-        //holder.tv_maDH.setText(item.getMaDH());
-        //holder.tv_tong.setText("Tổng: " + item.getTongTien());
-        //holder.tv_ngaydat.setText("Địa chỉ: " + item.getNguoiGiao());
+        holder.tv_maDH.setText(item.getName());
+        holder.tv_tong.setText("Tổng: " + item.getTotal());
+        holder.tv_ngaydat.setText("Địa chỉ: " + item.getShipperID());
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +64,12 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
                 }
             }
         };
+        holder.cb_hoantac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               item.setStatus(1);
+            }
+        });
     }
 
     @Override

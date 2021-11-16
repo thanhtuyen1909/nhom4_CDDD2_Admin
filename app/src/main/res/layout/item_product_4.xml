@@ -25,7 +25,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/padd_10"
             android:layout_toLeftOf="@id/delete_icon"
-            android:text="@string/delete"
+            android:text="Xoá"
             android:textColor="#fff"
             android:textSize="13dp" />
 
