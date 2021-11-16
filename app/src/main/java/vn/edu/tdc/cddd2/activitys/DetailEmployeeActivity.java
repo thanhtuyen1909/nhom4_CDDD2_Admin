@@ -1,37 +1,55 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.ybq.android.spinkit.style.FoldingCube;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Employee1Adapter;
 import vn.edu.tdc.cddd2.data_models.Employee;
 
 public class DetailEmployeeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -43,11 +61,16 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
     private NavigationView navigationView;
     private Intent intent;
     private ImageView empImage;
-    private Spinner empPosition,empGender;
-    private EditText empName,empID,empAddress,empSalary,empAllowance,empSeniority,empDOB,empCreated_at;
-
-    String type = "",date = "";
-    Employee item ;
+    private Spinner empPosition, empGender;
+    private EditText empName, empID, empAddress, empSalary, empAllowance, empSeniority, empDOB, empCreated_at;
+    Uri imageUri;
+    ProgressBar bar;
+    String type = "add", date = "";
+    Employee item = new Employee("Account2", "Khánh Hoà", 500000, "14/12/2001", "1/11/2018", "Nam", "https://firebasestorage.googleapis.com/v0/b/cddd2-f1bcd.appspot.com/o/images%2Fpromocodes%2Fsale%2011%2F11.jpg?alt=media&token=7b2aa86a-0850-424f-b9ba-848903f59f86",
+            "Tên Là Danh", "Quản lý kho", 10000000);
+    DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
+    static int SELECT_IMAGE_CODE = 1;
+    boolean check = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +102,10 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         empSalary = findViewById(R.id.edtLCB);
         empAllowance = findViewById(R.id.edtPC);
         empImage = findViewById(R.id.imageView);
+        bar =findViewById(R.id.progess1);
+        bar.setIndeterminateDrawable(new FoldingCube());
 
+        data();
         empDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +116,15 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
             @Override
             public void onClick(View v) {
                 showDatePickerDialog(v);
+            }
+        });
+        empImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Title"), SELECT_IMAGE_CODE);
             }
         });
         // Xử lý sự kiện click button "Huỷ":
@@ -104,7 +139,24 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                checkTrungID();
+                if (checkError() == 1) {
+                    if(type.equals("add")){
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (check == true) {
+                                    Log.d("TAG", "onClick: a");
+                                    saveEmployee();
+                                }
+                            }
+                        },200);
+
+                    }
+                    else if(type.equals("edit")){
+                        saveEmployee();
+                    }
+                }
             }
         });
 
@@ -112,7 +164,8 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         btnXemBangLuong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(DetailEmployeeActivity.this, "Xem bảng lương", Toast.LENGTH_SHORT).show();
+                intent = new Intent(DetailEmployeeActivity.this,DetailSalaryActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -120,21 +173,134 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
-    private int checkError(){
+    private void saveEmployee(){
+        Employee employee = new Employee();
 
-        return  1;
+        employee.setAccountID("");
+        employee.setAddress(empAddress.getText() + "");
+        if(!String.valueOf(empAllowance.getText()).equals("")){
+            employee.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
+        }
+        employee.setBirthday(empDOB.getText() + "");
+        employee.setCreated_at(empCreated_at.getText() + "");
+        employee.setGender((String) empGender.getSelectedItem());
+        employee.setName(empName.getText() + "");
+        employee.setPosition((String) empPosition.getSelectedItem());
+        employee.setSalary(Integer.parseInt(empSalary.getText() + ""));
+        //get image
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/Employees/" + employee.getName() + ".jpg");
+        Bitmap bitmap = ((BitmapDrawable) empImage.getDrawable()).getBitmap();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(DetailEmployeeActivity.this.getContentResolver(), bitmap, "Title", null);
+        imageUri = Uri.parse(path);
+        bar.setVisibility(View.VISIBLE);
+        imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        employee.setImage(uri.toString());
+                        empRef.child(empID.getText() + "").setValue(employee).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                bar.setVisibility(View.INVISIBLE);
+                                showSuccesDialog("Thêm nhân viên thành công !");
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
-    private void data(){
-        if (type.equals("edit")){
+    private int checkError() {
+        if (type.equals("add")) {
+            if (imageUri == null) {
+                showWarningDialog("Vui lòng chọn ảnh cho nhân viên");
+            }
+        }
+        if (String.valueOf(empID.getText()).equals("")) {
+            showWarningDialog("Mã nhân viên không được để trống");
+            return -1;
+        }
+        if (String.valueOf(empName.getText()).equals("")) {
+            showWarningDialog("Tên nhân viên không được để trống");
+            return -1;
+        }
+        if (String.valueOf(empAddress.getText()).equals("")) {
+            showWarningDialog("Địa chỉ không được để trống");
+            return -1;
+        }
+        if (String.valueOf(empSalary.getText()).equals("")) {
+            showWarningDialog("Lương cơ bản không được để trống");
+            return -1;
+        }
+        if (Integer.parseInt(String.valueOf(empSalary.getText())) <= 3000000) {
+            showWarningDialog("Lương cơ bản phải lớn hơn 3.000.000 đ");
+            return -1;
+        }
+        return 1;
+    }
+
+    private void checkTrungID() {
+        empRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                check = true;
+                for (DataSnapshot node : dataSnapshot.getChildren()) {
+                    if (node.getKey().equals(String.valueOf(empID.getText()))) {
+                        check = false;
+                        showWarningDialog("Mã nhân viên không được trùng!");
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void data() {
+        if (type.equals("edit")) {
             empID.setText(item.getId());
-            for(int i=0;i<empPosition.getCount();i++){
-                String position = (String)empPosition.getItemAtPosition(i);
-                if(position.equals(item.getPosition())){
+            for (int i = 0; i < empPosition.getCount(); i++) {
+                String position = (String) empPosition.getItemAtPosition(i);
+                if (position.equals(item.getPosition())) {
                     empPosition.setSelection(i);
                 }
             }
             empName.setText(item.getName());
             empAddress.setText(item.getAddress());
+            empDOB.setText(item.getBirthday());
+            for (int i = 0; i < empGender.getCount(); i++) {
+                String gender = (String) empGender.getItemAtPosition(i);
+                if (gender.equals(item.getGender())) {
+                    empGender.setSelection(i);
+                }
+            }
+            empCreated_at.setText(item.getCreated_at());
+            String seniority = getSeniority(item.getCreated_at());
+            empSeniority.setText(seniority);
+            empSalary.setText("" + item.getSalary());
+            empAllowance.setText("" + item.getAllowance());
+            Picasso.get().load(item.getImage()).fit().into(empImage);
+        }
+    }
+
+    private String getSeniority(String create_at) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date create = sdf.parse(create_at, new ParsePosition(0));
+        Date now = new Date();
+        long diff = now.getTime() - create.getTime();
+        int year = (int) (diff / (1000 * 60 * 60 * 24) % 365);
+        if (year < 1) {
+            return "Dưới 1 năm";
+        } else {
+            return year + " năm";
         }
     }
 
@@ -150,6 +316,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
                 Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -181,6 +348,64 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private void showSuccesDialog(String notify) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailEmployeeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(DetailEmployeeActivity.this).inflate(
+                R.layout.layout_succes_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        TextView title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        TextView mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            finish();
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    private void showWarningDialog(String notify) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailEmployeeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(DetailEmployeeActivity.this).inflate(
+                R.layout.layout_warning_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        TextView title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        TextView mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.yes));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SELECT_IMAGE_CODE) {
+            imageUri = data.getData();
+            empImage.setImageURI(imageUri);
         }
     }
 }

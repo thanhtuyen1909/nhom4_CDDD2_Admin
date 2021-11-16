@@ -71,7 +71,7 @@
                     android:layout_width="0dp"
                     android:layout_margin="5dp"
                     android:background="@drawable/bg_spinner"
-                    android:entries="@array/loaisp"
+
                     app:layout_constraintEnd_toStartOf="@+id/spinner_manu"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/edtTSP" />
@@ -89,7 +89,7 @@
                     android:layout_width="0dp"
                     android:layout_margin="5dp"
                     android:background="@drawable/bg_spinner"
-                    android:entries="@array/hang"
+
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/edtTSP" />

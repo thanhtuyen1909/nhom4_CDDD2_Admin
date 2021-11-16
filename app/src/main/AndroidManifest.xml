@@ -3,6 +3,7 @@
     package="vn.edu.tdc.cddd2">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
@@ -15,15 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CDDD2">
 
-        <activity
-            android:name=".activitys.LoginActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".activitys.ChangePasswordActivity"
-            android:screenOrientation="portrait" />
-
         <!-- Warehouse Management -->
-        <activity android:name=".activitys.MainQLKActivity"></activity>
+        <activity android:name=".activitys.MainQLKActivity" />
         <activity
             android:name=".activitys.ListProductActivity"
             android:screenOrientation="portrait" />
@@ -43,10 +37,21 @@
             android:name=".activitys.DetailInformationActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activitys.LoginActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".activitys.ListDiscountCodeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListPromoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activitys.ChangePasswordActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.DetailPromoCodeActivity"
@@ -60,7 +65,7 @@
         <!-- Salesman -->
         <activity
             android:name=".activitys.ListProductSMActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListCartActivity"
             android:screenOrientation="portrait" />
@@ -74,7 +79,7 @@
         <!-- Shipper -->
         <activity
             android:name=".activitys.ShipProcessActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <!-- Administrators -->
         <activity
             android:name=".activitys.MainADMActivity"
@@ -99,29 +104,30 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.RevenueStatisticActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" >
+        </activity>
         <activity
             android:name=".activitys.ListRatingActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.DetailRatingActivity"
             android:screenOrientation="portrait">
+
         </activity>
-        <!-- HR -->
+        <!-- Administrators -->
         <activity
             android:name=".activitys.AttendanceActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListEmployeeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+
+        </activity>
         <activity
             android:name=".activitys.DetailEmployeeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+
+        </activity>
         <activity
             android:name=".activitys.DetailSalaryActivity"
             android:screenOrientation="portrait" />
