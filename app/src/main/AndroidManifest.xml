@@ -103,10 +103,6 @@
         <activity
             android:name=".activitys.ListRatingActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activitys.DetailRatingActivity"
@@ -125,6 +121,19 @@
         <activity
             android:name=".activitys.DetailSalaryActivity"
             android:screenOrientation="portrait" />
+        <!-- Counselor -->
+        <activity
+            android:name=".activitys.ListMessageActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activitys.DetailMessageActivity"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>
