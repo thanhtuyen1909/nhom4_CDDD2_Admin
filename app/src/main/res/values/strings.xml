@@ -37,6 +37,10 @@
     <string name="gianhap">Giá nhập</string>
     <string name="giaban">Giá bán</string>
     <string name="btnAll">Chọn tất cả</string>
+    <string name="hoten">Nhập họ tên</string>
+    <string name="matkhau">Nhập mật khẩu</string>
+    <string name="roleSpinner">Chọn role</string>
+
 
     <string-array name="ngay">
         <item>Hôm nay</item>

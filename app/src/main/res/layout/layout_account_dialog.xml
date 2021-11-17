@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutDialogAccount"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:padding="20dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutDialog"
+        android:layout_width="294dp"
+        android:layout_height="417dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/dialog_background"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="38dp">
+
+        <TextView
+            android:id="@+id/textTitle1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/title_succes_background"
+            android:padding="10dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTen"
+            android:layout_width="136dp"
+            android:layout_height="48dp"
+            android:gravity="bottom"
+            android:text="@string/hoten"
+            app:layout_constraintBottom_toTopOf="@+id/tvMatKhau"
+            app:layout_constraintEnd_toStartOf="@+id/edtHoten"
+            app:layout_constraintHorizontal_bias="0.125"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textTitle1"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tvMatKhau"
+            android:layout_width="123dp"
+            android:layout_height="54dp"
+            android:layout_marginBottom="228dp"
+            android:gravity="bottom"
+            android:text="@string/matkhau"
+            app:layout_constraintBottom_toTopOf="@+id/buttonAction"
+            app:layout_constraintEnd_toStartOf="@+id/edtMatKhau"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvSpinner"
+            android:layout_width="139dp"
+            android:layout_height="32dp"
+            android:text="@string/roleSpinner"
+
+
+            app:layout_constraintBottom_toTopOf="@+id/buttonCancel"
+            app:layout_constraintEnd_toStartOf="@+id/spinner_role"
+            app:layout_constraintTop_toBottomOf="@+id/tvMatKhau"
+            app:layout_constraintVertical_bias="0.091" />
+
+        <EditText
+            android:id="@+id/edtHoten"
+            android:layout_width="158dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/edtMatKhau"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textTitle1"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <EditText
+            android:id="@+id/edtMatKhau"
+            android:layout_width="160dp"
+            android:layout_height="54dp"
+            app:layout_constraintBottom_toTopOf="@+id/buttonAction"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textTitle1"
+            app:layout_constraintVertical_bias="0.183" />
+
+        <Spinner
+            android:id="@+id/spinner_role"
+            android:layout_width="159dp"
+            android:layout_height="32dp"
+            android:entries="@array/quyen"
+            app:layout_constraintBottom_toTopOf="@+id/buttonCancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edtMatKhau"
+            app:layout_constraintVertical_bias="0.083" />
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="150dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/button_succes_background"
+            android:text="@string/buttonCancel"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonAction"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <Button
+            android:id="@+id/buttonAction"
+            android:layout_width="146dp"
+            android:layout_height="42dp"
+            android:background="@drawable/button_succes_background"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,10 +16,12 @@ import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Account;
+import vn.edu.tdc.cddd2.data_models.Employee;
 import vn.edu.tdc.cddd2.data_models.Product;
 
-public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
+public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> implements Filterable {
     ArrayList<Account> listAccounts;
+    ArrayList<Account> listAccount1;
     private Context context;
     AccountAdapter.ItemClickListener itemClickListener;
 
@@ -28,6 +32,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     public AccountAdapter(ArrayList<Account> listAccounts, Context context) {
         this.listAccounts = listAccounts;
         this.context = context;
+        this.listAccount1=listAccounts;
     }
 
     @NonNull
@@ -44,7 +49,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         Account item = listAccounts.get(position);
         holder.im_item.setImageResource(R.drawable.baseline_person_24);
         holder.tv_username.setText(item.getUsername());
-        holder.tv_role.setText(item.getRole());
+        holder.tv_role.setText(item.getRole_id()+"");
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +68,36 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     @Override
     public int getItemCount() {
         return listAccounts.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String search= constraint.toString();
+                if(search.isEmpty()){
+                    listAccounts=listAccount1;
+                }else {
+                    ArrayList<Account> list=new ArrayList<>();
+                    for (Account employee:listAccount1){
+                        if(employee.getUsername().toLowerCase().contains(search.toLowerCase())){
+                            list.add(employee);
+                        }
+                    }
+                    listAccounts=list;
+                }
+                FilterResults filterResults=new FilterResults();
+                filterResults.values=listAccounts;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                listAccounts =(ArrayList<Account>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

@@ -3,15 +3,24 @@ package vn.edu.tdc.cddd2.activitys;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -20,19 +29,31 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AccountAdapter;
 import vn.edu.tdc.cddd2.adapters.PromoCodeAdapter;
 import vn.edu.tdc.cddd2.data_models.Account;
+import vn.edu.tdc.cddd2.data_models.Employee;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class ListAccountActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
+    private TextView btnBack, subtitleAppbar,title;
+    private EditText edtHoten,edtMatKhau;
+    private Spinner spinnerRole;
     private Button btnAdd;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -41,6 +62,8 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     private NavigationView navigationView;
     private AccountAdapter accountAdapter;
     private Intent intent;
+    private SearchView searchView;
+    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +96,25 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ListAccountActivity.this, "Thêm tài khoản", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ListAccountActivity.this, "Thêm tài khoản", Toast.LENGTH_SHORT).show();
+                showAddAccountDialog();
             }
         });
+        //search
+        searchView=findViewById(R.id.editSearch);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                accountAdapter.getFilter().filter(query);
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                accountAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
         //RecycleView
         recyclerView = findViewById(R.id.listAccount);
         recyclerView.setHasFixedSize(true);
@@ -90,6 +128,8 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
     @Override
@@ -99,11 +139,22 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     }
 
     private void data() {
-        listAccount.add(new Account("qlk-1", "Quản lý kho"));
-        listAccount.add(new Account("xldh-1", "Nhân viên xử lý đơn hàng"));
-        listAccount.add(new Account("nvbh-1", "Nhân viên bán hàng"));
-        listAccount.add(new Account("nvgh-1", "Nhân viên giao hàng"));
-        listAccount.add(new Account("qlns-1", "Quản lý nhân sự"));
+        myRef.child("Account").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot DSAccount:dataSnapshot.getChildren()){
+                    Account account=DSAccount.getValue(Account.class);
+                    account.setAccountID(DSAccount.getKey());
+                    listAccount.add(account);
+                }
+                accountAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private AccountAdapter.ItemClickListener itemClickListener = new AccountAdapter.ItemClickListener() {
@@ -170,5 +221,59 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void showAddAccountDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListAccountActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListAccountActivity.this).inflate(
+                R.layout.layout_account_dialog,
+                findViewById(R.id.layoutDialogAccount)
+        );
+        builder.setView(view);
+        title = view.findViewById(R.id.textTitle1);
+        title.setText(R.string.title);
+        edtHoten = view.findViewById(R.id.edtHoten);
+        edtMatKhau = view.findViewById(R.id.edtMatKhau);
+        spinnerRole=view.findViewById(R.id.spinner_role);
+
+
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.titleAdd));
+        ((TextView) view.findViewById(R.id.buttonCancel)).setText(getResources().getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+        view.findViewById(R.id.buttonCancel).setOnClickListener(v->{
+            alertDialog.dismiss();
+        });
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            Map<String, Object> map = new HashMap<>();
+            myRef.child("Account").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            map.put("username", edtHoten.getText().toString());
+                            map.put("password", edtMatKhau.getText().toString());
+
+                            //map.put("role_id", spinnerRole);
+                            map.put("status", "unlock");
+                            myRef.child("Account").push().setValue(map);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
     }
 }
