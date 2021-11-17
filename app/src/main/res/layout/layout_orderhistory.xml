@@ -17,12 +17,12 @@
             layout="@layout/appbar" />
 
         <Spinner
-            android:id="@+id/spinner_status"
+            android:id="@+id/spHistoryCart"
             style="@style/CustomSpinner"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_margin="4dp"
             android:background="@drawable/bg_spinner"
-
+            android:entries="@array/quyen"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include" />
@@ -35,31 +35,29 @@
             app:layout_constraintGuide_percent="0.5" />
 
         <SearchView
-            android:id="@+id/editSearch"
-            android:layout_marginTop="5dp"
+            android:id="@+id/searchHistoryCart"
             style="@style/CustomSearchView"
+            android:layout_marginTop="5dp"
             android:background="@drawable/rounded_border_edittext"
-            android:queryHint="Mã đơn hàng"
+            android:queryHint="Tìm đơn hàng"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edtNgayBD" />
+            app:layout_constraintTop_toBottomOf="@+id/tvHistoryCartPickerTo" />
 
-        <EditText
-            android:id="@+id/edtNgayBD"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
+        <TextView
+            android:id="@+id/tvHistoryCartPickerTo"
+            android:layout_width="113dp"
+            android:layout_height="45dp"
             android:layout_margin="5dp"
-            android:padding="5dp"
-            android:clickable="true"
-            android:focusable="false"
-            android:gravity="center"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_border_edittext"
-            android:ems="10"
-            android:hint="01/10/2021"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            android:gravity="center"
+            android:hint="Từ ngày"
+            android:padding="5dp"
+            android:textColor="#252323"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view2" />
+            app:layout_constraintTop_toBottomOf="@+id/txt1" />
 
         <TextView
             android:id="@+id/txt1"
@@ -68,83 +66,84 @@
             android:textColor="@color/gray3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_status" />
-
-        <View
-            android:id="@+id/view2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt1" />
-
-        <EditText
-            android:id="@+id/edtNgayKT"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="false"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/rounded_border_edittext"
-            android:ems="10"
-            android:hint="01/10/2021"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/view2" />
+            app:layout_constraintTop_toBottomOf="@+id/spHistoryCart" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tvHistoryCartPickerFrom"
+            android:layout_width="106dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_border_edittext"
+            android:gravity="center"
+            android:hint="Đến ngày"
+            android:inputType="none"
+            android:padding="5dp"
+            android:textColor="#252323"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tvHistoryCartPickerTo"
+            app:layout_constraintTop_toBottomOf="@+id/txt1" />
+
+        <TextView
+
             android:layout_width="0dp"
             style="@style/CustomTextViewQuantity"
             android:layout_marginTop="10dp"
             android:text="Danh sách đơn hàng"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editSearch" />
+            app:layout_constraintTop_toBottomOf="@+id/searchHistoryCart" />
 
         <TextView
-            android:id="@+id/txt_xuatthongke"
+            android:id="@+id/tvHistoryCartRender"
             style="@style/CustomTextViewQuantity"
-            android:layout_marginEnd="15dp"
             android:layout_width="0dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
             android:text="Xuất thống kê"
             android:textAlignment="textEnd"
             android:textColor="@color/pink"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/editSearch" />
+            app:layout_constraintTop_toBottomOf="@+id/searchHistoryCart" />
+
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listOrder"
+            android:id="@+id/rcvHistoryCart"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/totalProduct"
+            app:layout_constraintBottom_toTopOf="@+id/tvHistoryCartTotal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/tvHistoryCartRender"
             android:dividerHeight="0dp"
-            android:divider="@null">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
+            android:divider="@null" />
         <TextView
-            android:id="@+id/totalProduct"
+            android:id="@+id/tvHistoryCartTotal"
             style="@style/CustomTextViewQuantity"
             android:text="@string/amountSP"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
+
+        <Button
+            android:id="@+id/btnHistoryCartSubmit"
+            android:layout_width="80dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/custom_button_1"
+            android:text="Lọc"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tvHistoryCartPickerFrom"
+            app:layout_constraintTop_toBottomOf="@+id/txt1" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Left Menu -->
     <com.google.android.material.navigation.NavigationView

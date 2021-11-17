@@ -156,6 +156,19 @@ public class Order implements Parcelable {
     public Order() {
     }
 
+    public Order(String orderID, String accountID, String address, String created_at, String note, String shipperID, int status, int total, String phone, String name) {
+        this.orderID = orderID;
+        this.accountID = accountID;
+        this.address = address;
+        this.created_at = created_at;
+        this.note = note;
+        this.shipperID = shipperID;
+        this.status = status;
+        this.total = total;
+        this.phone = phone;
+        this.name = name;
+    }
+
     public Order(String orderID, String accountID, String address, String created_at, String note, String shipperID, int status, int total, String phone, String name, int remain) {
         this.orderID = orderID;
         this.accountID = accountID;
