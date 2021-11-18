@@ -45,8 +45,16 @@
         <LinearLayout
             android:id="@+id/layout_gchat_container_other"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="7dp">
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/messageTv"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:adjustViewBounds="true"
+                android:padding="15dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_image_black" />
 
             <TextView
                 android:id="@+id/show_message"
@@ -58,6 +66,7 @@
                 android:paddingTop="8dp"
                 android:paddingRight="12dp"
                 android:text="Message"
+                android:visibility="gone"
                 android:textColor="#000000"
                 android:textSize="16sp" />
         </LinearLayout>

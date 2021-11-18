@@ -62,7 +62,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
         }
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
-                itemClickListener.detail(item.getUserID());
+                itemClickListener.detail(item.getUserID(), item.getImage(), item.getName());
             } else {
                 return;
             }
@@ -127,6 +127,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
     }
 
     public interface ItemClickListener {
-        void detail(String userID);
+        void detail(String userID, String img, String nameUser);
     }
 }

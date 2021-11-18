@@ -160,7 +160,13 @@
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/menu/drawer_view.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/menu/drawer_view_pm.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/menu/drawer_view_sm.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/drawable/ic_arrow_back_black_24dp.xml" value="0.21666666666666667" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/activity_review_send_image.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/appbar_3.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/item_in_message.xml" value="0.15806159420289856" />
         <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/item_message.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/item_out_message.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_detail_message.xml" value="0.20052083333333334" />
         <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_list_message.xml" value="0.16666666666666666" />
       </map>
     </option>

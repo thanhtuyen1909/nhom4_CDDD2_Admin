@@ -38,7 +38,17 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/messageTv"
+                android:adjustViewBounds="true"
+                android:padding="15dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_image_black"
+                android:layout_width="200dp"
+                android:layout_height="200dp"/>
+
             <TextView
+                android:visibility="gone"
                 android:id="@+id/show_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

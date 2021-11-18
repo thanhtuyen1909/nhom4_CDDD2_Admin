@@ -32,7 +32,7 @@ import vn.edu.tdc.cddd2.adapters.ChatAdapter;
 import vn.edu.tdc.cddd2.data_models.Chat;
 import vn.edu.tdc.cddd2.data_models.ItemChat;
 
-public class ListMessageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ListMessageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
     private Intent intent;
@@ -103,12 +103,14 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
 
     private final ChatAdapter.ItemClickListener itemClickListener = new ChatAdapter.ItemClickListener() {
         @Override
-        public void detail(String userID) {
+        public void detail(String userID, String img, String nameUser) {
             intent = new Intent(ListMessageActivity.this, DetailMessageActivity.class);
             intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
             intent.putExtra("userID", userID);
+            intent.putExtra("image", img);
+            intent.putExtra("nameUser", nameUser);
             startActivity(intent);
             finish();
         }
@@ -121,33 +123,33 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 chats.clear();
                 list.clear();
-                for(DataSnapshot node : snapshot.getChildren()) {
+                for (DataSnapshot node : snapshot.getChildren()) {
                     Chat chat = node.getValue(Chat.class);
                     chats.add(chat);
                 }
+                Collections.reverse(chats);
                 for (Chat c : chats) {
                     ItemChat item = new ItemChat();
-
-                    item.setMessageNew(c.getMessage());
                     item.setCreated_at(c.getCreated_at());
-
-                    if(c.getSendID().equals(username)) {
+                    if (c.getSendID().equals(username)) {
                         item.setUserID(c.getReceiveID());
-                    } else item.setUserID(c.getSendID());
-
-                    item.setSeen(c.getIsSeen());
+                        item.setMessageNew("Bạn: " + c.getMessage());
+                        item.setSeen(true);
+                    } else {
+                        item.setUserID(c.getSendID());
+                        item.setMessageNew(c.getMessage());
+                        item.setSeen(c.getIsSeen());
+                    }
                     cusRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                Log.d("TAG", "onDataChange1: " + item.getMessageNew() + "\t");
-                                if(dataSnapshot.child("accountID").getValue(String.class).equals(item.getUserID()) && checkExists(item.getUserID())) {
+                                if (dataSnapshot.child("accountID").getValue(String.class).equals(item.getUserID()) && checkExists(item.getUserID())) {
                                     item.setImage(dataSnapshot.child("image").getValue(String.class));
                                     item.setName(dataSnapshot.child("name").getValue(String.class));
                                     list.add(item);
                                 }
                             }
-                            Collections.reverse(list);
                             chatAdapter.notifyDataSetChanged();
                         }
 
@@ -167,8 +169,8 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
     }
 
     private boolean checkExists(String key) {
-        for(int i = 0; i < list.size(); i++) {
-            if(list.get(i).getUserID().equals(key)){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getUserID().equals(key)) {
                 return false;
             }
         }

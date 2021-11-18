@@ -2,7 +2,7 @@ package vn.edu.tdc.cddd2.data_models;
 
 public class Chat {
     // Properties:
-    String sendID, receiveID, message, created_at;
+    String sendID, receiveID, message, created_at, type;
     boolean isSeen;
 
     // Get - set:
@@ -45,6 +45,14 @@ public class Chat {
 
     public void setIsSeen(boolean seen) {
         isSeen = seen;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     // Contructors
