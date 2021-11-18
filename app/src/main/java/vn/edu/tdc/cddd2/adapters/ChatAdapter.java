@@ -1,12 +1,14 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -48,9 +50,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> im
     @Override
     public void onBindViewHolder(@NonNull ChatAdapter.ViewHolder holder, int position) {
         ItemChat item = listChat.get(position);
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/categories/" + item.getImage());
-        imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).fit().into(holder.im_item));
+        Picasso.get().load(item.getImage()).fit().into(holder.im_item);
         holder.tv_name.setText(item.getName());
+        holder.tv_mess.setText(item.getMessageNew());
+        holder.tv_created.setText(item.getCreated_at());
+        if(!item.isSeen()) {
+            holder.tv_mess.setTypeface(null, Typeface.BOLD);
+            holder.tv_mess.setTextColor(context.getResources().getColor(R.color.black));
+        } else {
+            holder.tv_mess.setTypeface(null, Typeface.NORMAL);
+        }
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
                 itemClickListener.detail(item.getUserID());

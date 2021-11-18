@@ -39,11 +39,11 @@ public class Chat {
         this.created_at = created_at;
     }
 
-    public boolean isSeen() {
+    public boolean getIsSeen() {
         return isSeen;
     }
 
-    public void setSeen(boolean seen) {
+    public void setIsSeen(boolean seen) {
         isSeen = seen;
     }
 
