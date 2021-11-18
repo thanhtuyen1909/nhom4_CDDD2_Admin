@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,7 +39,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import vn.edu.tdc.cddd2.DAO.DAOProduct;
 import vn.edu.tdc.cddd2.R;
@@ -58,15 +61,19 @@ public class DetailProductActivity extends AppCompatActivity {
     String username = "";
     RecyclerView recyclerView;
     private ArrayList<Product> listProduct;
-    private Spinner spinCata, spinManu, spinColor, spinStorage;
+    private Spinner spinCata, spinManu;
+    AutoCompleteTextView spinColor, spinStorage;
     private Product1Adapter proAdapter;
     Button btnAdd;
     static int SELECT_IMAGE_CODE = 1;
     private Uri imageUri;
     private ArrayList<Manufacture> listManu;
     private ArrayList<Category> listCate;
+    List<String> colors, sizes;
+
     static FirebaseDatabase db = FirebaseDatabase.getInstance();
     boolean check = true, check1 = true, checkSave = true;
+
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Override
@@ -98,6 +105,8 @@ public class DetailProductActivity extends AppCompatActivity {
         spinColor = findViewById(R.id.spinner_color);
         spinStorage = findViewById(R.id.spinner_size);
         listProduct = new ArrayList<>();
+        colors = Arrays.asList(getResources().getStringArray(R.array.mau));
+        sizes = Arrays.asList(getResources().getStringArray(R.array.dungluong));
         data();
 
         productImage.setOnClickListener(v -> {
@@ -134,10 +143,11 @@ public class DetailProductActivity extends AppCompatActivity {
                     if (check && check1) {
                         Product product = new Product();
                         product.setSold(0);
+                        product.setRating(0);
                         product.setCreated_at(formatter.format(now));
                         product.setId(String.valueOf(productID.getText()));
-                        String color = String.valueOf(spinColor.getSelectedItem());
-                        String size = String.valueOf(spinStorage.getSelectedItem());
+                        String color = String.valueOf(spinColor.getText());
+                        String size = String.valueOf(spinStorage.getText());
                         product.setName(String.valueOf(productName.getText()));
                         if (!color.equals("")) {
                             product.setName(product.getName() + " - " + color);
@@ -220,6 +230,16 @@ public class DetailProductActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
+
+        // AutoCompleteTextView
+        ArrayAdapter<String> adapterColor = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, colors);
+        spinColor.setAdapter(adapterColor);
+        ArrayAdapter<String> adapterSize = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, sizes);
+        spinStorage.setAdapter(adapterSize);
+
+        spinColor.setOnClickListener(view -> spinColor.showDropDown());
+
+        spinStorage.setOnClickListener(view -> spinStorage.showDropDown());
     }
 
     public int checkError() {

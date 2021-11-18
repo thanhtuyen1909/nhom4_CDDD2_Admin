@@ -109,6 +109,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tv_manu = itemView.findViewById(R.id.txt_manu);
             im_edit = itemView.findViewById(R.id.btnEdit);
             im_delete = itemView.findViewById(R.id.btnDelete);
+            im_delete.setColorFilter(R.color.black);
             im_edit.setOnClickListener(this);
             im_delete.setOnClickListener(this);
         }

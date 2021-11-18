@@ -112,22 +112,22 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_manu" />
 
-                <Spinner
+                <AutoCompleteTextView
                     android:id="@+id/spinner_color"
                     style="@style/CustomSpinner"
+                    android:focusable="true"
                     android:layout_margin="5dp"
                     android:background="@drawable/bg_spinner"
-                    android:entries="@array/mau"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/edtMT" />
 
-                <Spinner
+                <AutoCompleteTextView
                     android:id="@+id/spinner_size"
                     style="@style/CustomSpinner"
                     android:layout_margin="5dp"
+                    android:focusable="true"
                     android:layout_marginTop="4dp"
                     android:background="@drawable/bg_spinner"
-                    android:entries="@array/dungluong"
                     app:layout_constraintStart_toEndOf="@+id/spinner_color"
                     app:layout_constraintTop_toBottomOf="@+id/edtMT" />
 
