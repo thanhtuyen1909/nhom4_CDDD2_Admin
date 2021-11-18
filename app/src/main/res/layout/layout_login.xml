@@ -44,28 +44,35 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3">
 
-        <EditText
-            android:id="@+id/edtUser"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputUsername"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/gray"
-            android:hint="@string/username_text"
-            android:inputType="textEmailAddress"
-            android:minHeight="48dp"
-            android:textColor="@color/gray"
-            android:textColorHint="@color/gray" />
+            android:layout_height="55dp"
+            style="@style/parent">
 
-        <EditText
-            android:id="@+id/edtPass"
+            <EditText
+                android:id="@+id/edtUser"
+                style="@style/modifiedEditText"
+                android:hint="@string/username_text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:backgroundTint="@color/gray"
-            android:hint="@string/password_text"
-            android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:textColor="@color/gray"
-            android:textColorHint="@color/gray" />
+            android:layout_height="55dp"
+            style="@style/parent"
+            app:passwordToggleEnabled="true"
+            app:endIconMode="password_toggle"
+            app:endIconDrawable="@drawable/show_password_selector">
+
+            <EditText
+                android:id="@+id/edtPass"
+                style="@style/modifiedEditText"
+                android:hint="Mật khẩu"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnLogin"

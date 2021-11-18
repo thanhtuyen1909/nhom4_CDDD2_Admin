@@ -54,7 +54,7 @@ public class DetailMessageActivity extends AppCompatActivity {
     ImageView img;
     Intent intent;
     TextView subtitleAppbar, txtID;
-    String accountID = "", username = "", name = "", role = "", nameUser = "", imgUser = "";
+    String accountID = "", account = "", username = "", name = "", role = "", nameUser = "", imgUser = "";
     RecyclerView recyclerView;
     ArrayList<Chat> listMessage;
     MessageAdapter adapter;
@@ -66,9 +66,6 @@ public class DetailMessageActivity extends AppCompatActivity {
     //permissions constants
     //image pick constants
     private static final int IMAGE_PICK_GALLERY_CODE = 4;
-    //permissions array
-    String[] cameraPermissions;
-    String[] storagePermissions;
     Uri uri = null;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +75,7 @@ public class DetailMessageActivity extends AppCompatActivity {
         // Lấy dữ liệu được gửi sang:
         intent = getIntent();
         username = intent.getStringExtra("username");
+        account = intent.getStringExtra("accountID");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
         accountID = intent.getStringExtra("userID");
@@ -102,9 +100,6 @@ public class DetailMessageActivity extends AppCompatActivity {
         edtContent = findViewById(R.id.edtContent);
         recyclerView = findViewById(R.id.listMessage);
 
-        //init permissions arrays
-        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         // Xử lý sự kiện btnSend:
         btnSend.setOnClickListener(v -> {
@@ -128,7 +123,7 @@ public class DetailMessageActivity extends AppCompatActivity {
         // RecycleView
         recyclerView.setHasFixedSize(true);
         listMessage = new ArrayList<>();
-        adapter = new MessageAdapter(this, listMessage, username, imgUser);
+        adapter = new MessageAdapter(this, listMessage, account, imgUser);
         data();
         recyclerView.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -143,6 +138,7 @@ public class DetailMessageActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         intent = new Intent(DetailMessageActivity.this, ListMessageActivity.class);
         intent.putExtra("username", username);
+        intent.putExtra("accountID", account);
         intent.putExtra("name", name);
         intent.putExtra("role", role);
         startActivity(intent);
@@ -247,7 +243,7 @@ public class DetailMessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Chat chat = dataSnapshot.getValue(Chat.class);
-                    if (chat.getReceiveID().equals(username) && chat.getSendID().equals(accountID)) {
+                    if (chat.getReceiveID().equals(account) && chat.getSendID().equals(accountID)) {
                         dataSnapshot.getRef().child("isSeen").setValue(true);
                     }
                 }
@@ -288,7 +284,7 @@ public class DetailMessageActivity extends AppCompatActivity {
 
         Chat chat = new Chat();
         chat.setMessage(mess);
-        chat.setSendID(username);
+        chat.setSendID(account);
         chat.setReceiveID(accountID);
         chat.setCreated_at(sdf.format(date));
         chat.setType(type);

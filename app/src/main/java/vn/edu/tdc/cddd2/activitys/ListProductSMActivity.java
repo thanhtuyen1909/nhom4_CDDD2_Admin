@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -46,9 +47,9 @@ import vn.edu.tdc.cddd2.data_models.Product;
 public class ListProductSMActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
-    ImageView btnCart;
+    ImageView btnCart, iv_user;
     Spinner spinCate, spinManu;
-    TextView title, mess;
+    TextView title, mess, txtName, txtRole;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     RecyclerView recyclerView;
@@ -62,7 +63,7 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
     Handler handler = new Handler();
     int isFirst = 0;
     ArrayAdapter manuAdapter, cateAdapter;
-    String cartID = "", accountID = "Account3", username = "";
+    String cartID = "", accountID = "", username = "", name = "", role = "", img = "";
     boolean check = true;
 
     private static FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -77,9 +78,12 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_product_sm);
 
-//        intent = getIntent();
-//        accountID = intent.getStringExtra("accountID");
-//        username = intent.getStringExtra("username");
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -108,8 +112,11 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
         // Xử lý sự kiện click button "Giỏ hàng":
         btnCart.setOnClickListener(v -> {
             intent = new Intent(ListProductSMActivity.this, ListCartActivity.class);
-            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
         });
 
@@ -165,6 +172,12 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         // Sự kiện searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

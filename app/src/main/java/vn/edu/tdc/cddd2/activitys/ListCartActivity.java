@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -43,16 +45,17 @@ public class ListCartActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     // Khai báo biến:
     Toolbar toolbar;
-    TextView btnBack;
-    Button btnIncrease, btnDecrease, btnPayment;
+    TextView btnBack, txtRole, txtName;
+    Button btnPayment;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     RecyclerView recyclerView;
     NavigationView navigationView;
     CartDetailAdapter cartAdapter;
     private Intent intent;
-    String accountID = "", username = "";
+    String accountID = "", name = "", role = "", img = "", username = "";
     ArrayList<CartDetail> listCart;
+    ImageView iv_user;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference ref = db.getReference("Cart");
@@ -66,6 +69,9 @@ public class ListCartActivity extends AppCompatActivity
         intent = getIntent();
         accountID = intent.getStringExtra("accountID");
         username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -82,8 +88,11 @@ public class ListCartActivity extends AppCompatActivity
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListCartActivity.this, ListProductSMActivity.class);
-            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -91,8 +100,11 @@ public class ListCartActivity extends AppCompatActivity
         // Xử lý sự kiện click button "Thanh toán":
         btnPayment.setOnClickListener(v -> {
             intent = new Intent(ListCartActivity.this, CreateOrderActivity.class);
-            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -116,6 +128,12 @@ public class ListCartActivity extends AppCompatActivity
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
     }
 
     @Override

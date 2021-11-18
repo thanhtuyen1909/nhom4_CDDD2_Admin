@@ -17,15 +17,15 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
     Button btnQLH, btnQLSP, btnQLLSP, btnDPH, btnQLKM, btnQLMGG, btnDX, btnDMK;
     TextView txtUsername;
     Intent intent;
-    String username = "Account1", name = "Lê Nguyễn Đức Danh", role = "Quản lý kho";
+    String username = "", name = "", role = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         intent = getIntent();
-//        username = intent.getStringExtra("username");
-//        name = intent.getStringExtra("name");
-//        role = intent.getStringExtra("role");
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
         setContentView(R.layout.layout_main_1);
 
         // Khởi tạo biến

@@ -5,7 +5,9 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +39,7 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
     // Khai báo biến
     Toolbar toolbar;
     private Intent intent;
-    String username = "AccountTTV", name = "", role = "";
+    String accountID = "", username = "", name = "", role = "", img = "";
     NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -44,7 +47,8 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
     SearchView searchView;
     RecyclerView recyclerView;
     ChatAdapter chatAdapter;
-
+    TextView txtRole, txtName;
+    ImageView iv_user;
 
     private static FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference ref = db.getReference("Chats");
@@ -55,9 +59,11 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
         setContentView(R.layout.layout_list_message);
 
         intent = getIntent();
-        //username = intent.getStringExtra("username");
-        //name = intent.getStringExtra("name");
-        //role = intent.getStringExtra("role");
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -75,6 +81,12 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         //RecycleView
         recyclerView = findViewById(R.id.listMess);
@@ -106,11 +118,13 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
         public void detail(String userID, String img, String nameUser) {
             intent = new Intent(ListMessageActivity.this, DetailMessageActivity.class);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
             intent.putExtra("userID", userID);
             intent.putExtra("image", img);
             intent.putExtra("nameUser", nameUser);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         }
@@ -131,7 +145,7 @@ public class ListMessageActivity extends AppCompatActivity implements Navigation
                 for (Chat c : chats) {
                     ItemChat item = new ItemChat();
                     item.setCreated_at(c.getCreated_at());
-                    if (c.getSendID().equals(username)) {
+                    if (c.getSendID().equals(accountID)) {
                         item.setUserID(c.getReceiveID());
                         item.setMessageNew("Bạn: " + c.getMessage());
                         item.setSeen(true);

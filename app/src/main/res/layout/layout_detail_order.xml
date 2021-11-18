@@ -12,6 +12,7 @@
         layout="@layout/appbar" />
 
     <TextView
+
         android:id="@+id/txt_madonhang"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,6 +54,7 @@
         android:id="@+id/txt_ghichu"
         style="@style/CustomTextViewQuantity"
         android:layout_width="match_parent"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="5dp"
@@ -79,6 +81,7 @@
         android:id="@+id/txt_htkh"
         style="@style/CustomTextViewQuantity"
         android:layout_width="match_parent"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
         android:text="Họ tên khách hàng: Nguyễn Văn A"
@@ -91,6 +94,7 @@
         android:id="@+id/txt_diachi"
         style="@style/CustomTextViewQuantity"
         android:layout_width="match_parent"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
         android:text="Địa chỉ: 53 Võ Văn Ngân, p. Linh Chiểu, tp. Thủ Đức"
@@ -128,6 +132,7 @@
         android:layout_width="match_parent"
         android:layout_margin="5dp"
         android:text="Thông tin khách hàng"
+
         android:textColor="@color/gray3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

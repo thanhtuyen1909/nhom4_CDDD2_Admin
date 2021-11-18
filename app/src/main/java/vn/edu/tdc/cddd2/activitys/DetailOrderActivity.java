@@ -48,7 +48,7 @@ public class DetailOrderActivity extends AppCompatActivity {
     Product5Adapter product5Adapter;
     Intent intent;
     Order item = null;
-    String from = "", accountID = "", username = "";
+    String from = "", accountID = "", name = "", role = "", img = "", username = "";
 
     DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("Status");
     DatabaseReference order_detailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
@@ -58,10 +58,15 @@ public class DetailOrderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_order);
+
+        intent = getIntent();
         item = (Order) getIntent().getParcelableExtra("item");
         from = getIntent().getStringExtra("from");
         accountID = getIntent().getStringExtra("accountID");
         username = getIntent().getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -110,8 +115,11 @@ public class DetailOrderActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> {
             if(from != null && from.equals("PaymentSM")) {
                 intent = new Intent(DetailOrderActivity.this, ListProductSMActivity.class);
-                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
             }
             finish();

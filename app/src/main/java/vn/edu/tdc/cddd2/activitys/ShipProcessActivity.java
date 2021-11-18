@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -49,19 +51,27 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
     BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
     Toolbar toolbar;
-    TextView btnSave, subtitleAppbar, title, mess;
+    TextView btnSave, subtitleAppbar, title, mess, txtName, txtRole;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
     Intent intent;
-    String tagA = "ListOrderSP", username = "shipper";
+    String tagA = "ListOrderSP", username = "", name = "", role = "", img = "";
     ArrayList<Order> listOrder;
+    ImageView iv_user;
+
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_shipprocess);
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -76,6 +86,12 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtBack);
@@ -148,8 +164,8 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
         switch (id) {
             case R.id.nav_dmk:
                 intent = new Intent(ShipProcessActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
                 intent.putExtra("username", username);
+                startActivity(intent);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ShipProcessActivity.this, LoginActivity.class);
