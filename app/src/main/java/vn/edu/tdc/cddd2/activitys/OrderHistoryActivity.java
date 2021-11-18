@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -838,5 +839,29 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
     private String formatPrice(int price) {
         return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
                 .format(price);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            AlertDialog.Builder b = new AlertDialog.Builder(this);
+            b.setTitle("Xác nhận");
+            b.setMessage("Bạn có đồng ý thoát chương trình không?");
+            b.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    finishAndRemoveTask();
+                }
+            });
+            b.setNegativeButton("Không đồng ý", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+            AlertDialog al = b.create();
+            al.show();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }
