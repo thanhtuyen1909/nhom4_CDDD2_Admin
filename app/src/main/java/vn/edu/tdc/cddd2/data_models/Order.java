@@ -4,9 +4,19 @@ public class Order {
 
 
     // Khai báo biến
-    private String accountID,address,create_at,name,note,orderID,phone,shipperID;
-    private int status,total;
+    private String orderID;
+    private String accountID;
+    private String address;
+    private String created_at;
+    private String note;
 
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
+    }
 
     public String getAccountID() {
         return accountID;
@@ -24,20 +34,12 @@ public class Order {
         this.address = address;
     }
 
-    public String getCreate_at() {
-        return create_at;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setCreate_at(String create_at) {
-        this.create_at = create_at;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 
     public String getNote() {
@@ -46,22 +48,6 @@ public class Order {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getOrderID() {
-        return orderID;
-    }
-
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getShipperID() {
@@ -87,18 +73,57 @@ public class Order {
     public void setTotal(int total) {
         this.total = total;
     }
-    public Order() {
+
+    public String getPhone() {
+        return phone;
     }
-    public Order(String accountID, String address, String create_at, String name, String note, String orderID, String phone, String shipperID, int status, int total) {
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getRemain() {
+        return remain;
+    }
+
+    public void setRemain(int remain) {
+        this.remain = remain;
+    }
+
+    private String shipperID;
+    private int status;
+    private int total;
+    private String phone;
+    private String name;
+    private int remain;
+
+    public Order(String orderID, String accountID, String address, String created_at, String note, String shipperID, int status, int total, String phone, String name, int remain) {
+        this.orderID = orderID;
         this.accountID = accountID;
         this.address = address;
-        this.create_at = create_at;
-        this.name = name;
+        this.created_at = created_at;
         this.note = note;
-        this.orderID = orderID;
-        this.phone = phone;
         this.shipperID = shipperID;
         this.status = status;
         this.total = total;
+        this.phone = phone;
+        this.name = name;
+        this.remain = remain;
     }
+
+    public Order() {
+    }
+
+
+
+
+
 }
