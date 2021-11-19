@@ -197,16 +197,23 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
             @Override
             public void onClick(View v) {
                 //If user isn't selected fliter
-                if(isFilter){
-                    //Data not null
-                    if(arrOrderFilter.size()==0){
-                        showDialog("Dữ liệu rỗng in thất bại");
-                    }else{
-                        renderDataExcel();
-                    }
-                }else{
-                    showDialog("Bạn chưa chọn lọc theo thời gian này");
-                }
+
+                   if(isFilter){
+                       //Data not null
+                       if(arrOrderFilter.size()==0){
+                           showDialog("Dữ liệu rỗng in thất bại");
+                       }else{
+                           renderDataExcel();
+                           wb = new HSSFWorkbook();
+                           fontTitle = wb.createFont();
+                           fontTitleMain = wb.createFont();
+                           styleFont();
+                           styleCell();
+                           sheet = wb.createSheet("HOÁ ĐƠN");
+                       }
+                   }else{
+                       showDialog("Bạn chưa chọn lọc theo thời gian này");
+                   }
             }
         });
     }
@@ -219,13 +226,11 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
             strDateTo= strDateTo.replace("/","_");
             strDateFrom = strDateFrom.replace("/","_");
             strPathName = "BaoCao_"+strDateTo+"-"+strDateFrom;
-        }else{
-            arrOrderFilter.clear();
-            arrOrderFilter.addAll(arrOrder);
         }
 
         setShowTitleMain(0,3,"THỐNG KÊ HOÁ ĐƠN TỪ NGÀY "+tvHistoryCartPickerTo.getText().toString()
                 +"-"+tvHistoryCartPickerFrom.getText().toString());
+
         //SET ROW 1 TITLE
         setCellDataTitle();
         //SET VALUE
