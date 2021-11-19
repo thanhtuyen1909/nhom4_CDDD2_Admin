@@ -38,10 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Attendance;
 import vn.edu.tdc.cddd2.data_models.Employee;
 import vn.edu.tdc.cddd2.data_models.Payroll;
 
@@ -66,11 +64,14 @@ public class DetailSalaryActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_salary);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle!= null){
+            id = bundle.getString("key");
+        }
         requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-        exportExcel();
+
         UIinit();
         setEvent();
-        createPayroll();
 
     }
 
@@ -220,210 +221,14 @@ public class DetailSalaryActivity extends AppCompatActivity {
         return stmp + " ₫";
     }
 
-    private void createPayroll() {
-        Date now = new Date();
-        String s = now.getMonth() + "-" + now.toString().split(" ")[now.toString().split(" ").length - 1];
 
-        if (s.length() == 6) {
-            key = "0" + s;
-        } else {
-            key = s;
-        }
-        Log.d("TAG", "createPayroll: " + s);
-        DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
-        empRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot node : dataSnapshot.getChildren()) {
-
-                    Employee employee = node.getValue(Employee.class);
-                    attendRef.child(key).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                HashMap<String, Object> map = new HashMap<>();
-                                count = 0;
-                                count1 = 0;
-                                for (DataSnapshot node1 : snapshot.getChildren()) {
-                                    Attendance attendance = node1.getValue(Attendance.class);
-                                    Log.d("TAG", "onDataChange: " + attendance.getNote());
-
-                                    if (attendance.getEmployeeID().equals(node.getKey())) {
-                                        if (attendance.getStatus() == -1) {
-                                            count++;
-
-                                            if (attendance.getNote().equals("")) {
-                                                count1++;
-                                                Log.d("TAG", "onDataChange: " + count + "-" + count1);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                map.put("absent", count);
-                                map.put("allowance", employee.getAllowance());
-                                map.put("salary", employee.getSalary());
-                                map.put("workday", 30 - count);
-                                int bonus = 0;
-                                if (30 - count >= 26 && count1 == 0) {
-                                    map.put("bonus", 200000);
-                                    bonus = 200000;
-                                } else {
-                                    map.put("bonus", 0);
-                                }
-                                map.put("fine", 50000 * count1);
-                                map.put("total", employee.getSalary() + employee.getAllowance() + bonus - 50000 * count1);
-                                payrollRef.child(key).child(node.getKey()).setValue(map);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     private void requestPermission(String[] permission, int requestCode) {
         ActivityCompat.requestPermissions(this, permission, requestCode);
 
     }
 
-    private void exportExcel() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFCellStyle style = workbook.createCellStyle();
 
-        HSSFSheet sheet = workbook.createSheet("Bảng lương tháng 10");
-        sheet.setColumnWidth(6,4000);
-        sheet.setColumnWidth(10,4000);
-        HSSFRow row = sheet.createRow(firstIndex);
-        HSSFCell cell = row.createCell(firstIndex);
-        HSSFRow newRow = sheet.createRow(firstIndex+1);
-        firstIndex++;
-        HSSFCell cell0 = newRow.createCell(0);
-        cell0.setCellValue("Mã nhân viên");
-
-        HSSFCell cell1 = newRow.createCell(1);
-        cell1.setCellValue("Tên nhân viên");
-
-        HSSFCell cell2 = newRow.createCell(2);
-        cell2.setCellValue("Số ngày làm");
-
-        HSSFCell cell3 = newRow.createCell(3);
-        cell3.setCellValue("Số ngày nghỉ");
-
-        HSSFCell cell4 = newRow.createCell(4);
-        cell4.setCellValue("Có phép");
-
-        HSSFCell cell5 = newRow.createCell(5);
-        cell5.setCellValue("Không phép");
-
-        HSSFCell cell6 = newRow.createCell(6);
-        cell6.setCellValue("Lương cơ bản");
-
-        HSSFCell cell7 = newRow.createCell(7);
-        cell7.setCellValue("Phụ cấp");
-
-        HSSFCell cell8 = newRow.createCell(8);
-        cell8.setCellValue("Tiền phạt");
-
-        HSSFCell cell9 = newRow.createCell(9);
-        cell9.setCellValue("Tiền thưởng");
-
-        HSSFCell cell10 = newRow.createCell(10);
-        cell10.setCellValue("Tổng lương");
-
-        cell.setCellValue("Chi tiết bảng lương tháng 10");
-        payrollRef.child("10-2021").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot node : dataSnapshot.getChildren()) {
-                    Payroll payroll = node.getValue(Payroll.class);
-                    HSSFRow row1 = sheet.createRow(firstIndex + 1);
-
-                    firstIndex++;
-                    empRef.child(node.getKey()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                Employee employee = snapshot.getValue(Employee.class);
-                                HSSFCell cell0 = row1.createCell(0);
-                                cell0.setCellValue(node.getKey());
-
-                                HSSFCell cell1 = row1.createCell(1);
-                                cell1.setCellValue(employee.getName());
-
-                                HSSFCell cell2 = row1.createCell(2);
-                                cell2.setCellValue(payroll.getWorkday());
-
-                                HSSFCell cell3 = row1.createCell(3);
-                                cell3.setCellValue(payroll.getAbsent());
-
-                                HSSFCell cell4 = row1.createCell(4);
-                                cell4.setCellValue(payroll.getAbsent() - payroll.getFine() / 50000);
-
-                                HSSFCell cell5 = row1.createCell(5);
-                                cell5.setCellValue(payroll.getFine() / 50000);
-
-                                HSSFCell cell6 = row1.createCell(6);
-                                cell6.setCellValue(payroll.getSalary());
-
-                                HSSFCell cell7 = row1.createCell(7);
-                                cell7.setCellValue(payroll.getAllowance());
-
-                                HSSFCell cell8 = row1.createCell(8);
-                                cell8.setCellValue(payroll.getFine());
-
-                                HSSFCell cell9 = row1.createCell(9);
-                                cell9.setCellValue(payroll.getBonus());
-
-                                HSSFCell cell10 = row1.createCell(10);
-                                cell10.setCellValue(payroll.getTotal());
-
-                                //
-                                File filePath = new File(Environment.getExternalStorageDirectory() + "/Demo.xls");
-
-                                try {
-                                    if (!filePath.exists()) {
-                                        filePath.createNewFile();
-                                    }
-                                    FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-                                    workbook.write(fileOutputStream);
-                                    if(fileOutputStream != null){
-                                        fileOutputStream.flush();
-                                        fileOutputStream.close();
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

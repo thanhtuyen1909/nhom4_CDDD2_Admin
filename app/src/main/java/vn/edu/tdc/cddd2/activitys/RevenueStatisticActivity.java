@@ -48,6 +48,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.adapters.BadSellProductAdapter;
 import vn.edu.tdc.cddd2.adapters.BestSellProductAdapter;
 import vn.edu.tdc.cddd2.data_models.Order;
 import vn.edu.tdc.cddd2.data_models.Product;
@@ -58,8 +59,9 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
     private ActionBarDrawerToggle drawerToggle;
     private BarChart chart;
     BestSellProductAdapter adapter;
-    RecyclerView recyclerView;
-    ArrayList<Product> list;
+    BadSellProductAdapter adapter1;
+    RecyclerView recyclerView,recyclerView1;
+    ArrayList<Product> list,list1;
     private Spinner spinMonth, spinYear;
     private TextView txtTotalSuccess, txtSuccessOrder, txtTotalCanceled, txtCanceledOrder, txtInventory, txtTotalOrder,txtCountOrder,txtCountInventory;
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
@@ -67,6 +69,7 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
     ArrayList<BarEntry> revenue = new ArrayList<>();
     int totalRevenue = 0,month = 0,year = 0,totalSuccess = 0,totalCancel = 0,countOrder = 0,countSuccess = 0,countCancel = 0,countInvetory = 0;
     long totalInventory = 0;
+    int isFirst = 0,isFirst1 = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +83,13 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 year = Integer.parseInt((String)spinYear.getItemAtPosition(position));
-                chartData((int)spinMonth.getSelectedItemId(),year);
+                if(isFirst == 0){
+                    isFirst++;
+                }
+                else {
+                    chartData((int)spinMonth.getSelectedItemId(),year);
+                }
+
             }
 
             @Override
@@ -94,7 +103,12 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 month = position;
-                chartData(month,Integer.parseInt(""+spinYear.getSelectedItem()) );
+                if(isFirst1 == 0){
+                    isFirst1++;
+                }else {
+                    chartData(month,Integer.parseInt(""+spinYear.getSelectedItem()) );
+                }
+
             }
 
             @Override
@@ -130,12 +144,18 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         txtTotalOrder = findViewById(R.id.txt_order);
         txtCountOrder = findViewById(R.id.txtCountOrder);
         txtCountInventory = findViewById(R.id.txtCountInventory);
-        recyclerView = findViewById(R.id.listProduct);
+        recyclerView = findViewById(R.id.listProductGoodSale);
+        recyclerView1 = findViewById(R.id.listProductBadSale);
         recyclerView.setHasFixedSize(true);
+        recyclerView1.setHasFixedSize(true);
         list = new ArrayList<>();
+        list1 = new ArrayList<>();
         adapter = new BestSellProductAdapter(list,this);
+        adapter1 = new BadSellProductAdapter(list1,this);
         recyclerView.setAdapter(adapter);
+        recyclerView1.setAdapter(adapter1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView1.setLayoutManager(new LinearLayoutManager(this));
         ArrayList<String> years = new ArrayList<>();
         Date now = new Date();
         String[] list = now.toString().split(" ");
@@ -242,8 +262,6 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
                                 float oldRevenue = revenue.get(month-1).getY();
                                 revenue.get(month-1).setY(oldRevenue+((float) order.getTotal())/1000000);
                                 setChartData();
-
-
                                 //count success
                                 countSuccess++;
                                 totalSuccess+= order.getTotal();
@@ -258,13 +276,13 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
 
                         }
                     }
+
                     txtTotalSuccess.setText((double)totalSuccess/1000000 +"");
                     txtSuccessOrder.setText(countSuccess+" đơn hàng");
                     txtTotalCanceled.setText((double)totalCancel/1000000+"");
                     txtCanceledOrder.setText(countCancel+" huỷ đơn");
                     txtTotalOrder.setText("Đặt hàng: "+formatPrice(totalRevenue));
                     txtCountOrder.setText(countOrder+" phiếu đặt");
-
                 }
 
                 @Override
@@ -304,6 +322,24 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
 
                 }
                 adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        query =  proRef.orderByChild("sold").limitToFirst(5);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                list1.clear();
+                for(DataSnapshot node :dataSnapshot.getChildren()){
+                    list1.add(node.getValue(Product.class));
+
+                }
+                adapter1.notifyDataSetChanged();
 
             }
 

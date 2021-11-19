@@ -3,6 +3,8 @@ package vn.edu.tdc.cddd2.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import vn.edu.tdc.cddd2.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import vn.edu.tdc.cddd2.activitys.DetailEmployeeActivity;
 import vn.edu.tdc.cddd2.data_models.Employees;
 import vn.edu.tdc.cddd2.interfaceClick.ItemClickRefreshEmployees;
 
@@ -77,6 +80,10 @@ public class ManageEmployeesAdapter extends RecyclerView.Adapter<ManageEmployees
             @Override
             public void onClick(View view) {
                 Toast.makeText(context, employees.getKeyEmployees(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, DetailEmployeeActivity.class);
+                intent.putExtra("type","edit");
+                intent.putExtra("item",(Parcelable) employees);
+                context.startActivity(intent);
             }
         });
     }
