@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -93,6 +92,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
     Workbook wb;
     Font fontTitleMain, fontTitle;
     ReportOrder reportOrder;
+    boolean isFilter=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +135,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         tvHistoryCartPickerTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isFilter=false;
                 showDateDialog(tvHistoryCartPickerTo);
             }
         });
@@ -142,6 +143,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         tvHistoryCartPickerFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isFilter=false;
                 showDateDialog(tvHistoryCartPickerFrom);
             }
         });
@@ -149,6 +151,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         btnHistoryCartSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isFilter=true;
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Date dateTo;
                 Date dateFrom;
@@ -193,11 +196,16 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         tvHistoryCartRender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Data not null
-                if(arrOrderFilter.size()==0){
-                    showDialog("Dữ liệu rỗng in thất bại");
+                //If user isn't selected fliter
+                if(isFilter){
+                    //Data not null
+                    if(arrOrderFilter.size()==0){
+                        showDialog("Dữ liệu rỗng in thất bại");
+                    }else{
+                        renderDataExcel();
+                    }
                 }else{
-                    renderDataExcel();
+                    showDialog("Bạn chưa chọn lọc theo thời gian này");
                 }
             }
         });
@@ -211,6 +219,9 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
             strDateTo= strDateTo.replace("/","_");
             strDateFrom = strDateFrom.replace("/","_");
             strPathName = "BaoCao_"+strDateTo+"-"+strDateFrom;
+        }else{
+            arrOrderFilter.clear();
+            arrOrderFilter.addAll(arrOrder);
         }
 
         setShowTitleMain(0,3,"THỐNG KÊ HOÁ ĐƠN TỪ NGÀY "+tvHistoryCartPickerTo.getText().toString()
@@ -282,6 +293,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         spHistoryCart.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                isFilter=true;
                 arrOrderFilter.clear();
                 tvHistoryCartPickerFrom.setText("");
                 tvHistoryCartPickerTo.setText("");
@@ -839,29 +851,5 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
     private String formatPrice(int price) {
         return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
                 .format(price);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            AlertDialog.Builder b = new AlertDialog.Builder(this);
-            b.setTitle("Xác nhận");
-            b.setMessage("Bạn có đồng ý thoát chương trình không?");
-            b.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    finishAndRemoveTask();
-                }
-            });
-            b.setNegativeButton("Không đồng ý", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog al = b.create();
-            al.show();
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
     }
 }

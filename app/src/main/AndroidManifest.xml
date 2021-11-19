@@ -57,9 +57,7 @@
 <!--        </activity>-->
     <!-- Administrators -->
         <activity android:screenOrientation="portrait" android:name=".activitys.AttendanceActivity"> </activity>
-        <activity android:screenOrientation="portrait" android:name=".activitys.ListEmployeeActivity">
-
-        </activity>
+<!--        <activity android:screenOrientation="portrait" android:name=".activitys.ListEmployeeActivity"></activity>-->
         <activity android:screenOrientation="portrait" android:name=".activitys.DetailEmployeeActivity">
 
         </activity>
