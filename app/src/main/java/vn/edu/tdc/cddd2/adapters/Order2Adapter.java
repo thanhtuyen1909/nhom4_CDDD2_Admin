@@ -68,13 +68,16 @@ public class Order2Adapter extends RecyclerView.Adapter<Order2Adapter.ViewHolder
             @Override
             public void onClick(View v) {
                 item.setStatus(2);
+                holder.cb_huy.setChecked(false);
             }
         });
         holder.cb_huy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
               item.setStatus(0);
+              holder.cb_sedat.setChecked(false);
             }
+
         });
 
     }
