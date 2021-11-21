@@ -181,6 +181,42 @@
         <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_login.xml" value="0.22" />
         <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/layout_main_2.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_CDDD2_Admin/app/src/main/res/layout/nav_header.xml" value="0.11775362318840579" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/drawable/ic_arrow_next.xml" value="0.11510416666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/appbar.xml" value="0.1" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/appbar_1.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/appbar_2.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/appbar_3.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/appbar_4.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/appbar_adm_detail_invoice.xml" value="0.12" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/appbar_sm.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/card_history_cart.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/dialog_account.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/fragment_list.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_account_adm.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_bestsell_product.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_customer_1.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_detail_order_invoice.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_discount_1.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_historyactivity.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_order_historyorder.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_product_5.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_waitship_whm.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_willorder_oh.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/item_willorder_whm.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_detail_discountcode.xml" value="0.1118659420289855" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_detail_infomation.xml" value="0.1" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_detail_order.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_list_account.xml" value="0.1" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_orderhistory.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_orderprocess_oh.xml" value="0.1" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_revenues.xml" value="0.1" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/layout/layout_shipprocess.xml" value="0.9959677419354839" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/menu/bottom_menu_1.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/menu/bottom_menu_2.xml" value="0.22" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/menu/bottom_menu_3.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/menu/drawer_view.xml" value="0.1" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/menu/drawer_view_adm.xml" value="0.20052083333333334" />
+        <entry key="..\:/Users/admin/AndroidStudioProjects/nhom4_LTDD2_Admin/app/src/main/res/menu/drawer_view_pm.xml" value="0.3333333333333333" />
       </map>
     </option>
   </component>

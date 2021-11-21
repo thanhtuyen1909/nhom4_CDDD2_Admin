@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/willorder"
-        android:title="Sẽ đặt"
+        android:title="Chờ xử lý"
         android:icon="@drawable/baseline_checklist_24"/>
 
     <item

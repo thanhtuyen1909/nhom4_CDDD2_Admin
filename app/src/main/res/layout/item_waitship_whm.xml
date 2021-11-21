@@ -50,15 +50,6 @@
             android:text="Title"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/txt_nguoigiao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_diachi"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="20dp"
-            android:text="Title"
-            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/btnDetail"
@@ -74,7 +65,7 @@
             android:id="@+id/checkgiao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_nguoigiao"
+            android:layout_below="@+id/txt_diachi"
             android:layout_alignParentStart="true"
             android:text="Giao hàng" />
 
@@ -82,14 +73,14 @@
             android:id="@+id/checkhoanthanh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_nguoigiao"
+            android:layout_below="@+id/txt_diachi"
             android:layout_toEndOf="@+id/checkgiao"
             android:enabled="false"
             android:text="Hoàn thành" />
 
         <RadioGroup
             android:id="@+id/group"
-            android:layout_below="@+id/txt_nguoigiao"
+            android:layout_below="@+id/txt_diachi"
             android:layout_toEndOf="@+id/checkhoanthanh"
             android:background="@drawable/rounded_border_edittext"
             android:layout_alignParentEnd="true"

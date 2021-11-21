@@ -68,6 +68,11 @@
     <string name="error">error</string>
     <string name="dummy_text">Loren Ipsum is simple dummy of the printing and type setting industry</string>
     <string name="title11">Chi tiết hoá đơn</string>
+    <string name="titleDSTK">Danh sách tài khoản</string>
+    <string name="titleTK">Thống kê</string>
+    <string name="titleDGBL"><![CDATA[Đánh giá & bình luận]]></string>
+    <string name="titleLSDH">Lịch sử đơn hàng</string>
+    <string name="titleTKDT">Thống kê doanh thu</string>
 
     <!--  Array  -->
     <string-array name="ngay">
@@ -83,8 +88,19 @@
 
     </string-array>
     <string-array name="thang">
+        <item>Tất cả</item>
+        <item>Tháng 1</item>
+        <item>Tháng 2</item>
+        <item>Tháng 3</item>
+        <item>Tháng 4</item>
+        <item>Tháng 5</item>
+        <item>Tháng 6</item>
+        <item>Tháng 7</item>
         <item>Tháng 8</item>
         <item>Tháng 9</item>
+        <item>Tháng 10</item>
+        <item>Tháng 11</item>
+        <item>Tháng 12</item>
     </string-array>
 
     <string-array name="loaikhachhang">

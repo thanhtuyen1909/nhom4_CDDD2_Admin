@@ -46,10 +46,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_tongtien"
+            android:layout_alignParentLeft="true"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:layout_alignParentLeft="true"
             android:text="Title"
             android:textSize="16sp" />
 
@@ -63,22 +63,13 @@
             android:src="@drawable/baseline_info_24"
             android:text="" />
 
-        <Spinner
-            android:id="@+id/spinShipper"
-            style="@style/CustomSpinner"
-            android:layout_width="130dp"
-            android:layout_height="48dp"
-            android:layout_below="@id/txt_diachi"
-            android:layout_alignParentStart="true"
+        <CheckBox
+            android:id="@+id/checkgiao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_diachi"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/bg_spinner"
-            android:entries="@array/shipper"
-            app:layout_constraintStart_toStartOf="parent" />
-
+            android:text="Đã soạn hàng, chờ giao cho vận chuyển" />
 
     </RelativeLayout>
 

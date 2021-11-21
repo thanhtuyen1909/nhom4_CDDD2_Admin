@@ -17,12 +17,12 @@
             layout="@layout/appbar" />
 
         <Spinner
-            android:id="@+id/spinner_cata"
+            android:id="@+id/spinner_position"
             style="@style/CustomSpinner"
             android:layout_width="0dp"
             android:layout_margin="4dp"
             android:background="@drawable/bg_spinner"
-            android:entries="@array/quyen"
+
             app:layout_constraintTop_toBottomOf="@+id/include"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
             android:queryHint="Tên tài khoản"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_cata" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_position" />
 
         <TextView
             android:id="@+id/textView2"
@@ -64,7 +64,6 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2"
             android:dividerHeight="0dp"
             android:divider="@null">
-
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView

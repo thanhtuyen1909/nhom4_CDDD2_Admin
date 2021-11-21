@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activitys.DetailRatingActivity">
+        tools:context="vn.edu.tdc.ltdd2.activitys.DetailRatingActivity">
 
         <include
             android:id="@+id/include"

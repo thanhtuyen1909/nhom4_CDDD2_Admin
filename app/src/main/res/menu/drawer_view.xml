@@ -23,10 +23,6 @@
             android:id="@+id/nav_qlh"
             android:icon="@drawable/ic_baseline_category_24"
             android:title="@string/title5" />
-        <item
-            android:id="@+id/nav_qlmgg"
-            android:icon="@drawable/baseline_menu_18"
-            android:title="@string/title6" />
 
         <item android:title="@string/title7">
             <menu>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="vn.edu.tdc.cddd2">
+    package="vn.edu.tdc.ltdd2">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,124 +16,77 @@
         android:theme="@style/Theme.CDDD2">
 
         <activity
-            android:name=".activitys.LoginActivity"
-            android:screenOrientation="portrait">
+            android:name="vn.edu.tdc.ltdd2.activitys.LoginActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activitys.ChangePasswordActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.ChangePasswordActivity"
             android:screenOrientation="portrait" />
 
         <!-- Warehouse Management -->
-        <activity android:name=".activitys.MainQLKActivity"></activity>
+        <activity android:name="vn.edu.tdc.ltdd2.activitys.MainQLKActivity" />
         <activity
-            android:name=".activitys.ListProductActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.ListProductActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.ListManuActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.ListManuActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.ListCateActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.ListCateActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.DetailProductActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.DetailProductActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.DetailEditProductActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.DetailEditProductActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.DetailInformationActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.DetailInformationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.ListDiscountCodeActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.ListPromoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.ListPromoActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.DetailPromoCodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.DetailPromoCodeActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.InformationPromoCodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.InformationPromoCodeActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.OrderCoordinationActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activitys.OrderCoordinationActivity"
-            android:screenOrientation="portrait" />
-        <!-- Salesman -->
-        <activity
-            android:name=".activitys.ListProductSMActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".activitys.ListCartActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activitys.CreateOrderActivity"
-            android:screenOrientation="portrait" />
-        <!-- Order Handler -->
-        <activity
-            android:name=".activitys.OrderProcessActivity"
-            android:screenOrientation="portrait" />
-        <!-- Shipper -->
-        <activity
-            android:name=".activitys.ShipProcessActivity"
-            android:screenOrientation="portrait"></activity>
         <!-- Administrators -->
         <activity
-            android:name=".activitys.MainADMActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.MainADMActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.ListAccountActivity"
-            android:screenOrientation="portrait" />
+            android:name="vn.edu.tdc.ltdd2.activitys.ListAccountActivity"
+            android:screenOrientation="portrait" >
+        </activity>
         <activity
-            android:name=".activitys.ListHistoryActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.ListHistoryActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".activitys.OrderHistoryActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.OrderHistoryActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.DetailOrderActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.DetailOrderActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.ListInvoiceActivity"
-            android:screenOrientation="portrait" />
+            android:name="vn.edu.tdc.ltdd2.activitys.RevenueStatisticActivity"
+            android:screenOrientation="landscape" />
         <activity
-            android:name=".activitys.DetailInvoiceActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activitys.RevenueStatisticActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activitys.ListRatingActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.ListRatingActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".activitys.DetailRatingActivity"
+            android:name="vn.edu.tdc.ltdd2.activitys.DetailRatingActivity"
             android:screenOrientation="portrait">
-        </activity>
-        <!-- HR -->
-        <activity
-            android:name=".activitys.AttendanceActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activitys.ListEmployeeActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".activitys.DetailEmployeeActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".activitys.DetailSalaryActivity"
-            android:screenOrientation="portrait" />
-        <!-- Counselor -->
-        <activity
-            android:name=".activitys.ListMessageActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".activitys.DetailMessageActivity"
-            android:screenOrientation="portrait" >
         </activity>
     </application>
 

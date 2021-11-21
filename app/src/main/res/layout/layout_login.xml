@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".activitys.LoginActivity">
+    tools:context="vn.edu.tdc.ltdd2.activitys.LoginActivity">
 
     <LinearLayout
         android:id="@+id/imageView1"
