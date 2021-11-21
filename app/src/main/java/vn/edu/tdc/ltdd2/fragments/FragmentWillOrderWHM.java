@@ -86,7 +86,7 @@ public class FragmentWillOrderWHM extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listOrder.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(snapshot.child("status").getValue(Integer.class) == 2) {
+                    if(snapshot.child("status").getValue(Integer.class) == 1) {
                         Order order = snapshot.getValue(Order.class);
                         order.setOrderID(snapshot.getKey());
                         listOrder.add(order);

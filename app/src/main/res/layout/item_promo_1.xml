@@ -26,8 +26,7 @@
             android:id="@+id/txt_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="15dp"
             android:layout_toRightOf="@+id/img"
             android:text="Title"
             android:textSize="18sp"
@@ -38,25 +37,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_name"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@+id/img"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/img"
             android:text="Title"
             android:textSize="16sp"
             android:textStyle="italic" />
 
         <TextView
             android:id="@+id/txt_endDate"
-            android:textSize="16sp"
-            android:text="Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:layout_toRightOf="@+id/img"
             android:layout_below="@+id/txt_startDate"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginStart="15dp"
+            android:layout_toRightOf="@+id/img"
+            android:text="Title"
+            android:textSize="16sp"
+            android:textStyle="italic" />
 
         <ImageView
             android:id="@+id/btnEdit"
@@ -65,7 +62,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:layout_toLeftOf="@+id/btnAddDetail"
-            android:src="@drawable/baseline_edit_24"
+            android:src="@drawable/baseline_edit_black_24"
             android:text="" />
 
         <ImageView
@@ -75,7 +72,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:layout_toLeftOf="@+id/btnDelete"
-            android:src="@drawable/baseline_add_circle_outline_24"
+            android:src="@drawable/baseline_add_circle_outline_black_24"
             android:text="" />
 
         <ImageView
@@ -84,7 +81,7 @@
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_delete_24"
+            android:src="@drawable/baseline_delete_black_24"
             android:text="" />
 
     </RelativeLayout>

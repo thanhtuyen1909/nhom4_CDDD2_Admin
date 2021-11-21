@@ -163,8 +163,8 @@ public class DetailOrderActivity extends AppCompatActivity {
         queryOrderDetail.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot snapshot1 :dataSnapshot.getChildren()){
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                         //add data
                         String orderID = snapshot1.getKey();
                         String productID = snapshot1.getValue(OrderDetail.class).getProductID();
@@ -285,11 +285,10 @@ public class DetailOrderActivity extends AppCompatActivity {
         try {
             outputStream = new FileOutputStream(file);
             myPdfDocument.writeTo(outputStream);
-            showDialog("In file excel thành công");
+            showDialog("In hóa đơn thành công");
         } catch (java.io.IOException e) {
             e.printStackTrace();
-
-            showDialog("In file excel thành công");
+            showDialog("In hóa đơn thành công");
             try {
                 outputStream.close();
             } catch (IOException ex) {

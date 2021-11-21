@@ -151,7 +151,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
 
     private void showDatePickerDialog(View v) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
-            date = (dayOfMonth + 1) + "/" + (month + 1) + "/" + year;
+            date = dayOfMonth + "/" + (month + 1) + "/" + year;
             if (v.getId() == R.id.edtNgayBD) {
                 edtStartDate.setText(date);
             } else edtEndDate.setText(date);

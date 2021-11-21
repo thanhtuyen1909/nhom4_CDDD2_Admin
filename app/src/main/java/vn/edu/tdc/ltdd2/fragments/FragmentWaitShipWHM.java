@@ -86,7 +86,7 @@ public class FragmentWaitShipWHM extends Fragment {
                 listOrder.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     int status = snapshot.child("status").getValue(Integer.class) ;
-                    if( status >= 3 && status != 8) {
+                    if( status == 2 || status == 4) {
                         Order order = snapshot.getValue(Order.class);
                         order.setOrderID(snapshot.getKey());
                         listOrder.add(order);

@@ -1,8 +1,8 @@
 package vn.edu.tdc.ltdd2.data_models;
 
 public class ReportOrder {
-    private int amount0, amount1,amount2, amount3, amount4,amount5,
-            amount6,amount7, amount8, amount9, amount10, amountTotal;
+    private int amount0, amount1, amount2, amount3, amount4, amount5,
+            amount6, amount7, amount8, amount9, amount10, amountTotal;
     private int total0, total1, total2, total3, total4, total5, total6,
             total7, total8, total9, total10, totalTotal;
 

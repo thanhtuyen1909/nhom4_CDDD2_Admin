@@ -17,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="6dp">
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
         <TextView
             android:id="@+id/txt_madonhang"
@@ -58,6 +59,7 @@
             android:layout_alignParentEnd="true"
             android:clickable="true"
             android:focusable="true"
+            android:paddingEnd="6dp"
             android:src="@drawable/baseline_info_24"
             android:text="" />
 
