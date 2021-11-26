@@ -44,6 +44,7 @@ import java.util.List;
 
 import vn.edu.tdc.cddd2.DAO.DAOProduct;
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.HistoryActivity;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
@@ -65,7 +66,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements View
     private ArrayList<Category> listCate;
     private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
     List<String> colors, sizes;
-    String username = "";
+    String username = "", accountID = "";
     Product item = null;
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -75,6 +76,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements View
         setContentView(R.layout.layout_detail_edit_product);
         intent = getIntent();
         username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
         item = intent.getParcelableExtra("item");
 
         // Toolbar
@@ -306,6 +308,17 @@ public class DetailEditProductActivity extends AppCompatActivity implements View
         }
     }
 
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        db.getReference("AccountHistory").push().setValue(accountHistory);
+    }
+
     @Override
     public void onClick(View v) {
         if (v == btnSave) {
@@ -356,19 +369,7 @@ public class DetailEditProductActivity extends AppCompatActivity implements View
                 }
                 DAOProduct dao = new DAOProduct();
                 dao.update(item.getKey(), product).addOnSuccessListener(unused -> showSuccesDialog("Sửa sản phẩm thành công!"));
-//                //Tạo lịch sử hoạt động
-//                HistoryActivity history = new HistoryActivity();
-//                history.setDate(formatter.format(new Date()));
-//                history.setAccount_id(2);
-//                history.setAction("Cập nhật sản phẩm");
-//                String detail = "";
-//                if (!product.getName().equals(item.getName())) {
-//                    detail += "Tên sản phẩm : " + item.getName() + " -> " + product.getName() + " \n";
-//                }
-//                if (!product.getDescription().equals(item.getDescription())) {
-//                    detail += "Chỉnh sửa mô tả \n";
-//                }
-//                DatabaseReference historyRef = db.getReference("HistoryActivities");
+                pushAccountHistory("Cập nhật thông tin sản phẩm", "Sản phẩm có mã " + product.getId());
             }
         } else {
             finish();

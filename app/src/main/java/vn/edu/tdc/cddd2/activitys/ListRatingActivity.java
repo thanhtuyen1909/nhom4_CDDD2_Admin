@@ -52,7 +52,7 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
     Intent intent;
     Spinner spinner_filterrating;
     SearchView editSearch;
-    String accountID = "", name = "", role = "", img = "";
+    String accountID = "", username = "", name = "", role = "", img = "";
     int size = 0;
     ImageView iv_user;
 
@@ -66,7 +66,8 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         setContentView(R.layout.layout_list_rating);
 
         intent = getIntent();
-        accountID = intent.getStringExtra("username");
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
         img = intent.getStringExtra("image");
@@ -90,7 +91,8 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListRatingActivity.this, MainADMActivity.class);
-            intent.putExtra("username", accountID);
+            intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
             intent.putExtra("image", img);
@@ -427,7 +429,8 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         @Override
         public void getInfor(String key) {
             intent = new Intent(ListRatingActivity.this, DetailRatingActivity.class);
-            intent.putExtra("username", accountID);
+            intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
             intent.putExtra("productID", key);
@@ -443,23 +446,43 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         switch (id) {
             case R.id.nav_qltk:
                 intent = new Intent(ListRatingActivity.this, ListAccountActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_lsdh:
                 intent = new Intent(ListRatingActivity.this, OrderHistoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlhd:
                 intent = new Intent(ListRatingActivity.this, ListInvoiceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_tk:
                 intent = new Intent(ListRatingActivity.this, RevenueStatisticActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlbl:
                 break;

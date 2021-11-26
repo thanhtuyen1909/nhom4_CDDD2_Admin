@@ -33,10 +33,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CateAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Product;
 
@@ -45,7 +48,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
     Handler handler = new Handler();
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar, totalCate, txtName, txtRole, title, mess;
-    String username = "", name = "", role = "";
+    String username = "", name = "", role = "", img = "", accountID = "";
     SearchView searchView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -63,10 +66,13 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_cate);
+
         intent = getIntent();
         username = intent.getStringExtra("username");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        accountID = intent.getStringExtra("accountID");
+        img = intent.getStringExtra("image");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -87,9 +93,11 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListCateActivity.this, MainQLKActivity.class);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -99,6 +107,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             intent = new Intent(ListCateActivity.this, DetailInformationActivity.class);
             intent.putExtra("to", "ListCate");
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         });
 
@@ -176,6 +185,7 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
             intent.putExtra("to", "ListCate");
             intent.putExtra("itemCate", (Parcelable) item);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         }
     };
@@ -198,24 +208,17 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
 
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
             check = true;
-            proRef.addValueEventListener(new ValueEventListener() {
+            proRef.orderByChild("category_id").equalTo(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Product product = snapshot.getValue(Product.class);
-                        if(product.getManu_id().equals(key)) {
-                            check = false;
-                        }
+                    if(dataSnapshot.exists()){
+                        showErrorDialog("Không thể xoá loại sản phẩm còn sản phẩm!");
+                    } else {
+                        cateRef.child(key).removeValue();
+                        showSuccesDialog();
+                        pushAccountHistory("Xóa loại sản phẩm", "Loại sản phẩm " + name);
                     }
-                    handler.postDelayed(() -> {
-                        if(check) {
-                            cateRef.child(key).removeValue();
-                            showSuccesDialog();
-                        } else {
-                            showErrorDialog("Không thể xoá loại sản phẩm còn sản phẩm!");
-                        }
-                    }, 100);
                 }
 
                 @Override
@@ -293,33 +296,51 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListCateActivity.this, ListProductActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListCateActivity.this, ListPromoActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListCateActivity.this, OrderCoordinationActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListCateActivity.this, ListDiscountCodeActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.nav_qlh:
+                intent = new Intent(ListCateActivity.this, ListManuActivity.class);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -332,14 +353,6 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ListCateActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.nav_qlh:
-                intent = new Intent(ListCateActivity.this, ListManuActivity.class);
-                intent.putExtra("username", username);
-                intent.putExtra("name", name);
-                intent.putExtra("role", role);
                 startActivity(intent);
                 finish();
                 break;
@@ -358,5 +371,16 @@ public class ListCateActivity extends AppCompatActivity implements NavigationVie
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
     }
 }

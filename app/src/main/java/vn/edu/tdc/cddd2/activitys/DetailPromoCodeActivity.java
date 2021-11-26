@@ -26,10 +26,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ProductPromoAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Product;
 
@@ -47,7 +50,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements View.O
     private Spinner spinProduct, spinGiamGia;
     ProductPromoAdapter productAdapter;
     Button btnAdd;
-    String key = "-MmLuVjl6Gg64YK9FEft", keyPD = null, username = "";
+    String key = "", keyPD = null, username = "", accountID = "";
     boolean check = true;
     ArrayAdapter<Product> spinAdapter;
     DatabaseReference promoDetailRef = FirebaseDatabase.getInstance().getReference("Offer_Details");
@@ -61,6 +64,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements View.O
         productRef.keepSynced(true);
         intent = getIntent();
         username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
         key = getIntent().getStringExtra("key");
 
         // Toolbar
@@ -94,6 +98,17 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements View.O
         data();
         recyclerView.setAdapter(productAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
     }
 
     private final ProductPromoAdapter.ItemClickListener itemClickListener = new ProductPromoAdapter.ItemClickListener() {
@@ -202,7 +217,7 @@ public class DetailPromoCodeActivity extends AppCompatActivity implements View.O
                 dp1.setOfferID(dp.getOfferID());
                 dp1.setPercentSale(dp.getPercentSale());
                 dp1.setProductID(dp.getProductID());
-                promoDetailRef.push().setValue(dp1);
+                promoDetailRef.push().setValue(dp1).addOnSuccessListener(unused -> pushAccountHistory("Thêm sản phẩm vào khuyến mãi", "Mã khuyến mãi " + dp1.getOfferID() + "\n" + "Mã sản phẩm " + dp.getProductID()));
             }
 
             showSuccesDialog("Cập nhật chi tiết khuyến mãi thành công!");

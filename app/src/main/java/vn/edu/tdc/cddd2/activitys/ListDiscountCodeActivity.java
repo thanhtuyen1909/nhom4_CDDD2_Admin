@@ -56,6 +56,7 @@ import java.util.Date;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.DiscountCodeAdapter;
 import vn.edu.tdc.cddd2.data_models.Account;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.DiscountCode;
 import vn.edu.tdc.cddd2.data_models.DiscountCode_Customer;
@@ -81,16 +82,19 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     boolean check = true;
     private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference codeRef = db.getReference("DiscountCode");
-    String username = "", name = "", role = "";
+    String username = "", name = "", role = "", img = "", accountID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_discountcode);
+
         intent = getIntent();
         username = intent.getStringExtra("username");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        accountID = intent.getStringExtra("accountID");
+        img = intent.getStringExtra("image");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -120,15 +124,18 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListDiscountCodeActivity.this, MainQLKActivity.class);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
 
         // Xử lý sự kiện click button "+":
         btnAdd.setOnClickListener(v -> showDialog("add", null));
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -178,6 +185,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 return false;
             }
         });
+
         //RecycleView
         recyclerView = findViewById(R.id.listDiscount);
         recyclerView.setHasFixedSize(true);
@@ -212,7 +220,6 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                         @Override
                         public void onSuccess(Uri uri) {
                             noti.setImage(uri.toString());
-                            Log.d("TAG", "pushNotification: " + "success");
                             notiRef.push().setValue(noti);
                         }
                     });
@@ -524,7 +531,21 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                     codeRef.push().setValue(discountCode).addOnSuccessListener(unused -> {
                         createCodeCustomer(discountCode.getCode(), discountCode.getEvent());
                         showSuccesDialog("Lưu mã giảm giá thành công");
-
+                        if(discountCode.getType().equals("%")) {
+                            pushAccountHistory("Thêm mã giảm giá", "Mã giảm giá " + discountCode.getCode()
+                                    + "\nƯu đãi dành cho: " + discountCode.getEvent()
+                                    + "\nGiá trị: " + discountCode.getValue() + discountCode.getType());
+                        }
+                        else if (discountCode.getType().equals("VND")) {
+                            pushAccountHistory("Thêm mã giảm giá", "Mã giảm giá " + discountCode.getCode()
+                                    + "\nƯu đãi dành cho: " + discountCode.getEvent()
+                                    + "\nGiá trị: " + discountCode.getValue() + " " + discountCode.getType());
+                        }
+                        else {
+                            pushAccountHistory("Thêm mã giảm giá", "Mã giảm giá " + discountCode.getCode()
+                                    + "\nƯu đãi dành cho: " + discountCode.getEvent()
+                                    + "\nGiá trị: "  + discountCode.getType());
+                        }
                     });
                 } else {
                     db.getReference("DiscountCode").addValueEventListener(new ValueEventListener() {
@@ -599,28 +620,31 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListDiscountCodeActivity.this, ListProductActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListDiscountCodeActivity.this, ListPromoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListDiscountCodeActivity.this, OrderCoordinationActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -628,10 +652,11 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListDiscountCodeActivity.this, ListCateActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -648,10 +673,11 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListDiscountCodeActivity.this, ListManuActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -750,5 +776,16 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
     }
 }

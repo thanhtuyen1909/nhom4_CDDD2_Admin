@@ -118,6 +118,7 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
             intent.putExtra("role", role);
             intent.putExtra("image", img);
             startActivity(intent);
+            finish();
         });
 
         // Xử lý sự kiện lọc theo spinCate:
@@ -239,9 +240,7 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
                     manu.setKey(node.getKey());
                     listManu.add(manu);
                     manuAdapter.notifyDataSetChanged();
-
                 }
-
             }
 
             @Override

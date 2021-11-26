@@ -69,7 +69,7 @@ public class PromoCodeAdapter extends RecyclerView.Adapter<PromoCodeAdapter.View
                         itemClickListener.addDetailPromoCode(item.getKey());
                     } else if (v.getId() == R.id.btnEdit){
                         itemClickListener.editPromoCode(item);
-                    } else itemClickListener.deletePromoCode(item.getKey());
+                    } else itemClickListener.deletePromoCode(item.getKey(), item.getName());
                 } else {
                     return;
                 }
@@ -143,7 +143,7 @@ public class PromoCodeAdapter extends RecyclerView.Adapter<PromoCodeAdapter.View
     public interface ItemClickListener {
         void editPromoCode(PromoCode item);
         void addDetailPromoCode(String key);
-        void deletePromoCode(String key);
+        void deletePromoCode(String key, String name);
     }
 }
 

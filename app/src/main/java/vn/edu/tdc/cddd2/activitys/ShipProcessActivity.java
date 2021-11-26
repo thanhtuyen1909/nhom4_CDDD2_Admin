@@ -56,7 +56,7 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
     Intent intent;
-    String tagA = "ListOrderSP", username = "", name = "", role = "", img = "";
+    String tagA = "ListOrderSP", accountID = "", username = "", name = "", role = "", img = "";
     ArrayList<Order> listOrder;
     ImageView iv_user;
 
@@ -69,6 +69,7 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
 
         intent = getIntent();
         username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
         img = intent.getStringExtra("image");

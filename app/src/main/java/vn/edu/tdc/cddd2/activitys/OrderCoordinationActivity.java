@@ -33,10 +33,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AreaAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Area;
 import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.Order;
@@ -53,7 +56,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     Fragment selectedFragment = null;
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, btnCancel, title, mess, txtName, txtRole;
-    String username = "", name = "", role = "";
+    String username = "", name = "", role = "", img = "", accountID = "";
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
@@ -76,10 +79,13 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_ordercoor);
+
         intent = getIntent();
         username = intent.getStringExtra("username");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        accountID = intent.getStringExtra("accountID");
+        img = intent.getStringExtra("image");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -200,17 +206,21 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(OrderCoordinationActivity.this, ListProductActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(OrderCoordinationActivity.this, ListPromoActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -218,17 +228,21 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(OrderCoordinationActivity.this, ListDiscountCodeActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(OrderCoordinationActivity.this, ListCateActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -244,9 +258,11 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(OrderCoordinationActivity.this, ListManuActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -294,6 +310,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                 } else {
                     orderRef.child(order.getOrderID()).setValue(order);
                     if (order.getStatus() == 8) {
+                        pushAccountHistory("Thay đổi trạng thái hoàn thành đơn hàng", "Đơn hàng: " + order.getOrderID());
                         orderDetailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -374,9 +391,11 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
             alertDialog.dismiss();
             intent = new Intent(OrderCoordinationActivity.this, MainQLKActivity.class);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -412,5 +431,16 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
     }
 }

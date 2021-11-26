@@ -44,6 +44,7 @@ import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CommentAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Comment;
 import vn.edu.tdc.cddd2.data_models.Notification;
 
@@ -61,7 +62,7 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
     private ArrayList<Comment> listComments;
     NavigationView navigationView;
     CommentAdapter commentAdapter;
-    String accountID = "Account2", productID = "-MmNx4YnTO674tYPalu9", keyComment = "", accountUser = "", name = "", role = "";
+    String accountID = "", username = "", productID = "", keyComment = "", accountUser = "", name = "", role = "", img = "";
     Intent intent;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -74,10 +75,12 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
         setContentView(R.layout.layout_detail_rating);
 
         intent = getIntent();
-        accountID = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        username = intent.getStringExtra("username");
         productID = intent.getStringExtra("productID");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -106,7 +109,8 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(DetailRatingActivity.this, ListRatingActivity.class);
-            intent.putExtra("username", accountID);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
             startActivity(intent);
@@ -124,6 +128,7 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
                     public void onSuccess(Void unused) {
                         // Thông báo cho người dùng:
                         pushNotification(comment, accountUser);
+                        pushAccountHistory("Trả lời bình luận", comment);
                     }
                 });
             } else {
@@ -144,6 +149,17 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        db.getReference("AccountHistory").push().setValue(accountHistory);
     }
 
     // Lưu thông báo:
@@ -285,10 +301,10 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
 
     private CommentAdapter.ItemClickListener itemClickListener = new CommentAdapter.ItemClickListener() {
         @Override
-        public void getInfor(String key, String username, String account) {
+        public void getInfor(String key, String username1, String account) {
             // Định nghĩa lại trạng thái:
             btnAdd.setEnabled(true);
-            txtReply.setText(username);
+            txtReply.setText(username1);
             keyComment = key;
             accountUser = account;
         }
@@ -300,25 +316,43 @@ public class DetailRatingActivity extends AppCompatActivity implements Navigatio
         switch (id) {
             case R.id.nav_qltk:
                 intent = new Intent(DetailRatingActivity.this, ListAccountActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_lsdh:
                 intent = new Intent(DetailRatingActivity.this, OrderHistoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
-                break;
-            case R.id.nav_qlhd:
+                finish();
                 break;
             case R.id.nav_tk:
                 intent = new Intent(DetailRatingActivity.this, RevenueStatisticActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlbl:
                 intent = new Intent(DetailRatingActivity.this, ListRatingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(DetailRatingActivity.this, ChangePasswordActivity.class);

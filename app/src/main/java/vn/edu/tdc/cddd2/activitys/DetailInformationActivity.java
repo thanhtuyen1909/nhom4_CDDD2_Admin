@@ -2,8 +2,6 @@ package vn.edu.tdc.cddd2.activitys;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,29 +13,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
-import vn.edu.tdc.cddd2.data_models.Product;
 
 public class DetailInformationActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
@@ -48,7 +42,7 @@ public class DetailInformationActivity extends AppCompatActivity implements View
     Intent intent;
     Category itemCate = null;
     Manufacture itemManu = null;
-    String to, key = null, name = null, image = null, location = "images/categories", username = "";
+    String to, key = null, name = null, image = null, location = "images/categories", username = "", accountID = "";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference cateRef = database.getReference("Categories");
     DatabaseReference manuRef = database.getReference("Manufactures");
@@ -63,6 +57,7 @@ public class DetailInformationActivity extends AppCompatActivity implements View
         setContentView(R.layout.layout_detail_infomation);
         intent = getIntent();
         username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
         to = intent.getStringExtra("to");
         itemCate = intent.getParcelableExtra("itemCate");
         itemManu = intent.getParcelableExtra("itemManu");
@@ -115,6 +110,17 @@ public class DetailInformationActivity extends AppCompatActivity implements View
         btnCancel.setOnClickListener(this);
     }
 
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
+    }
+
     private void chooseImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -140,61 +146,6 @@ public class DetailInformationActivity extends AppCompatActivity implements View
         return 1;
     }
 
-    private void checkTrungID(String id) {
-        name = edtName.getText().toString();
-        check = true;
-        //Check trùng loại
-        if(to.equals("ListCate")) {
-            cateRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    check = true;
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Category temp = node.getValue(Category.class);
-                        if (temp.getName().equals(name)) {
-                            check = false;
-                            showWarningDialog("Loại sản phẩm đã tồn tại!");
-                            if (edtName.requestFocus()) {
-                                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                            }
-                            edtName.setText("");
-                            break;
-                        }
-                    }
-                }
-
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        } else {
-            manuRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    check = true;
-                    for (DataSnapshot node : snapshot.getChildren()) {
-                        Manufacture temp = node.getValue(Manufacture.class);
-                        if (temp.getName().equals(name)) {
-                            check = false;
-                            showWarningDialog("Hãng đã tồn tại!");
-                            if (edtName.requestFocus()) {
-                                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                            }
-                            edtName.setText("");
-                            break;
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -223,9 +174,20 @@ public class DetailInformationActivity extends AppCompatActivity implements View
                     category.setName(name);
                     category.setImage(image);
                     if (itemCate == null) {
-                        cateRef.push().setValue(category).addOnSuccessListener(unused -> showSuccesDialog("Thêm loại sản phẩm thành công!"));
+                        cateRef.push().setValue(category).addOnSuccessListener(unused -> {
+                            showSuccesDialog("Thêm loại sản phẩm thành công!");
+                            pushAccountHistory("Thêm loại sản phẩm", "Loại sản phẩm " + category.getName());
+                        });
                     } else {
-                        cateRef.child(key).setValue(category).addOnSuccessListener(unused -> showSuccesDialog("Cập nhật loại sản phẩm thành công!"));
+                        cateRef.child(key).setValue(category).addOnSuccessListener(unused -> {
+                            showSuccesDialog("Cập nhật loại sản phẩm thành công!");
+                            if(!itemCate.getName().equals(category.getName())) {
+                                pushAccountHistory("Cập nhật loại sản phẩm", "Loại sản phẩm đổi tên từ " + itemCate.getName() +
+                                        " thành " + category.getName());
+                            } else {
+                                pushAccountHistory("Cập nhật loại sản phẩm", "Loại sản phẩm " + category.getName() + " đổi ảnh");
+                            }
+                        });
                     }
                 }
                 else {
@@ -234,8 +196,17 @@ public class DetailInformationActivity extends AppCompatActivity implements View
                     manufacture.setImage(image);
                     if (itemManu == null) {
                         manuRef.push().setValue(manufacture).addOnSuccessListener(unused -> showSuccesDialog("Thêm hãng thành công!"));
+                        pushAccountHistory("Thêm hãng", "Hãng " + manufacture.getName());
                     } else {
-                        manuRef.child(key).setValue(manufacture).addOnSuccessListener(unused -> showSuccesDialog("Cập nhật hãng thành công!"));
+                        manuRef.child(key).setValue(manufacture).addOnSuccessListener(unused -> {
+                            showSuccesDialog("Cập nhật hãng thành công!");
+                            if(!itemManu.getName().equals(manufacture.getName())) {
+                                pushAccountHistory("Cập nhật hãng", "Hãng đổi tên từ " + itemManu.getName() +
+                                        " thành " + manufacture.getName());
+                            } else {
+                                pushAccountHistory("Cập nhật hãng", "Hãng " + manufacture.getName() + " đổi ảnh");
+                            }
+                        });
                     }
                 }
             }

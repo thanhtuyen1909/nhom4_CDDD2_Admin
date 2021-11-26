@@ -65,7 +65,7 @@
         <!-- Salesman -->
         <activity
             android:name=".activitys.ListProductSMActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListCartActivity"
             android:screenOrientation="portrait" />
@@ -79,7 +79,7 @@
         <!-- Shipper -->
         <activity
             android:name=".activitys.ShipProcessActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <!-- Administrators -->
         <activity
             android:name=".activitys.MainADMActivity"
@@ -119,10 +119,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListEmployeeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.DetailEmployeeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.DetailSalaryActivity"
             android:screenOrientation="portrait" />

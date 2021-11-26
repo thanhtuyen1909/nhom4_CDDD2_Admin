@@ -30,20 +30,28 @@ import vn.edu.tdc.cddd2.data_models.Invoice;
 
 public class AttendanceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private RecyclerView recyclerView;
-    private ArrayList<Employee> listEmployees;
-    private NavigationView navigationView;
-    private EmployeeAdapter employeeAdapter;
+    RecyclerView recyclerView;
+    ArrayList<Employee> listEmployees;
+    NavigationView navigationView;
+    EmployeeAdapter employeeAdapter;
     private Intent intent;
+    String accountID = "", username = "", name = "", role = "", img = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_employee);
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);

@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 Account account = new Account();
                 account.setUsername(String.valueOf(edtUsername.getText()));
                 account.setPassword(String.valueOf(edtPassword.getText()));
-                ref.addValueEventListener(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot node : snapshot.getChildren()) {
@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 switch (temp.getRole_id()) {
                                                     case 0:
                                                         intent = new Intent(LoginActivity.this, MainADMActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
@@ -85,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         break;
                                                     case 2:
                                                         intent = new Intent(LoginActivity.this, MainQLKActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
@@ -104,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         break;
                                                     case 4:
                                                         intent = new Intent(LoginActivity.this, OrderProcessActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
@@ -113,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         break;
                                                     case 5:
                                                         intent = new Intent(LoginActivity.this, AttendanceActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);

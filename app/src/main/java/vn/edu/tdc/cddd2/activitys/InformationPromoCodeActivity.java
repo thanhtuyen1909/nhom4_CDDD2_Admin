@@ -41,6 +41,7 @@ import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.data_models.Account;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Notification;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
@@ -57,7 +58,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
     PromoCode item = null;
     DatabaseReference promoRef;
     StorageReference imageRef = null;
-    String key = null, name = null, image = null, startDate = null, endDate = null, username = "";
+    String key = null, name = null, image = null, startDate = null, endDate = null, username = "", accountID = "";
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
@@ -66,6 +67,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
         setContentView(R.layout.layout_info_promocode);
         intent = getIntent();
         username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
         item = (PromoCode) intent.getParcelableExtra("item");
 
         // Toolbar
@@ -133,10 +135,13 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
             return -1;
         }
         //Check ngày
-        if (sdate.before(now)) {
-            showWarningDialog("Ngày bắt đầu phải lớn hơn hoặc bằng ngày hiện tại!");
-            return -1;
+        if(item == null) {
+            if (sdate.before(now)) {
+                showWarningDialog("Ngày bắt đầu phải lớn hơn hoặc bằng ngày hiện tại!");
+                return -1;
+            }
         }
+
         if (edate.before(sdate)) {
             showWarningDialog("Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!");
             return -1;
@@ -147,7 +152,7 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
 
     private void showDatePickerDialog(View v) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
-            date = (dayOfMonth + 1) + "/" + (month + 1) + "/" + year;
+            date = dayOfMonth + "/" + (month + 1) + "/" + year;
             if (v.getId() == R.id.edtNgayBD) {
                 edtStartDate.setText(date);
             } else edtEndDate.setText(date);
@@ -168,57 +173,61 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
         }
     }
 
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
+    }
+
     @Override
     public void onClick(View v) {
         if (v == btnSave) {
             name = edtName.getText().toString();
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
-                    .child(name + "." + getFileExtension(filePath));
             startDate = edtStartDate.getText().toString();
             endDate = edtEndDate.getText().toString();
-            if(checkError() == 1) {
+            if (checkError() == 1) {
                 //upload ảnh
                 if (filePath != null) {
-                    storageRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //lưu thông báo
-                            DatabaseReference notiRef = FirebaseDatabase.getInstance().getReference("Notification");
-                            DatabaseReference accountRef = FirebaseDatabase.getInstance().getReference("Account");
-                            accountRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    for(DataSnapshot node : dataSnapshot.getChildren()){
-                                        Account account = node.getValue(Account.class);
-                                        if(account.getRole_id() == 1){
-                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/promocodes")
+                            .child(name + "." + getFileExtension(filePath));
+                    storageRef.putFile(filePath).addOnSuccessListener(taskSnapshot -> {
+                        //lưu thông báo
+                        DatabaseReference notiRef = FirebaseDatabase.getInstance().getReference("Notification");
+                        DatabaseReference accountRef = FirebaseDatabase.getInstance().getReference("Account");
+                        accountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot node : dataSnapshot.getChildren()) {
+                                    Account account = node.getValue(Account.class);
+                                    if (account.getRole_id() == 1) {
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-                                            Notification noti = new Notification();
-                                            noti.setTitle(name);
-                                            noti.setCreated_at(sdf.format(new Date()));
-                                            noti.setContent("Tưng bừng khuyến mãi từ ngày "+startDate+" đến "+endDate);
-                                            noti.setAccountID(node.getKey());
-                                            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                @Override
-                                                public void onSuccess(Uri uri) {
-                                                    Log.d("TAG", "onSuccess: +"+uri.toString());
-                                                    noti.setImage(uri.toString());
-                                                    notiRef.push().setValue(noti);
-                                                    //get image uri
-                                                }
-                                            });
-
-                                        }
-
+                                        Notification noti = new Notification();
+                                        noti.setTitle(name);
+                                        noti.setCreated_at(sdf.format(new Date()));
+                                        noti.setContent("Tưng bừng khuyến mãi từ ngày " + startDate + " đến " + endDate);
+                                        noti.setAccountID(node.getKey());
+                                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                noti.setImage(uri.toString());
+                                                notiRef.push().setValue(noti);
+                                            }
+                                        });
                                     }
                                 }
+                            }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                }
-                            });
-                        }
+                            }
+                        });
                     });
                     image = name + "." + getFileExtension(filePath);
                 }
@@ -228,9 +237,15 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
                 promoCode.setEndDate(endDate);
                 promoCode.setImage(image);
                 if (item == null) {
-                    promoRef.push().setValue(promoCode).addOnSuccessListener(unused -> showSuccesDialog("Thêm khuyến mãi thành công!"));
+                    promoRef.push().setValue(promoCode).addOnSuccessListener(unused -> {
+                        showSuccesDialog("Thêm khuyến mãi thành công!");
+                        pushAccountHistory("Thêm chương trình khuyến mãi", promoCode.getName());
+                    });
                 } else {
-                    promoRef.child(key).setValue(promoCode).addOnSuccessListener(unused -> showSuccesDialog("Cập nhật khuyến mãi thành công!"));
+                    promoRef.child(key).setValue(promoCode).addOnSuccessListener(unused -> {
+                        showSuccesDialog("Cập nhật khuyến mãi thành công!");
+                        pushAccountHistory("Cập nhật chương trình khuyến mãi", promoCode.getName());
+                    });
                 }
 
 
@@ -333,4 +348,3 @@ public class InformationPromoCodeActivity extends AppCompatActivity implements V
         alertDialog.show();
     }
 }
-

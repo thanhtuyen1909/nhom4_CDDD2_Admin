@@ -32,10 +32,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.PromoCodeAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.PromoCode;
 
 public class ListPromoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -43,7 +46,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
     Handler handler = new Handler();
     Toolbar toolbar;
     TextView btnBack, subtitleAppbar, txtName, txtRole;
-    String username = "", name = "", role = "";
+    String username = "", name = "", role = "", img = "", accountID = "";
     SearchView searchView;
     Button btnAdd;
     private DrawerLayout drawerLayout;
@@ -60,10 +63,13 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_promocode);
+
         intent = getIntent();
         username = intent.getStringExtra("username");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        accountID = intent.getStringExtra("accountID");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -86,9 +92,11 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListPromoActivity.this, MainQLKActivity.class);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -97,6 +105,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         btnAdd.setOnClickListener(v -> {
             intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         });
 
@@ -175,6 +184,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             intent = new Intent(ListPromoActivity.this, InformationPromoCodeActivity.class);
             intent.putExtra("item", (Parcelable) item);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         }
 
@@ -183,12 +193,13 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             intent = new Intent(ListPromoActivity.this, DetailPromoCodeActivity.class);
             intent.putExtra("key", key);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         }
 
         @Override
-        public void deletePromoCode(String key) {
-            showWarningDialog(key);
+        public void deletePromoCode(String key, String name) {
+            showWarningDialog(key, name);
         }
 
     };
@@ -200,9 +211,11 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListPromoActivity.this, ListProductActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -210,25 +223,31 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListPromoActivity.this, OrderCoordinationActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListPromoActivity.this, ListDiscountCodeActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListPromoActivity.this, ListCateActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -244,9 +263,11 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListPromoActivity.this, ListManuActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -268,7 +289,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
     }
 
     // Xử lý sự kiện xoá:
-    private void showWarningDialog(String key) {
+    private void showWarningDialog(String key, String name) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListPromoActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListPromoActivity.this).inflate(
                 R.layout.layout_error_dialog,
@@ -304,6 +325,7 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
                 }
             });
             showSuccesDialog();
+            pushAccountHistory("Xóa chương trình khuyến mãi", name);
         });
 
         view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
@@ -341,5 +363,16 @@ public class ListPromoActivity extends AppCompatActivity implements NavigationVi
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
     }
 }

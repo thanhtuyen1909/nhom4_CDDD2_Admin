@@ -36,11 +36,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.DAO.DAOProduct;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ProductAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Category;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
@@ -50,7 +53,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     Toolbar toolbar;
     Handler handler = new Handler();
     TextView btnBack, totalProduct, txtName, txtRole, title, mess;
-    String username = "", name = "", role = "";
+    String username = "", name = "", role = "", img = "", accountID = "";
     SearchView searchView;
     Button btnAdd;
     private Spinner spinCate, spinManu;
@@ -70,10 +73,13 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_product);
+
         intent = getIntent();
         username = intent.getStringExtra("username");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        accountID = intent.getStringExtra("accountID");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -94,9 +100,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListProductActivity.this, MainQLKActivity.class);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -105,6 +113,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         btnAdd.setOnClickListener(v -> {
             intent = new Intent(ListProductActivity.this, DetailProductActivity.class);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         });
 
@@ -322,9 +331,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                     manu.setKey(node.getKey());
                     listManu.add(manu);
                     manuAdapter.notifyDataSetChanged();
-
                 }
-
             }
 
             @Override
@@ -361,7 +368,7 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         public void editProduct(Product item) {
             intent = new Intent(ListProductActivity.this, DetailEditProductActivity.class);
             intent.putExtra("item", (Parcelable) item);
-            intent.putExtra("username", username);
+            intent.putExtra("accountID", username);
             startActivity(intent);
         }
     };
@@ -375,33 +382,41 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListProductActivity.this, ListPromoActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListProductActivity.this, OrderCoordinationActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListProductActivity.this, ListDiscountCodeActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListProductActivity.this, ListCateActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -417,9 +432,11 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_qlh:
                 intent = new Intent(ListProductActivity.this, ListManuActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -460,11 +477,9 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
             alertDialog.dismiss();
             item.setStatus(-1);
             DAOProduct dao = new DAOProduct();
-            dao.update(item.getKey(), item).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    showSuccesDialog();
-                }
+            dao.update(item.getKey(), item).addOnSuccessListener(unused -> {
+                showSuccesDialog();
+                pushAccountHistory("Xóa sản phẩm", "Mã sản phẩm " + item.getId());
             });
             proAdapter.notifyDataSetChanged();
         });
@@ -502,4 +517,14 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         alertDialog.show();
     }
 
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
+    }
 }

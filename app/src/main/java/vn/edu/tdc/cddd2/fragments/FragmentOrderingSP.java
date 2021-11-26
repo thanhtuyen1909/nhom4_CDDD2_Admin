@@ -36,7 +36,7 @@ public class FragmentOrderingSP extends Fragment {
     ArrayList<Order> listOrder;
     Order2Adapter orderAdapter;
     Intent intent;
-    String accountID = "Account6";
+    String accountID = "a";
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
 

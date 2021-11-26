@@ -14,7 +14,7 @@ import vn.edu.tdc.cddd2.R;
 
 public class MainADMActivity extends AppCompatActivity implements View.OnClickListener {
     // Khai báo biến
-    String username = "", name = "", role = "", img = "";
+    String accountID = "", username = "", name = "", role = "", img = "";
     TextView txtUsername;
     Button btnQLTK, btnLSDH, btnTK, btnQLBL, btnDX, btnDMK;
     private Intent intent;
@@ -23,8 +23,10 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main_2);
+
         intent = getIntent();
         username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
         img = intent.getStringExtra("image");
@@ -86,6 +88,7 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btnQLBL:
                 intent = new Intent(MainADMActivity.this, ListRatingActivity.class);
                 intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 intent.putExtra("image", img);
