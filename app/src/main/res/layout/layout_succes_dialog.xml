@@ -26,18 +26,6 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             />
-
-        <ImageView
-            android:id="@+id/imageIcon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="10dp"
-            android:contentDescription="@string/app_name"
-            app:layout_constraintBottom_toBottomOf="@+id/textTitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textTitle"
-            android:background="@drawable/ic_succes" />
-
         <TextView
             android:id="@+id/textMessage"
             android:layout_width="match_parent"
@@ -48,21 +36,35 @@
             android:layout_marginBottom="40dp"
             android:textColor="@color/colorTextPrimary"
             android:textSize="16sp"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textTitle"/>
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="166dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/button_succes_background"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            android:text="@string/buttonCancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            />
 
+        <Button
+            android:id="@+id/buttonAction"
+            android:layout_width="168dp"
+            android:layout_height="37dp"
+            android:background="@drawable/button_succes_background"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            android:text="@string/buttonOk"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/buttonAction"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/button_succes_background"
-        android:textColor="@color/colorWhite"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/layoutDialog"
-        app:layout_constraintTop_toBottomOf="@+id/layoutDialog"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,11 @@
 package vn.edu.tdc.cddd2.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.icu.text.SimpleDateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,22 +13,47 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.activitys.AttendanceActivity;
+import vn.edu.tdc.cddd2.activitys.ListAccountActivity;
+import vn.edu.tdc.cddd2.activitys.ListHistoryActivity;
 import vn.edu.tdc.cddd2.data_models.Account;
+import vn.edu.tdc.cddd2.data_models.Attendance;
+import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.Employee;
+import vn.edu.tdc.cddd2.data_models.History;
 import vn.edu.tdc.cddd2.data_models.Product;
+import vn.edu.tdc.cddd2.data_models.Role;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> implements Filterable {
     ArrayList<Account> listAccounts;
     ArrayList<Account> listAccount1;
     private Context context;
+    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
     AccountAdapter.ItemClickListener itemClickListener;
+    private TextView title,mess;
+    private String unlock,lock;
+    private Intent intent;
 
     public void setItemClickListener(AccountAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -45,24 +75,132 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AccountAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AccountAdapter.ViewHolder holder,@SuppressLint("RecyclerView")  int position) {
         Account item = listAccounts.get(position);
         holder.im_item.setImageResource(R.drawable.baseline_person_24);
-        holder.tv_username.setText(item.getUsername());
-        holder.tv_role.setText(item.getRole_id()+"");
+        if (item.getUsername().equals("")) {
+            if (item.getRole_id() == 1) {
+                myRef.child("Customer").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Customer customer = node.getValue(Customer.class);
+                            if (customer.getAccountID().equals(item.getAccountID())) {
+                                holder.tv_username.setText(customer.getName() + " (Facebook)");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+        } else {
+            holder.tv_username.setText(item.getUsername());
+        }
+
+
+        myRef.child("Role").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot DSRole:dataSnapshot.getChildren()){
+                    Role role=DSRole.getValue(Role.class);
+                    if(item.getRole_id()==role.getId()){
+                        holder.tv_role.setText(role.getName());
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        if (item.getRole_id() == 1) {
+            myRef.child("Customer").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Customer customer = node.getValue(Customer.class);
+                        if (customer.getAccountID().equals(item.getAccountID())) {
+                            if (!customer.getImage().equals("")) {
+                                Picasso.get().load(customer.getImage()).fit().into(holder.im_item);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            myRef.child("Employees").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot node : snapshot.getChildren()) {
+                        Employee employee = node.getValue(Employee.class);
+
+                        if (employee.getAccountID().equals(item.getAccountID())) {
+
+                            if (!employee.getImage().equals("")) {
+                                Picasso.get().load(employee.getImage()).fit().into(holder.im_item);
+                            }
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
         holder.onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(itemClickListener != null) {
-                    if(v.getId() == R.id.btnHistory) {
-                        itemClickListener.getLayoutHistory();
+
+                if (itemClickListener != null) {
+                    if (v.getId() == R.id.btnHistory) {
+                        itemClickListener.getLayoutHistory(item);
+                    } else if(v.getId() == R.id.btnLock){
+                        if (item.getStatus().equals("lock")) {
+                            itemClickListener.lockAccount(item, "unlock");
+                        } else {
+                            itemClickListener.lockAccount(item, "lock");
+                        }
+
+                    }else {
+                        itemClickListener.getInfor(item);
                     }
-                    else itemClickListener.getInfor(item);
                 } else {
                     return;
                 }
             }
         };
+        if (item.getStatus().equals("lock")) {
+            holder.im_lock.setBackground(context.getDrawable(R.drawable.baseline_lock_24));
+        } else {
+            holder.im_lock.setBackground(context.getDrawable(R.drawable.baseline_lock_open_24));
+        }
+        holder.im_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String key=item.getAccountID();
+                intent=new Intent(context, ListHistoryActivity.class);
+                intent.putExtra("key",key);
+                Log.d("TAG", "getLayoutHistory: "+item.getAccountID());
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -126,6 +264,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     public interface ItemClickListener {
         void getInfor(Account item);
-        void getLayoutHistory();
+        void getLayoutHistory(Account item);
+        void lockAccount(Account item, String status);
     }
 }

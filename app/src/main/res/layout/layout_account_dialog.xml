@@ -44,27 +44,27 @@
 
         <TextView
             android:id="@+id/tvMatKhau"
-            android:layout_width="123dp"
+            android:layout_width="128dp"
             android:layout_height="54dp"
-            android:layout_marginBottom="228dp"
+            android:layout_marginBottom="8dp"
             android:gravity="bottom"
             android:text="@string/matkhau"
-            app:layout_constraintBottom_toTopOf="@+id/buttonAction"
-            app:layout_constraintEnd_toStartOf="@+id/edtMatKhau"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintBottom_toTopOf="@+id/tvSpinner"
+
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/tvSpinner"
-            android:layout_width="139dp"
-            android:layout_height="32dp"
+            android:layout_width="123dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="184dp"
+            android:gravity="bottom"
             android:text="@string/roleSpinner"
-
-
             app:layout_constraintBottom_toTopOf="@+id/buttonCancel"
-            app:layout_constraintEnd_toStartOf="@+id/spinner_role"
-            app:layout_constraintTop_toBottomOf="@+id/tvMatKhau"
-            app:layout_constraintVertical_bias="0.091" />
+            app:layout_constraintEnd_toStartOf="@+id/edtRole"
+            app:layout_constraintHorizontal_bias="0.625"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/edtHoten"
@@ -75,26 +75,27 @@
             app:layout_constraintBottom_toTopOf="@+id/edtMatKhau"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textTitle1"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/edtMatKhau"
             android:layout_width="160dp"
             android:layout_height="54dp"
-            app:layout_constraintBottom_toTopOf="@+id/buttonAction"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textTitle1"
-            app:layout_constraintVertical_bias="0.183" />
+            android:layout_marginEnd="4dp"
 
-        <Spinner
-            android:id="@+id/spinner_role"
-            android:layout_width="159dp"
-            android:layout_height="32dp"
-            android:entries="@array/quyen"
-            app:layout_constraintBottom_toTopOf="@+id/buttonCancel"
+
+            app:layout_constraintBottom_toTopOf="@+id/edtRole"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edtMatKhau"
-            app:layout_constraintVertical_bias="0.083" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/tvMatKhau" />
+
+        <EditText
+            android:id="@+id/edtRole"
+            android:layout_width="159dp"
+            android:layout_height="42dp"
+            android:layout_marginBottom="176dp"
+            app:layout_constraintBottom_toTopOf="@+id/buttonAction"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/buttonCancel"
@@ -102,7 +103,6 @@
             android:layout_height="42dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/button_succes_background"
-            android:text="@string/buttonCancel"
             android:textColor="@color/colorWhite"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"

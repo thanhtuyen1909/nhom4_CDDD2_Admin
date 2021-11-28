@@ -18,6 +18,7 @@
     <string name="buttonBack">Trở lại</string>
     <string name="buttonSave">Lưu</string>
     <string name="buttonCancel">Huỷ</string>
+    <string name="buttonOk">Ok</string>
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="subtitleUS">qlk-1</string>
@@ -39,7 +40,7 @@
     <string name="btnAll">Chọn tất cả</string>
     <string name="hoten">Nhập họ tên</string>
     <string name="matkhau">Nhập mật khẩu</string>
-    <string name="roleSpinner">Chọn role</string>
+    <string name="roleSpinner">Nhap Role_ID</string>
 
 
     <string-array name="ngay">

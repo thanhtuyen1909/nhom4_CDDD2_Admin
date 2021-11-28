@@ -4,8 +4,16 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String maNV, String accountID, String address, String birthday, String create_at, String gender, String image, String name, String position, int salary, int allowance) {
-        this.maNV = maNV;
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public Employee(String ID, String accountID, String address, String birthday, String create_at, String gender, String image, String name, String position, int salary, int allowance) {
+        this.ID = ID;
         this.accountID = accountID;
         this.address = address;
         this.birthday = birthday;
@@ -19,16 +27,9 @@ public class Employee {
     }
 
     // Khai báo biến:
-    private String maNV,accountID,address,birthday,create_at,gender,image,name,position;
+    private String ID,accountID,address,birthday,create_at,gender,image,name,position;
     private int salary,allowance;
 
-    public String getMaNV() {
-        return maNV;
-    }
-
-    public void setMaNV(String maNV) {
-        this.maNV = maNV;
-    }
 
     public String getAccountID() {
         return accountID;

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,8 +20,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -41,11 +49,16 @@ public class ListHistoryActivity extends AppCompatActivity {
     private HistoryAdapter historyAdapter;
     private Intent intent;
     private ListView listView;
+    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
+    private String key;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_historyactivity);
+        intent=this.getIntent();
+        key=intent.getStringExtra("key");
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.btnBack);
@@ -62,13 +75,31 @@ public class ListHistoryActivity extends AppCompatActivity {
         listView = findViewById(R.id.listHistory);
         listHistory = new ArrayList<>();
         data();
-        historyAdapter = new HistoryAdapter(this, R.layout.item_historyactivity, listHistory);
+        historyAdapter =new HistoryAdapter(this,R.layout.item_historyactivity,listHistory);
+
         listView.setAdapter(historyAdapter);
+
     }
 
     private void data() {
-        listHistory.add(new History("13/10/2021", "Tivi", 1));
-        listHistory.add(new History("13/10/2021", "Laptop", 5));
-        listHistory.add(new History("13/10/2021", "Máy tính bảng", 10));
+       myRef.child("AccountHistory").addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               for (DataSnapshot DSAccountH:dataSnapshot.getChildren()){
+                   History history = DSAccountH.getValue(History.class);
+                  if(history.getAccountID().equals(key)){
+                      listHistory.add(history);
+                      Log.d("aaaa", "onDataChange: "+listHistory.size());
+                  }
+               }
+
+               historyAdapter.notifyDataSetChanged();
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
     }
 }

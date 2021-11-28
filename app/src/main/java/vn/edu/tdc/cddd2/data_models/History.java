@@ -1,12 +1,36 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class History {
-    // Khai báo biến:
-    private String date;
-    private String name;
-    private int soluong;
 
-    // Get - set:
+    // Khai báo biến:
+    private String key,accountID,date,action,detail;
+    public String getKey() {
+        return key;
+    }
+
+    public History() {
+    }
+
+    public History(String key, String accountID, String date, String action, String detail) {
+        this.key = key;
+        this.accountID = accountID;
+        this.date = date;
+        this.action = action;
+        this.detail = detail;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
     public String getDate() {
         return date;
     }
@@ -15,37 +39,22 @@ public class History {
         this.date = date;
     }
 
-    public String getName() {
-        return name;
+    public String getAction() {
+        return action;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAction(String action) {
+        this.action = action;
     }
 
-    public int getSoluong() {
-        return soluong;
+    public String getDetail() {
+        return detail;
     }
 
-    public void setSoluong(int soluong) {
-        this.soluong = soluong;
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
-    // Contructor:
-    public History(String date, String name, int soluong) {
-        this.date = date;
-        this.name = name;
-        this.soluong = soluong;
-    }
 
-    // ToString:
 
-    @Override
-    public String toString() {
-        return "History{" +
-                "date='" + date + '\'' +
-                ", name='" + name + '\'' +
-                ", soluong='" + soluong + '\'' +
-                '}';
-    }
 }
