@@ -34,7 +34,7 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
     @Override
     public Product5Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View itemView = inflater.inflate(R.layout.item_detail_order_invoice,parent,false);
+        View itemView = inflater.inflate(R.layout.item_detail_order_invoice, parent, false);
         Product5Adapter.ViewHolder viewHolder = new Product5Adapter.ViewHolder(itemView);
         return viewHolder;
     }
@@ -42,7 +42,7 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull Product5Adapter.ViewHolder holder, int position) {
         Product item = listProducts.get(position);
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/products/"+item.getName()+"/"+item.getImage());
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/products/" + item.getName() + "/" + item.getImage());
         imageRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri.toString()).resize(holder.im_item.getWidth(), holder.im_item.getHeight()).into(holder.im_item));
         holder.tv_name.setText(item.getName());
         holder.tv_amount.setText(formatPrice(item.getPrice()) + " x " + String.valueOf(item.getQuantity()));
@@ -53,9 +53,9 @@ public class Product5Adapter extends RecyclerView.Adapter<Product5Adapter.ViewHo
         return listProducts.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView im_item ;
-        TextView tv_name, tv_amount ;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView im_item;
+        TextView tv_name, tv_amount;
         View.OnClickListener onClickListener;
 
         public ViewHolder(@NonNull View itemView) {
