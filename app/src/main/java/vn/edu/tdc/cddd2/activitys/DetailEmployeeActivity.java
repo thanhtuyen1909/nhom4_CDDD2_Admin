@@ -50,7 +50,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Employee;
+import vn.edu.tdc.cddd2.data_models.Employees;
 
 public class DetailEmployeeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
@@ -66,9 +66,8 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
     Uri imageUri;
     ProgressBar bar;
     String type = "add", date = "";
-    Employee item = new Employee("Account2", "Khánh Hoà", 500000, "14/12/2001", "1/11/2018", "Nam", "https://firebasestorage.googleapis.com/v0/b/cddd2-f1bcd.appspot.com/o/images%2Fpromocodes%2Fsale%2011%2F11.jpg?alt=media&token=7b2aa86a-0850-424f-b9ba-848903f59f86",
-            "Tên Là Danh", "Quản lý kho", 10000000);
-    DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
+    Employees item ;
+    DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employeess");
     static int SELECT_IMAGE_CODE = 1;
     boolean check = true;
 
@@ -76,7 +75,11 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_employee);
-
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            type = bundle.getString("type");
+            item = bundle.getParcelable("item");
+        }
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -147,14 +150,14 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
                             public void run() {
                                 if (check == true) {
                                     Log.d("TAG", "onClick: a");
-                                    saveEmployee();
+                                    saveEmployees();
                                 }
                             }
                         },200);
 
                     }
                     else if(type.equals("edit")){
-                        saveEmployee();
+                        saveEmployees();
                     }
                 }
             }
@@ -165,6 +168,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
             @Override
             public void onClick(View v) {
                 intent = new Intent(DetailEmployeeActivity.this,DetailSalaryActivity.class);
+                intent.putExtra("key",empID.getText()+"");
                 startActivity(intent);
             }
         });
@@ -173,22 +177,22 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
-    private void saveEmployee(){
-        Employee employee = new Employee();
+    private void saveEmployees(){
+        Employees Employees = new Employees();
 
-        employee.setAccountID("");
-        employee.setAddress(empAddress.getText() + "");
+        Employees.setAccountID("");
+        Employees.setAddress(empAddress.getText() + "");
         if(!String.valueOf(empAllowance.getText()).equals("")){
-            employee.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
+            Employees.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
         }
-        employee.setBirthday(empDOB.getText() + "");
-        employee.setCreated_at(empCreated_at.getText() + "");
-        employee.setGender((String) empGender.getSelectedItem());
-        employee.setName(empName.getText() + "");
-        employee.setPosition((String) empPosition.getSelectedItem());
-        employee.setSalary(Integer.parseInt(empSalary.getText() + ""));
+        Employees.setBirthday(empDOB.getText() + "");
+        Employees.setCreated_at(empCreated_at.getText() + "");
+        Employees.setGender((String) empGender.getSelectedItem());
+        Employees.setName(empName.getText() + "");
+        Employees.setPosition((String) empPosition.getSelectedItem());
+        Employees.setSalary(Integer.parseInt(empSalary.getText() + ""));
         //get image
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/Employees/" + employee.getName() + ".jpg");
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/Employeess/" + Employees.getName() + ".jpg");
         Bitmap bitmap = ((BitmapDrawable) empImage.getDrawable()).getBitmap();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -201,12 +205,17 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
                 imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        employee.setImage(uri.toString());
-                        empRef.child(empID.getText() + "").setValue(employee).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        Employees.setImage(uri.toString());
+                        empRef.child(empID.getText() + "").setValue(Employees).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
                                 bar.setVisibility(View.INVISIBLE);
-                                showSuccesDialog("Thêm nhân viên thành công !");
+                                if(type.equals("add")){
+                                    showSuccesDialog("Thêm nhân viên thành công !");
+                                }else{
+                                    showSuccesDialog("Cập nhật nhân viên thành công !");
+                                }
+
                             }
                         });
                     }
@@ -266,7 +275,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
 
     private void data() {
         if (type.equals("edit")) {
-            empID.setText(item.getId());
+            empID.setText(item.getKeyEmployees());
             for (int i = 0; i < empPosition.getCount(); i++) {
                 String position = (String) empPosition.getItemAtPosition(i);
                 if (position.equals(item.getPosition())) {
@@ -368,6 +377,8 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
+            Intent itent = new Intent(DetailEmployeeActivity.this,ListEmployeeActivity.class);
+            startActivity(itent);
             finish();
         });
 

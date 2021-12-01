@@ -1,19 +1,15 @@
 package vn.edu.tdc.cddd2.activitys;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,12 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -37,7 +30,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,39 +42,42 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.EmployeeAdapter;
-
+import vn.edu.tdc.cddd2.adapters.AttendanceAdapter;
 import vn.edu.tdc.cddd2.data_models.Attendance;
 import vn.edu.tdc.cddd2.data_models.Employee;
 
 
 public class AttendanceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar, title, mess;
-    private EditText edtĐiemDanh, spinerDate;
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar, title;
+    EditText edtĐiemDanh, spinerDate;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private RecyclerView recyclerView;
-    private ArrayList<Employee> listEmployees;
-    private NavigationView navigationView;
-    private EmployeeAdapter employeeAdapter;
+    RecyclerView recyclerView;
+    private ArrayList<Attendance> listAttend;
+    NavigationView navigationView;
+    private AttendanceAdapter adapter;
     private Intent intent;
     private DatePickerDialog datePickerDialog;
-    private SearchView searchView;
+    SearchView searchView;
     private DatabaseReference myDB = FirebaseDatabase.getInstance().getReference();
 
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Attendance");
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     boolean check = true;
+    String currentMoth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
+    String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+    ArrayList<Employee> listEmployee = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_list_employee);
-
+        setContentView(R.layout.layout_attendance);
+        getListEmployee();
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,66 +87,37 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
-        spinerDate = findViewById(R.id.spinner_date);
-        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+        spinerDate = findViewById(R.id.spManageEmployees);
         String[] temp = currentDate.split("/");
         String key = temp[1] + "-" + temp[2];
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        Query query = myRef.child(key).orderByChild("date").equalTo(currentDate);
+        query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
-                check = true;
-                myRef.child(key).addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Attendance attendance = dataSnapshot.getValue(Attendance.class);
-                        if (attendance.getDate().equals(currentDate)) {
-                            check = false;
-                            Log.d("TAG", "onDataChange: " + check);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    empRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot node : dataSnapshot.getChildren()) {
+                                Attendance attendance = new Attendance(currentDate, node.getKey(), "", 0);
+                                myRef.child(key).push().setValue(attendance);
+                            }
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                        }
+                    });
+                }
             }
-        }, 200);
 
-        if (check) {
-            empRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot node : dataSnapshot.getChildren()) {
-                        Attendance attendance = new Attendance(currentDate, node.getKey(), "", 0);
-                        myRef.child(key).push().setValue(attendance);
-                    }
-                }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
 
-                }
-            });
-        }
 
         spinerDate.setText(currentDate);
         spinerDate.addTextChangedListener(new TextWatcher() {
@@ -186,8 +152,8 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
                                 // set day of month , month and year value in the edit text
-                                String day = dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year;
+                                String day = dayOfMonth + "/"
+                                        + (monthOfYear + 1) + "/" + year;
                                 spinerDate.setText(day);
 
                             }
@@ -209,31 +175,120 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         });
 
         //RecycleView
-        recyclerView = findViewById(R.id.listEmployee);
+        recyclerView = findViewById(R.id.rcvManageEmployees);
         recyclerView.setHasFixedSize(true);
-        listEmployees = new ArrayList<>();
-        data();
-        employeeAdapter = new EmployeeAdapter(listEmployees, this);
-        employeeAdapter.setItemClickListener(itemClickListener);
-        recyclerView.setAdapter(employeeAdapter);
+        listAttend = new ArrayList<>();
+        if (!spinerDate.getText().equals("")) {
+            data(spinerDate.getText() + "");
+        } else {
+            data(currentDate);
+        }
+        adapter = new AttendanceAdapter(listAttend, this);
+        adapter.setItemClickListener(itemClickListener);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         //search
-        searchView = findViewById(R.id.editSearch);
+        searchView = findViewById(R.id.searchManageEmployees);
+
+        spinerDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                data(String.valueOf(s));
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                employeeAdapter.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                employeeAdapter.getFilter().filter(newText);
+
+                filter(String.valueOf(spinerDate.getText()), newText);
                 return false;
+            }
+        });
+    }
+
+
+    private void filter(String date, String query) {
+        if (!date.equals("")) {
+
+            if (query.equals("")) {
+
+                data(date);
+            } else {
+
+                String month = date.split("/")[1] + "-" + date.split("/")[2];
+                myRef.child(month).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        listAttend.clear();
+                        ArrayList<Attendance> temp = new ArrayList<>();
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            Attendance attendance = node.getValue(Attendance.class);
+                            attendance.setKey(node.getKey());
+                            if (attendance.getDate().equals(date)) {
+                                temp.add(attendance);
+                            }
+                        }
+
+                        for (Attendance attendance : temp) {
+                            if(attendance.getEmployeeID().trim().toLowerCase().contains(query.trim().toLowerCase())){
+                                listAttend.add(attendance);
+                                continue;
+                            }
+                            for(Employee emp : listEmployee){
+                                if(attendance.getEmployeeID().equals(emp.getId())){
+                                    if(emp.getName().trim().toLowerCase().contains(query.trim().toLowerCase())){
+                                        listAttend.add(attendance);
+                                    }
+                                }
+                            }
+                        }
+
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        }
+    }
+    private void getListEmployee(){
+
+        empRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot node : snapshot.getChildren()){
+                    Employee employee = node.getValue(Employee.class);
+                    employee.setId(node.getKey());
+                    listEmployee.add(employee);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -244,36 +299,33 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void data() {
-        //listEmployees.add(new Employee("NV001", "Nguyễn Văn A", "Nhân viên bán hàng"));
-        //listEmployees.add(new Employee("QLK001", "Trương Thị Bình", "Quản ly kho"));
-        //listEmployees.add(new Employee("XL001", "La Văn Tiến", "Xử lý đơn hàng"));
-        //listEmployees.add(new Employee("GH001", "Nguyễn Bình", "Nhân viên giao hàng"));
-        //listEmployees.add(new Employee("QTV001", "Lê Danh", "Quản trị viên"));
-        myDB.child("Employees").addListenerForSingleValueEvent(new ValueEventListener() {
+    private void data(String date) {
+        String month = date.split("/")[1] + "-" + date.split("/")[2];
+        myRef.child(month).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot DSEmployee : dataSnapshot.getChildren()) {
-                    Employee employee = DSEmployee.getValue(Employee.class);
-                    employee.setId(DSEmployee.getKey());
-                    listEmployees.add(employee);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listAttend.clear();
+                for (DataSnapshot node : snapshot.getChildren()) {
+                    Attendance attendance = node.getValue(Attendance.class);
+                    attendance.setKey(node.getKey());
+                    if (attendance.getDate().equals(date)) {
+                        listAttend.add(attendance);
+                    }
                 }
-                employeeAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
     }
 
-    private EmployeeAdapter.ItemClickListener itemClickListener = new EmployeeAdapter.ItemClickListener() {
+    private AttendanceAdapter.ItemClickListener itemClickListener = new AttendanceAdapter.ItemClickListener() {
         @Override
-        public void getInfor(Employee item) {
-            //Toast.makeText(AttendanceActivity.this, "Điểm danh", Toast.LENGTH_SHORT).show();
-            showSuccesDialog("Lý do vắng", item.getId());
-
+        public void makeAbsent(Attendance item) {
+            showSuccesDialog("Lý do vắng", item);
         }
     };
 
@@ -305,7 +357,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         }
     }
 
-    private void showSuccesDialog(String message, String maNV) {
+    private void showSuccesDialog(String message, Attendance item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(AttendanceActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(AttendanceActivity.this).inflate(
                 R.layout.layout_diemdanh_dialog,
@@ -313,9 +365,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         );
         builder.setView(view);
         title = view.findViewById(R.id.textTitle);
-        title.setText(R.string.title);
-        mess = view.findViewById(R.id.textMessage);
-        mess.setText(message);
+        title.setText("Lý do vắng");
         edtĐiemDanh = view.findViewById(R.id.edtDiemDanh);
 
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
@@ -325,32 +375,13 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
             Map<String, Object> map = new HashMap<>();
-            myDB.child("Employees").addListenerForSingleValueEvent(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot DSEmployees : dataSnapshot.getChildren()) {
-                        Employee employee = DSEmployees.getValue(Employee.class);
-                        employee.setId(DSEmployees.getKey());
-                        //lay ra ngay thang hien tai
-                        String currentMoth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
-                        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-                        if (employee.getId().equals(maNV)) {
-                            map.put("employeeID", employee.getId());
-                            map.put("note", edtĐiemDanh.getText().toString());
-                            map.put("status", "-1");
-                            map.put("date", currentDate);
-                            myDB.child("Attendance").child(currentMoth).push().setValue(map);
-                        }
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+            String currentMoth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
+            String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+            map.put("employeeID", item.getEmployeeID());
+            map.put("note", edtĐiemDanh.getText().toString());
+            map.put("status", -1);
+            map.put("date", currentDate);
+            myRef.child(currentMoth).child(item.getKey()).setValue(map);
 
 
         });

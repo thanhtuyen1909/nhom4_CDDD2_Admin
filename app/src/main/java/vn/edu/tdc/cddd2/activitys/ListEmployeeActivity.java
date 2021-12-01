@@ -1,8 +1,14 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,8 +21,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,21 +33,38 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManageEmployeesAdapter;
+import vn.edu.tdc.cddd2.data_models.Attendance;
+import vn.edu.tdc.cddd2.data_models.Employee;
 import vn.edu.tdc.cddd2.data_models.Employees;
+import vn.edu.tdc.cddd2.data_models.Payroll;
 import vn.edu.tdc.cddd2.data_models.Role;
 import vn.edu.tdc.cddd2.interfaceClick.ItemClickRefreshEmployees;
 
 public class ListEmployeeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         ItemClickRefreshEmployees, SearchView.OnQueryTextListener {
+    private static final int REQUEST_CODE = 1412;
     // Khai báo biến
     private Toolbar toolbar;
     private TextView btnBack, subtitleAppbar;
@@ -60,13 +85,17 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
     ArrayList<Employees> arrEmployees;
     ArrayList<Employees> arrEmployeesFilter;
     ArrayList<String> arrRole;
-
+    int count = 0, count1 = 0,firstIndex = 4;
+    DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
+    DatabaseReference payrollRef = FirebaseDatabase.getInstance().getReference("Payroll");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_employee);
-        setControl();
+        requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
 
+        setControl();
+        createPayroll();
         arrEmployees = new ArrayList<>();
         arrEmployeesFilter = new ArrayList<>();
         arrRole = new ArrayList<>();
@@ -118,19 +147,225 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                 finish();
             }
         });
-
+        tvManageEmployeesRenderSalary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChooseMonthDialog();
+            }
+        });
         // Xử lý sự kiện click button "+":
         btnManageEmployeesAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(ListEmployeeActivity.this, DetailEmployeeActivity.class);
+                intent.putExtra("type","add");
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
         });
 
     }
+    private void showChooseMonthDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListEmployeeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListEmployeeActivity.this).inflate(
+                R.layout.dialog_export,
+                findViewById(R.id.layoutDialog)
+        );
+        builder.setView(view);
+        TextView title = view.findViewById(R.id.textTitle);
+        title.setText("Chọn thời gian");
+        Spinner spinMonth = view.findViewById(R.id.spinMonth);
+        Spinner spinYear = view.findViewById(R.id.spinYear);
+        ArrayList<String> listMonth = new ArrayList<>();
+        ArrayList<String> listYear = new ArrayList<>();
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(ListEmployeeActivity.this, android.R.layout.simple_spinner_dropdown_item,listMonth);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(ListEmployeeActivity.this, android.R.layout.simple_spinner_dropdown_item,listYear);
+        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinMonth.setAdapter(monthAdapter);
+        spinYear.setAdapter(yearAdapter);
+        for(int i = 1;i<=12;i++){
+            monthAdapter.add("Tháng "+i);
+        }
+        monthAdapter.notifyDataSetChanged();
+        for(int i = 2020;i<=2021;i++){
+            yearAdapter.add(""+i);
+        }
+        yearAdapter.notifyDataSetChanged();
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
 
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            int index = spinMonth.getSelectedItemPosition()+1;
+            String month = "";
+            if(index<10){
+                month = "0"+index ;
+            }else {
+                month = index+"";
+            }
+            month+= "-"+spinYear.getSelectedItem();
+            exportExcel(month);
+            showSuccesDialog();
+        });
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+    private void exportExcel(String month) {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFCellStyle style = workbook.createCellStyle();
+
+        HSSFSheet sheet = workbook.createSheet("Bảng lương tháng 10");
+        sheet.setColumnWidth(6,4000);
+        sheet.setColumnWidth(10,4000);
+        HSSFRow row = sheet.createRow(firstIndex);
+        HSSFCell cell = row.createCell(firstIndex);
+        HSSFRow newRow = sheet.createRow(firstIndex+1);
+        firstIndex++;
+        HSSFCell cell0 = newRow.createCell(0);
+        cell0.setCellValue("Mã nhân viên");
+
+        HSSFCell cell1 = newRow.createCell(1);
+        cell1.setCellValue("Tên nhân viên");
+
+        HSSFCell cell2 = newRow.createCell(2);
+        cell2.setCellValue("Số ngày làm");
+
+        HSSFCell cell3 = newRow.createCell(3);
+        cell3.setCellValue("Số ngày nghỉ");
+
+        HSSFCell cell4 = newRow.createCell(4);
+        cell4.setCellValue("Có phép");
+
+        HSSFCell cell5 = newRow.createCell(5);
+        cell5.setCellValue("Không phép");
+
+        HSSFCell cell6 = newRow.createCell(6);
+        cell6.setCellValue("Lương cơ bản");
+
+        HSSFCell cell7 = newRow.createCell(7);
+        cell7.setCellValue("Phụ cấp");
+
+        HSSFCell cell8 = newRow.createCell(8);
+        cell8.setCellValue("Tiền phạt");
+
+        HSSFCell cell9 = newRow.createCell(9);
+        cell9.setCellValue("Tiền thưởng");
+
+        HSSFCell cell10 = newRow.createCell(10);
+        cell10.setCellValue("Tổng lương");
+
+        cell.setCellValue("Chi tiết bảng lương tháng "+month);
+        payrollRef.child(month).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot node : dataSnapshot.getChildren()) {
+                    Payroll payroll = node.getValue(Payroll.class);
+                    HSSFRow row1 = sheet.createRow(firstIndex + 1);
+
+                    firstIndex++;
+                    empRef.child(node.getKey()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                Employee employee = snapshot.getValue(Employee.class);
+                                HSSFCell cell0 = row1.createCell(0);
+                                cell0.setCellValue(node.getKey());
+
+                                HSSFCell cell1 = row1.createCell(1);
+                                cell1.setCellValue(employee.getName());
+
+                                HSSFCell cell2 = row1.createCell(2);
+                                cell2.setCellValue(payroll.getWorkday());
+
+                                HSSFCell cell3 = row1.createCell(3);
+                                cell3.setCellValue(payroll.getAbsent());
+
+                                HSSFCell cell4 = row1.createCell(4);
+                                cell4.setCellValue(payroll.getAbsent() - payroll.getFine() / 50000);
+
+                                HSSFCell cell5 = row1.createCell(5);
+                                cell5.setCellValue(payroll.getFine() / 50000);
+
+                                HSSFCell cell6 = row1.createCell(6);
+                                cell6.setCellValue(payroll.getSalary());
+
+                                HSSFCell cell7 = row1.createCell(7);
+                                cell7.setCellValue(payroll.getAllowance());
+
+                                HSSFCell cell8 = row1.createCell(8);
+                                cell8.setCellValue(payroll.getFine());
+
+                                HSSFCell cell9 = row1.createCell(9);
+                                cell9.setCellValue(payroll.getBonus());
+
+                                HSSFCell cell10 = row1.createCell(10);
+                                cell10.setCellValue(payroll.getTotal());
+
+                                //
+                                File filePath = new File(Environment.getExternalStorageDirectory() + "/Demo.xls");
+
+                                try {
+                                    if (!filePath.exists()) {
+                                        filePath.createNewFile();
+                                    }
+                                    FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                                    workbook.write(fileOutputStream);
+                                    if(fileOutputStream != null){
+                                        fileOutputStream.flush();
+                                        fileOutputStream.close();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+    private void showSuccesDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListEmployeeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListEmployeeActivity.this).inflate(
+                R.layout.layout_succes_dialog,
+                findViewById(R.id.layoutDialog)
+        );
+        builder.setView(view);
+        TextView title = view.findViewById(R.id.textTitle);
+        title.setText("Thông báo");
+        TextView message = view.findViewById(R.id.textMessage);
+        message.setText("Xuất bảng lương thành công!");
+
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
+            alertDialog.dismiss();
+        });
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
     private void setDataTotalNumber() {
         tvManageEmployeesTotal.setText("Tìm được: " + arrEmployeesFilter.size() + "/" + arrEmployees.size() + " nhân viên");
     }
@@ -214,7 +449,86 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         });
     }
 
+    private void createPayroll() {
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+        String currentMonth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
+        int month = Integer.parseInt(currentMonth.split("-")[0]);
+        month--;
+        String lastMonth = month+"-"+currentMonth.split("-")[1];
+        int date = Integer.parseInt(currentDate.split("/")[0]);
+        if(date == 1){
+            DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
+            empRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot node : dataSnapshot.getChildren()) {
 
+                        Employee employee = node.getValue(Employee.class);
+                        attendRef.child(lastMonth).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    HashMap<String, Object> map = new HashMap<>();
+                                    count = 0;
+                                    count1 = 0;
+                                    for (DataSnapshot node1 : snapshot.getChildren()) {
+                                        Attendance attendance = node1.getValue(Attendance.class);
+                                        if (attendance.getEmployeeID().equals(node.getKey())) {
+                                            if (attendance.getStatus() == -1) {
+                                                count++;
+                                                if (attendance.getNote().equals("")) {
+                                                    count1++;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    map.put("absent", count);
+                                    map.put("allowance", employee.getAllowance());
+                                    map.put("salary", employee.getSalary());
+                                    map.put("workday", 30 - count);
+                                    int bonus = 0;
+                                    if (30 - count >= 26 && count1 == 0) {
+                                        map.put("bonus", 200000);
+                                        bonus = 200000;
+                                    } else {
+                                        map.put("bonus", 0);
+                                    }
+                                    map.put("fine", 50000 * count1);
+                                    map.put("total", employee.getSalary() + employee.getAllowance() + bonus - 50000 * count1);
+                                    payrollRef.child(lastMonth).child(node.getKey()).setValue(map);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+    private void requestPermission(String[] permission, int requestCode) {
+        ActivityCompat.requestPermissions(this, permission, requestCode);
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                setControl();
+                createPayroll();
+            }
+        }
+    }
     @Override
     public void onItemClickEmployees() {
         arrEmployeesFilter.clear();

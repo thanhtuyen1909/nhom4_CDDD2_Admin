@@ -39,10 +39,7 @@
         <activity
             android:name=".activitys.LoginActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity
             android:name=".activitys.ListDiscountCodeActivity"
@@ -75,7 +72,9 @@
         <!-- Order Handler -->
         <activity
             android:name=".activitys.OrderProcessActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+
+        </activity>
         <!-- Shipper -->
         <activity
             android:name=".activitys.ShipProcessActivity"
@@ -86,7 +85,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.ListAccountActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activitys.ListHistoryActivity"
             android:screenOrientation="landscape" />
@@ -99,6 +103,7 @@
         <activity
             android:name=".activitys.RevenueStatisticActivity"
             android:screenOrientation="landscape" >
+
         </activity>
         <activity
             android:name=".activitys.ListRatingActivity"
@@ -111,7 +116,9 @@
         <!-- Administrators -->
         <activity
             android:name=".activitys.AttendanceActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+
+        </activity>
         <activity
             android:name=".activitys.ListEmployeeActivity"
             android:screenOrientation="portrait">
@@ -124,7 +131,9 @@
         </activity>
         <activity
             android:name=".activitys.DetailSalaryActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+
+        </activity>
     </application>
 
 </manifest>

@@ -3,6 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/CDDD2/app/src/main/res/layout/dialog_export.xml" value="0.22" />
+        <entry key="..\:/CDDD2/app/src/main/res/layout/item_employee.xml" value="0.1" />
+        <entry key="..\:/CDDD2/app/src/main/res/layout/layout_attendance.xml" value="0.1" />
+        <entry key="..\:/CDDD2/app/src/main/res/layout/layout_diemdanh_dialog.xml" value="0.25" />
+        <entry key="..\:/CDDD2/app/src/main/res/layout/layout_list_employee.xml" value="0.14" />
+        <entry key="..\:/CDDD2/app/src/main/res/layout/layout_revenues.xml" value="0.25" />
+        <entry key="..\:/CDDD2/app/src/main/res/layout/layout_succes_dialog.xml" value="0.1" />
+        <entry key="..\:/CDDD2/app/src/main/res/layout/text_input_percent.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_green_circle.xml" value="0.2203125" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_spinner.xml" value="0.21614583333333334" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/Zuke-Admin/app/src/main/res/drawable/bg_toolbar.xml" value="0.11510416666666666" />

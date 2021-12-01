@@ -39,20 +39,39 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textTitle" />
 
-        <EditText
-            android:id="@+id/edtDiemDanh"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_marginBottom="30dp"
-            android:hint="Nhập lý do..."
-            android:paddingStart="5dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textTitle"/>
+            app:layout_constraintTop_toBottomOf="@+id/textTitle">
+
+            <Spinner
+                android:id="@+id/spinMonth"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_spinner"
+                android:hint="Nhập lý do..."
+                android:paddingStart="5dp" />
+
+            <Spinner
+                android:id="@+id/spinYear"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_spinner"
+                android:hint="Nhập lý do..."
+                android:paddingStart="5dp" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
