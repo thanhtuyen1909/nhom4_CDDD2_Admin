@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +42,7 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
     // Khai báo biến
     Handler handler = new Handler();
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar, totalRating;
+    TextView btnBack, subtitleAppbar, totalRating, txtName, txtRole;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     RecyclerView recyclerView;
@@ -51,8 +52,9 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
     Intent intent;
     Spinner spinner_filterrating;
     SearchView editSearch;
-    String accountID = "Account2", name = "", role = "";
+    String accountID = "", username = "", name = "", role = "", img = "";
     int size = 0;
+    ImageView iv_user;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference proRef = db.getReference("Products");
@@ -62,6 +64,13 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_rating);
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -81,10 +90,12 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
 
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
-            intent = new Intent(ListRatingActivity.this, MainQLKActivity.class);
-            intent.putExtra("username", accountID);
+            intent = new Intent(ListRatingActivity.this, MainADMActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -102,6 +113,12 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         // Xử lý sự kiện thay đổi dữ liệu searchview:
         editSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -138,7 +155,7 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
     }
 
     public void filterRating(String criteria, String query) {
-        if (criteria.equals("Cũ nhất")) {
+        if (criteria.equals("Mới nhất")) {
             if (query.isEmpty()) {
                 ratRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -215,7 +232,7 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                 });
             }
         }
-        else if (criteria.equals("Mới nhất")) {
+        else if (criteria.equals("Cũ nhất")) {
             if (query.isEmpty()) {
                 ratRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -412,10 +429,12 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         @Override
         public void getInfor(String key) {
             intent = new Intent(ListRatingActivity.this, DetailRatingActivity.class);
-            intent.putExtra("username", accountID);
+            intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
             intent.putExtra("productID", key);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         }
@@ -427,29 +446,49 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         switch (id) {
             case R.id.nav_qltk:
                 intent = new Intent(ListRatingActivity.this, ListAccountActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_lsdh:
                 intent = new Intent(ListRatingActivity.this, OrderHistoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlhd:
                 intent = new Intent(ListRatingActivity.this, ListInvoiceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_tk:
                 intent = new Intent(ListRatingActivity.this, RevenueStatisticActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlbl:
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListRatingActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", accountID);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

@@ -17,16 +17,19 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
     Button btnQLH, btnQLSP, btnQLLSP, btnDPH, btnQLKM, btnQLMGG, btnDX, btnDMK;
     TextView txtUsername;
     Intent intent;
-    String username = "Account1", name = "Lê Nguyễn Đức Danh", role = "Quản lý kho";
+    String username = "", name = "", role = "", img = "", accountID = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        intent = getIntent();
-//        username = intent.getStringExtra("username");
-//        name = intent.getStringExtra("name");
-//        role = intent.getStringExtra("role");
         setContentView(R.layout.layout_main_1);
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        accountID = intent.getStringExtra("accountID");
+        img = intent.getStringExtra("image");
 
         // Khởi tạo biến
         btnQLH = findViewById(R.id.btnQLH);
@@ -61,49 +64,61 @@ public class MainQLKActivity extends AppCompatActivity implements View.OnClickLi
         switch (id) {
             case R.id.btnQLSP:
                 intent = new Intent(MainQLKActivity.this, ListProductActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.btnQLH:
                 intent = new Intent(MainQLKActivity.this, ListManuActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.btnQLKM:
                 intent = new Intent(MainQLKActivity.this, ListPromoActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.btnQLMGG:
                 intent = new Intent(MainQLKActivity.this, ListDiscountCodeActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.btnDPH:
                 intent = new Intent(MainQLKActivity.this, OrderCoordinationActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.btnQLLSP:
                 intent = new Intent(MainQLKActivity.this, ListCateActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;

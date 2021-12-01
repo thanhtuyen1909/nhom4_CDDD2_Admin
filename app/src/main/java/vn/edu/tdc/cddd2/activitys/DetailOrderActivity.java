@@ -3,10 +3,8 @@ package vn.edu.tdc.cddd2.activitys;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,23 +12,16 @@ import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,9 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.Product5Adapter;
@@ -62,6 +51,8 @@ public class DetailOrderActivity extends AppCompatActivity {
     Product5Adapter product5Adapter;
     Intent intent;
     Order item = null;
+    String from = "", accountID = "", name = "", role = "", img = "", username = "";
+
     DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("Status");
     DatabaseReference order_detailRef = FirebaseDatabase.getInstance().getReference("Order_Details");
     Query queryOrderDetail;
@@ -83,11 +74,12 @@ public class DetailOrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_order);
         item = (Order) getIntent().getParcelableExtra("item");
-
-        order = new Order();
-        arrOrderDetail = new ArrayList<>();
-        myPdfDocument = new PdfDocument();
-        myPaint = new Paint();
+        from = getIntent().getStringExtra("from");
+        accountID = getIntent().getStringExtra("accountID");
+        username = getIntent().getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         myPageInfo1 = new PdfDocument.
                 PageInfo.Builder(250, 500, 1).create();
@@ -98,11 +90,12 @@ public class DetailOrderActivity extends AppCompatActivity {
         queryOrderDetail = FirebaseDatabase.getInstance().getReference()
                 .child("Order_Details").orderByChild("orderID").equalTo(item.getOrderID());
         loadDataOrderDetail();
+
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Chi tiết đơn hàng");
+        subtitleAppbar.setText(R.string.titleDetaiCTDH);
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
@@ -116,15 +109,15 @@ public class DetailOrderActivity extends AppCompatActivity {
         txtAddress = findViewById(R.id.txt_diachi);
 
         // Đổ dữ liệu
-        if (item != null) {
+        if(item != null) {
             txtPhone.setText(item.getPhone());
             txtMaDH.setText(item.getOrderID());
             txtCreatedAt.setText("Ngày tạo: " + item.getCreated_at());
             statusRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if (Integer.parseInt(snapshot.getKey()) == item.getStatus()) {
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if(Integer.parseInt(snapshot.getKey()) == item.getStatus()) {
                             txtStatus.setText("Trạng thái: " + snapshot.getValue(String.class));
                         }
                     }
@@ -142,7 +135,18 @@ public class DetailOrderActivity extends AppCompatActivity {
         }
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            if(from != null && from.equals("PaymentSM")) {
+                intent = new Intent(DetailOrderActivity.this, ListProductSMActivity.class);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
+                startActivity(intent);
+            }
+            finish();
+        });
 
         // Xử lý sự kiện click phone:
         txtPhone.setOnClickListener(v -> {
@@ -193,7 +197,6 @@ public class DetailOrderActivity extends AppCompatActivity {
         order_detailRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listProducts.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     OrderDetail orderDetail = snapshot.getValue(OrderDetail.class);
                     if (orderDetail.getOrderID().equals(item.getOrderID())) {
@@ -201,16 +204,15 @@ public class DetailOrderActivity extends AppCompatActivity {
                             @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                listProducts.clear();
+                                for(DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                     Product product = snapshot1.getValue(Product.class);
                                     product.setPrice(orderDetail.getPrice());
                                     product.setKey(snapshot1.getKey());
                                     product.setQuantity(orderDetail.getAmount());
-                                    if (product.getKey().equals(orderDetail.getProductID())) {
+                                    if(product.getKey().equals(orderDetail.getProductID())) {
                                         listProducts.add(product);
                                     }
-
-
                                 }
                                 product5Adapter.notifyDataSetChanged();
                             }
@@ -244,7 +246,7 @@ public class DetailOrderActivity extends AppCompatActivity {
 
         myPaint.setTextSize(6.0f);
         myPaint.setColor(Color.rgb(122, 119, 119));
-        canvas.drawText("54 Lê văn chí, Linh Trung, Thủ Đức, TP.HCM", myPageInfo1.getPageWidth() / 2, 40, myPaint);
+        canvas.drawText("53 Võ Văn Ngân, p. Linh Chiểu, q. Thủ Đức, tp. Thủ Đức", myPageInfo1.getPageWidth() / 2, 40, myPaint);
         myPaint.setTextScaleX(1.2f);
 
         myPaint.setTextAlign(Paint.Align.LEFT);
@@ -360,11 +362,7 @@ public class DetailOrderActivity extends AppCompatActivity {
     private void showDialog(String title) {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(title);
-        b.setNegativeButton("Xác nhận", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        b.setNegativeButton("Xác nhận", (dialog, id) -> dialog.cancel());
         AlertDialog al = b.create();
         al.show();
     }

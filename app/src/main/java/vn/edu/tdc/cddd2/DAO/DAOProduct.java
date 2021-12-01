@@ -40,6 +40,7 @@ public class DAOProduct {
         map.put("sold", product.getSold());
         map.put("created_at", product.getCreated_at());
         map.put("status", product.getStatus());
+        map.put("rating", product.getRating());
         return map;
     }
 

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ import vn.edu.tdc.cddd2.data_models.Product;
 public class CreateOrderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến:
     Toolbar toolbar;
-    TextView btnBack, txt_tongtien, txt_conlai, txt_giamgia, title, mess;
+    TextView btnBack, txt_tongtien, txt_conlai, txt_giamgia, title, mess, txtName, txtRole;
     Button buttonTTNgay, buttonGiaoHang;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -60,8 +62,9 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
     NavigationView navigationView;
     PaymentAdapter proAdapter;
     private Intent intent;
-    String accountID = "", username = "";
+    String accountID = "", username = "", name = "", role = "", img = "";
     EditText edtDaThanhToan, edtDiaChi, edtHoTenKH, edtSDT;
+    ImageView iv_user;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference ref = db.getReference("Cart");
@@ -82,6 +85,9 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
         intent = getIntent();
         accountID = intent.getStringExtra("accountID");
         username = intent.getStringExtra("username");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -108,8 +114,11 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(CreateOrderActivity.this, ListCartActivity.class);
-            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -441,6 +450,12 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
     }
 
     // Kiểm tra lỗi
@@ -519,7 +534,10 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
                     .putExtra("item", item)
                     .putExtra("from", "PaymentSM")
                     .putExtra("accountID", accountID)
-                    .putExtra("username", username));
+                    .putExtra("username", username)
+                    .putExtra("name", name)
+                    .putExtra("role", role)
+                    .putExtra("image", img));
         });
 
         if (alertDialog.getWindow() != null) {
@@ -599,7 +617,7 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
         switch (id) {
             case R.id.nav_dmk:
                 intent = new Intent(CreateOrderActivity.this, ChangePasswordActivity.class);
-                intent.putExtra("username", username);
+                intent.putExtra("username", accountID);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:

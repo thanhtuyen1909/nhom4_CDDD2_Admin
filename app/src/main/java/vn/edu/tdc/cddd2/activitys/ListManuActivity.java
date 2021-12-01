@@ -32,10 +32,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManuAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.DetailPromoCode;
 import vn.edu.tdc.cddd2.data_models.Manufacture;
 import vn.edu.tdc.cddd2.data_models.Product;
@@ -46,7 +49,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     Toolbar toolbar;
     SearchView searchView;
     TextView btnBack, subtitleAppbar, totalManu, title, mess, txtName, txtRole;
-    String username = "", name = "", role = "";
+    String username = "", name = "", role = "", img = "", accountID = "";
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
@@ -63,10 +66,13 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_manu);
+
         intent = getIntent();
         username = intent.getStringExtra("username");
         name = intent.getStringExtra("name");
         role = intent.getStringExtra("role");
+        accountID = intent.getStringExtra("accountID");
+        img = intent.getStringExtra("image");
 
         // Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -87,9 +93,11 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         // Xử lý sự kiện click button "Trở lại":
         btnBack.setOnClickListener(v -> {
             intent = new Intent(ListManuActivity.this, MainQLKActivity.class);
+            intent.putExtra("accountID", accountID);
             intent.putExtra("username", username);
             intent.putExtra("name", name);
             intent.putExtra("role", role);
+            intent.putExtra("image", img);
             startActivity(intent);
             finish();
         });
@@ -98,6 +106,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         btnAdd.setOnClickListener(v -> {
             intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
             intent.putExtra("to", "ListManu");
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         });
 
@@ -175,6 +184,7 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
             intent = new Intent(ListManuActivity.this, DetailInformationActivity.class);
             intent.putExtra("to", "ListManu");
             intent.putExtra("itemManu", item);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         }
     };
@@ -191,41 +201,51 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         switch (id) {
             case R.id.nav_qlsp:
                 intent = new Intent(ListManuActivity.this, ListProductActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlkm:
                 intent = new Intent(ListManuActivity.this, ListPromoActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_dph:
                 intent = new Intent(ListManuActivity.this, OrderCoordinationActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListManuActivity.this, ListDiscountCodeActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListManuActivity.this, ListCateActivity.class);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("username", username);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
                 finish();
                 break;
@@ -277,24 +297,17 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
 
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
             check = true;
-            proRef.addValueEventListener(new ValueEventListener() {
+            proRef.orderByChild("manu_id").equalTo(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Product product = snapshot.getValue(Product.class);
-                        if(product.getManu_id().equals(key)) {
-                            check = false;
-                        }
+                    if(dataSnapshot.exists()){
+                        showErrorDialog("Không thể xoá hãng còn sản phẩm!");
+                    } else {
+                        manuRef.child(key).removeValue();
+                        showSuccesDialog();
+                        pushAccountHistory("Xóa hãng", "Hãng " + name);
                     }
-                    handler.postDelayed(() -> {
-                        if(check) {
-                            manuRef.child(key).removeValue();
-                            showSuccesDialog();
-                        } else {
-                            showErrorDialog("Không thể xoá hãng còn sản phẩm!");
-                        }
-                    }, 100);
                 }
 
                 @Override
@@ -360,4 +373,16 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         }
         alertDialog.show();
     }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
+    }
+
 }

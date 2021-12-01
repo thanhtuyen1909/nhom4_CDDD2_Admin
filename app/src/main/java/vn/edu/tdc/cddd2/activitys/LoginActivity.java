@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edtUsername, edtPassword;
     Button btnLogin;
     private Intent intent;
-    String name = "", role = "";
+    String name = "", role = "", image = "";
     TextView title, mess;
     boolean check = true;
     Handler handler = new Handler();
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 Account account = new Account();
                 account.setUsername(String.valueOf(edtUsername.getText()));
                 account.setPassword(String.valueOf(edtPassword.getText()));
-                ref.addValueEventListener(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot node : snapshot.getChildren()) {
@@ -71,53 +71,76 @@ public class LoginActivity extends AppCompatActivity {
                                             if (employee.getAccountID().equals(temp.getKey())) {
                                                 name = employee.getName();
                                                 role = employee.getPosition();
+                                                image = employee.getImage();
                                                 check = false;
                                                 switch (temp.getRole_id()) {
                                                     case 0:
                                                         intent = new Intent(LoginActivity.this, MainADMActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
+                                                        intent.putExtra("image", image);
                                                         startActivity(intent);
                                                         finish();
                                                         break;
                                                     case 2:
                                                         intent = new Intent(LoginActivity.this, MainQLKActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
+                                                        intent.putExtra("image", image);
                                                         startActivity(intent);
                                                         finish();
                                                         break;
                                                     case 3:
                                                         intent = new Intent(LoginActivity.this, ListProductSMActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
+                                                        intent.putExtra("image", image);
                                                         startActivity(intent);
                                                         finish();
                                                         break;
                                                     case 4:
                                                         intent = new Intent(LoginActivity.this, OrderProcessActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
+                                                        intent.putExtra("image", image);
                                                         startActivity(intent);
                                                         finish();
                                                         break;
                                                     case 5:
                                                         intent = new Intent(LoginActivity.this, AttendanceActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
+                                                        intent.putExtra("image", image);
                                                         startActivity(intent);
                                                         finish();
                                                         break;
                                                     case 6:
                                                         intent = new Intent(LoginActivity.this, ShipProcessActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
                                                         intent.putExtra("username", temp.getUsername());
                                                         intent.putExtra("name", name);
                                                         intent.putExtra("role", role);
+                                                        intent.putExtra("image", image);
+                                                        startActivity(intent);
+                                                        finish();
+                                                        break;
+                                                    case 7:
+                                                        intent = new Intent(LoginActivity.this, ListMessageActivity.class);
+                                                        intent.putExtra("accountID", temp.getKey());
+                                                        intent.putExtra("username", temp.getUsername());
+                                                        intent.putExtra("name", name);
+                                                        intent.putExtra("role", role);
+                                                        intent.putExtra("image", image);
                                                         startActivity(intent);
                                                         finish();
                                                         break;
@@ -135,20 +158,17 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 });
 
-                            } else if(account.getUsername().equals(temp.getUsername()) && account.getPassword().equals(temp.getPassword()) &&
+                            }
+                            else if(account.getUsername().equals(temp.getUsername()) && account.getPassword().equals(temp.getPassword()) &&
                                     temp.getStatus().equals("lock")) {
                                 showWarningDialog("Tài khoản này đã bị khoá, vui lòng liên hệ Quản trị viên để mở khoá!");
                             }
-
                         }
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (check) {
-                                    showWarningDialog("Tên đăng nhập/Mật khẩu Không chính xác!");
-                                }
+                        handler.postDelayed(() -> {
+                            if (check) {
+                                showWarningDialog("Tên đăng nhập/Mật khẩu Không chính xác!");
                             }
-                        }, 100);
+                        }, 200);
 
                     }
 
