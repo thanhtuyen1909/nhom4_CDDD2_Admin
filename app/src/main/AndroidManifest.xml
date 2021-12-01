@@ -97,12 +97,6 @@
             android:name=".activitys.DetailOrderActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activitys.ListInvoiceActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activitys.DetailInvoiceActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activitys.RevenueStatisticActivity"
             android:screenOrientation="landscape" >
         </activity>
