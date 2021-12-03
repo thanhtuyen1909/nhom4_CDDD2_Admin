@@ -1,7 +1,7 @@
 package vn.edu.tdc.cddd2.data_models;
 
 public class Attendance {
-    private String key,date,employeeID,note;
+    private String key, date, employeeID, note;
     private int status;
 
     public String getKey() {

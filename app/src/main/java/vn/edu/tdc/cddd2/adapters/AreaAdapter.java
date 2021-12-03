@@ -14,8 +14,8 @@ import vn.edu.tdc.cddd2.data_models.Area;
 
 public class AreaAdapter extends BaseAdapter {
     final ArrayList<Area> list;
-    private LayoutInflater layoutInflater;
-    private Context context;
+    LayoutInflater layoutInflater;
+    Context context;
 
     public AreaAdapter(Context context, ArrayList<Area> list) {
         this.context = context;

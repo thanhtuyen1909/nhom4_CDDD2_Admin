@@ -1,19 +1,16 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -37,12 +34,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AttendanceAdapter;
@@ -61,15 +59,12 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
     private ArrayList<Attendance> listAttend;
     NavigationView navigationView;
     private AttendanceAdapter adapter;
-    private Intent intent;
+    Intent intent;
     private DatePickerDialog datePickerDialog;
     SearchView searchView;
-    private DatabaseReference myDB = FirebaseDatabase.getInstance().getReference();
 
     private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Attendance");
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
-    boolean check = true;
-    String currentMoth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
     String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
     ArrayList<Employee> listEmployee = new ArrayList<>();
 
@@ -136,31 +131,22 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
 
             }
         });
-        spinerDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // calender class's instance and get current date , month and year from calender
-                final Calendar c = Calendar.getInstance();
-                int mYear = c.get(Calendar.YEAR); // current year
-                int mMonth = c.get(Calendar.MONTH); // current month
-                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
-                // date picker dialog
-                datePickerDialog = new DatePickerDialog(AttendanceActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
+        spinerDate.setOnClickListener(v -> {
+            // calender class's instance and get current date , month and year from calender
+            final Calendar c = Calendar.getInstance();
+            int mYear = c.get(Calendar.YEAR); // current year
+            int mMonth = c.get(Calendar.MONTH); // current month
+            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+            // date picker dialog
+            datePickerDialog = new DatePickerDialog(AttendanceActivity.this,
+                    (view, year, monthOfYear, dayOfMonth) -> {
+                        // set day of month , month and year value in the edit text
+                        String day = dayOfMonth + "/"
+                                + (monthOfYear + 1) + "/" + year;
+                        spinerDate.setText(day);
+                    }, mYear, mMonth, mDay);
+            datePickerDialog.show();
 
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-                                // set day of month , month and year value in the edit text
-                                String day = dayOfMonth + "/"
-                                        + (monthOfYear + 1) + "/" + year;
-                                spinerDate.setText(day);
-
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-
-            }
         });
 
         // Khởi tạo biến
@@ -229,12 +215,10 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
 
     private void filter(String date, String query) {
         if (!date.equals("")) {
-
             if (query.equals("")) {
 
                 data(date);
             } else {
-
                 String month = date.split("/")[1] + "-" + date.split("/")[2];
                 myRef.child(month).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -254,6 +238,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                                 listAttend.add(attendance);
                                 continue;
                             }
+
                             for(Employee emp : listEmployee){
                                 if(attendance.getEmployeeID().equals(emp.getId())){
                                     if(emp.getName().trim().toLowerCase().contains(query.trim().toLowerCase())){
@@ -275,7 +260,6 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         }
     }
     private void getListEmployee(){
-
         empRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -322,13 +306,9 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         });
     }
 
-    private AttendanceAdapter.ItemClickListener itemClickListener = new AttendanceAdapter.ItemClickListener() {
-        @Override
-        public void makeAbsent(Attendance item) {
-            showSuccesDialog("Lý do vắng", item);
-        }
-    };
+    private AttendanceAdapter.ItemClickListener itemClickListener = item -> showSuccesDialog("Lý do vắng", item);
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

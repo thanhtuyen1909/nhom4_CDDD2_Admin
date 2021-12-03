@@ -813,11 +813,6 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
                 break;
             case R.id.nav_lsdh:
                 break;
-            case R.id.nav_qlhd:
-                intent = new Intent(OrderHistoryActivity.this, ListInvoiceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
             case R.id.nav_tk:
                 intent = new Intent(OrderHistoryActivity.this, RevenueStatisticActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

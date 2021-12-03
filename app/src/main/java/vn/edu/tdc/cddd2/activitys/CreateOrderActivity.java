@@ -234,23 +234,30 @@ public class CreateOrderActivity extends AppCompatActivity implements Navigation
                             for ( DataSnapshot node : snapshot.getChildren()) {
                                 Account account = node.getValue(Account.class);
                                 if(account.getStatus().equals("unlock")) {
-                                    customerRef.orderByChild("accountID").equalTo(node.getKey()).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    customerRef.orderByChild("accountID").equalTo(order.getAccountID()).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                                                 Customer customer = dataSnapshot1.getValue(Customer.class);
                                                 int totalPaymentNew = customer.getTotalPayment() + order.getTotal();
-                                                String typeID = "";
-                                                if (totalPaymentNew >= 15000000) {
-                                                    typeID = "Type1";
-                                                } else if (totalPaymentNew > 100000000) {
-                                                    typeID = "Type2";
-                                                } else if (totalPaymentNew > 200000000) {
-                                                    typeID = "Type3";
-                                                } else typeID = "Type";
-                                                customerRef.child(dataSnapshot1.getKey()).child("totalPayment").setValue(totalPaymentNew);
-                                                customerRef.child(dataSnapshot1.getKey()).child("type_id").setValue(typeID);
-                                                break;
+                                                cusTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        String typeID = "";
+                                                        for(DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                                            if (totalPaymentNew >= snapshot1.child("consume").getValue(Integer.class)) {
+                                                                typeID = snapshot1.getKey();
+                                                            }
+                                                        }
+                                                        customerRef.child(dataSnapshot1.getKey()).child("type_id").setValue(typeID);
+                                                        customerRef.child(dataSnapshot1.getKey()).child("totalPayment").setValue(totalPaymentNew);
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
                                             }
                                         }
 

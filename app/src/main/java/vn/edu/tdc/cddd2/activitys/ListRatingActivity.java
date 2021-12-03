@@ -464,16 +464,6 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
                 startActivity(intent);
                 finish();
                 break;
-            case R.id.nav_qlhd:
-                intent = new Intent(ListRatingActivity.this, ListInvoiceActivity.class);
-                intent.putExtra("username", username);
-                intent.putExtra("accountID", accountID);
-                intent.putExtra("name", name);
-                intent.putExtra("role", role);
-                intent.putExtra("image", img);
-                startActivity(intent);
-                finish();
-                break;
             case R.id.nav_tk:
                 intent = new Intent(ListRatingActivity.this, RevenueStatisticActivity.class);
                 intent.putExtra("username", username);

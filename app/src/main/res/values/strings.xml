@@ -67,6 +67,7 @@
     <string name="error">error</string>
     <string name="dummy_text">Loren Ipsum is simple dummy of the printing and type setting industry</string>
     <string name="title11">Chi tiết hoá đơn</string>
+    <string name="titleTTNV">Thông tin nhân viên</string>
 
     <!--  Array  -->
     <string-array name="ngay">
@@ -81,7 +82,7 @@
         <item>Quản lý kho</item>
         <item>Quản lý nhân sự</item>
         <item>Tư vấn viên</item>
-        <item>Shipper</item>
+        <item>Nhân viên giao hàng</item>
     </string-array>
 
     <string-array name="gender">

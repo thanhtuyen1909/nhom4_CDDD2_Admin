@@ -71,6 +71,7 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
     DatabaseReference proRef = db.getReference("Products");
     DatabaseReference areaRef = db.getReference("Area");
     DatabaseReference cusRef = db.getReference("Customer");
+    DatabaseReference cusTypeRef = db.getReference("CustomerType");
 
     private GestureDetector gestureDetector;
 
@@ -307,7 +308,8 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                 if (order.getStatus() == 2 && !order.getShipperID().equals("null")) {
                     order.setStatus(3);
                     orderRef.child(order.getOrderID()).setValue(order);
-                } else {
+                }
+                else {
                     orderRef.child(order.getOrderID()).setValue(order);
                     if (order.getStatus() == 8) {
                         pushAccountHistory("Thay đổi trạng thái hoàn thành đơn hàng", "Đơn hàng: " + order.getOrderID());
@@ -325,30 +327,38 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                                                 int quantity = product.getQuantity() - orderDetail.getAmount();
                                                 proRef.child(orderDetail.getProductID()).child("quantity").setValue(quantity);
                                                 proRef.child(orderDetail.getProductID()).child("sold").setValue(sold);
-                                                    cusRef.orderByChild("accountID").equalTo(order.getAccountID()).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                                                Customer customer = dataSnapshot1.getValue(Customer.class);
-                                                                int totalPaymentNew = customer.getTotalPayment() + order.getTotal();
-                                                                String typeID = "";
-                                                                if (totalPaymentNew >= 15000000) {
-                                                                    typeID = "Type1";
-                                                                } else if (totalPaymentNew > 100000000) {
-                                                                    typeID = "Type2";
-                                                                } else if (totalPaymentNew > 200000000) {
-                                                                    typeID = "Type3";
-                                                                } else typeID = "Type";
-                                                                cusRef.child(dataSnapshot1.getKey()).child("totalPayment").setValue(totalPaymentNew);
-                                                                cusRef.child(dataSnapshot1.getKey()).child("type_id").setValue(typeID);
-                                                            }
-                                                        }
+                                                cusRef.orderByChild("accountID").equalTo(order.getAccountID()).limitToFirst(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                                            Customer customer = dataSnapshot1.getValue(Customer.class);
+                                                            int totalPaymentNew = customer.getTotalPayment() + order.getTotal();
+                                                            cusTypeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    String typeID = "";
+                                                                    for(DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                                                        if (totalPaymentNew >= snapshot1.child("consume").getValue(Integer.class)) {
+                                                                            typeID = snapshot1.getKey();
+                                                                        }
+                                                                    }
+                                                                    cusRef.child(dataSnapshot1.getKey()).child("type_id").setValue(typeID);
+                                                                    cusRef.child(dataSnapshot1.getKey()).child("totalPayment").setValue(totalPaymentNew);
+                                                                }
 
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
 
+                                                                }
+                                                            });
                                                         }
-                                                    });
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
                                             }
 
                                             @Override

@@ -432,11 +432,6 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;
-            case R.id.nav_qlhd:
-                intent = new Intent(RevenueStatisticActivity.this, ListInvoiceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
             case R.id.nav_tk:
                 break;
             case R.id.nav_qlbl:

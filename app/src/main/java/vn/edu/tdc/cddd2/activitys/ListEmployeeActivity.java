@@ -1,11 +1,11 @@
 package vn.edu.tdc.cddd2.activitys;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -47,17 +47,16 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManageEmployeesAdapter;
 import vn.edu.tdc.cddd2.data_models.Attendance;
 import vn.edu.tdc.cddd2.data_models.Employee;
-import vn.edu.tdc.cddd2.data_models.Employees;
 import vn.edu.tdc.cddd2.data_models.Payroll;
 import vn.edu.tdc.cddd2.data_models.Role;
 import vn.edu.tdc.cddd2.interfaceClick.ItemClickRefreshEmployees;
@@ -82,12 +81,13 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
 
     private ManageEmployeesAdapter employeesAdapter;
     private Query queryByManageEmployees, queryByRole;
-    ArrayList<Employees> arrEmployees;
-    ArrayList<Employees> arrEmployeesFilter;
+    ArrayList<Employee> arrEmployees;
+    ArrayList<Employee> arrEmployeesFilter;
     ArrayList<String> arrRole;
-    int count = 0, count1 = 0,firstIndex = 4;
+    int count = 0, count1 = 0, firstIndex = 4;
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference payrollRef = FirebaseDatabase.getInstance().getReference("Payroll");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,30 +141,18 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         });
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        tvManageEmployeesRenderSalary.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showChooseMonthDialog();
-            }
-        });
+        btnBack.setOnClickListener(v -> finish());
+        tvManageEmployeesRenderSalary.setOnClickListener(v -> showChooseMonthDialog());
         // Xử lý sự kiện click button "+":
-        btnManageEmployeesAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ListEmployeeActivity.this, DetailEmployeeActivity.class);
-                intent.putExtra("type","add");
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-            }
+        btnManageEmployeesAdd.setOnClickListener(v -> {
+            intent = new Intent(ListEmployeeActivity.this, DetailEmployeeActivity.class);
+            intent.putExtra("type", "add");
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
         });
 
     }
+
     private void showChooseMonthDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListEmployeeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListEmployeeActivity.this).inflate(
@@ -178,18 +166,18 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         Spinner spinYear = view.findViewById(R.id.spinYear);
         ArrayList<String> listMonth = new ArrayList<>();
         ArrayList<String> listYear = new ArrayList<>();
-        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(ListEmployeeActivity.this, android.R.layout.simple_spinner_dropdown_item,listMonth);
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(ListEmployeeActivity.this, android.R.layout.simple_spinner_dropdown_item,listYear);
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(ListEmployeeActivity.this, android.R.layout.simple_spinner_dropdown_item, listMonth);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(ListEmployeeActivity.this, android.R.layout.simple_spinner_dropdown_item, listYear);
         monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinMonth.setAdapter(monthAdapter);
         spinYear.setAdapter(yearAdapter);
-        for(int i = 1;i<=12;i++){
-            monthAdapter.add("Tháng "+i);
+        for (int i = 1; i <= 12; i++) {
+            monthAdapter.add("Tháng " + i);
         }
         monthAdapter.notifyDataSetChanged();
-        for(int i = 2020;i<=2021;i++){
-            yearAdapter.add(""+i);
+        for (int i = 2020; i <= 2021; i++) {
+            yearAdapter.add("" + i);
         }
         yearAdapter.notifyDataSetChanged();
         ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.okay));
@@ -198,14 +186,14 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
-            int index = spinMonth.getSelectedItemPosition()+1;
+            int index = spinMonth.getSelectedItemPosition() + 1;
             String month = "";
-            if(index<10){
-                month = "0"+index ;
-            }else {
-                month = index+"";
+            if (index < 10) {
+                month = "0" + index;
+            } else {
+                month = index + "";
             }
-            month+= "-"+spinYear.getSelectedItem();
+            month += "-" + spinYear.getSelectedItem();
             exportExcel(month);
             showSuccesDialog();
         });
@@ -214,16 +202,17 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         }
         alertDialog.show();
     }
+
     private void exportExcel(String month) {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFCellStyle style = workbook.createCellStyle();
 
         HSSFSheet sheet = workbook.createSheet("Bảng lương tháng 10");
-        sheet.setColumnWidth(6,4000);
-        sheet.setColumnWidth(10,4000);
+        sheet.setColumnWidth(6, 4000);
+        sheet.setColumnWidth(10, 4000);
         HSSFRow row = sheet.createRow(firstIndex);
         HSSFCell cell = row.createCell(firstIndex);
-        HSSFRow newRow = sheet.createRow(firstIndex+1);
+        HSSFRow newRow = sheet.createRow(firstIndex + 1);
         firstIndex++;
         HSSFCell cell0 = newRow.createCell(0);
         cell0.setCellValue("Mã nhân viên");
@@ -258,7 +247,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         HSSFCell cell10 = newRow.createCell(10);
         cell10.setCellValue("Tổng lương");
 
-        cell.setCellValue("Chi tiết bảng lương tháng "+month);
+        cell.setCellValue("Chi tiết bảng lương tháng " + month);
         payrollRef.child(month).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -314,7 +303,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                                     }
                                     FileOutputStream fileOutputStream = new FileOutputStream(filePath);
                                     workbook.write(fileOutputStream);
-                                    if(fileOutputStream != null){
+                                    if (fileOutputStream != null) {
                                         fileOutputStream.flush();
                                         fileOutputStream.close();
                                     }
@@ -339,8 +328,8 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         });
 
 
-
     }
+
     private void showSuccesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListEmployeeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListEmployeeActivity.this).inflate(
@@ -366,6 +355,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         }
         alertDialog.show();
     }
+
     private void setDataTotalNumber() {
         tvManageEmployeesTotal.setText("Tìm được: " + arrEmployeesFilter.size() + "/" + arrEmployees.size() + " nhân viên");
     }
@@ -379,31 +369,17 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
 
     private void loadDataManageEmployees() {
         queryByManageEmployees.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Employees employees;
-                    String keyEmployees, accountID, address, birthday, created_at, gender, image, name, position;
-                    int allowance, salary;
                     for (DataSnapshot emp : snapshot.getChildren()) {
-                        keyEmployees = emp.getKey();
-                        accountID = emp.getValue(Employees.class).getAccountID();
-                        address = emp.getValue(Employees.class).getAddress();
-                        birthday = emp.getValue(Employees.class).getBirthday();
-                        created_at = emp.getValue(Employees.class).getCreated_at();
-                        gender = emp.getValue(Employees.class).getGender();
-                        image = emp.getValue(Employees.class).getImage();
-                        name = emp.getValue(Employees.class).getName();
-                        position = emp.getValue(Employees.class).getPosition();
-                        allowance = emp.getValue(Employees.class).getAllowance();
-                        salary = emp.getValue(Employees.class).getSalary();
-                        employees = new Employees(keyEmployees, accountID, address, birthday, created_at
-                                , gender, image, name, position, allowance, salary);
-
-                        arrEmployees.add(employees);
-                        arrEmployeesFilter.add(employees);
-                        employeesAdapter.notifyDataSetChanged();
+                        Employee employee = emp.getValue(Employee.class);
+                        employee.setId(emp.getKey());
+                        arrEmployees.add(employee);
+                        arrEmployeesFilter.add(employee);
                     }
+                    employeesAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -454,9 +430,9 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         String currentMonth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
         int month = Integer.parseInt(currentMonth.split("-")[0]);
         month--;
-        String lastMonth = month+"-"+currentMonth.split("-")[1];
+        String lastMonth = month + "-" + currentMonth.split("-")[1];
         int date = Integer.parseInt(currentDate.split("/")[0]);
-        if(date == 1){
+        if (date == 1) {
             DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
             empRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -515,10 +491,12 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
             });
         }
     }
+
     private void requestPermission(String[] permission, int requestCode) {
         ActivityCompat.requestPermissions(this, permission, requestCode);
 
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -529,6 +507,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
             }
         }
     }
+
     @Override
     public void onItemClickEmployees() {
         arrEmployeesFilter.clear();
@@ -550,7 +529,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         } else {
             for (int i = 0; i < arrEmployees.size(); i++) {
                 if (arrEmployees.get(i).getName().toLowerCase(Locale.getDefault()).contains(s)
-                        || arrEmployees.get(i).getKeyEmployees().toLowerCase(Locale.getDefault()).contains(s)) {
+                        || arrEmployees.get(i).getId().toLowerCase(Locale.getDefault()).contains(s)) {
                     arrEmployeesFilter.add(arrEmployees.get(i));
                 }
             }

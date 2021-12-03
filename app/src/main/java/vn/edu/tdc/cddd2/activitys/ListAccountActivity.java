@@ -99,11 +99,6 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     }
 
     private void data() {
-//        listAccount.add(new Account("qlk-1", "Quản lý kho"));
-//        listAccount.add(new Account("xldh-1", "Nhân viên xử lý đơn hàng"));
-//        listAccount.add(new Account("nvbh-1", "Nhân viên bán hàng"));
-//        listAccount.add(new Account("nvgh-1", "Nhân viên giao hàng"));
-//        listAccount.add(new Account("qlns-1", "Quản lý nhân sự"));
     }
 
     private AccountAdapter.ItemClickListener itemClickListener = new AccountAdapter.ItemClickListener() {
@@ -128,11 +123,6 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_lsdh:
                 intent = new Intent(ListAccountActivity.this, OrderHistoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            case R.id.nav_qlhd:
-                intent = new Intent(ListAccountActivity.this, ListInvoiceActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 break;

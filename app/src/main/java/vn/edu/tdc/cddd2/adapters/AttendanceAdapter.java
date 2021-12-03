@@ -2,8 +2,8 @@ package vn.edu.tdc.cddd2.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -33,6 +34,9 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
     ArrayList<Attendance> listAttend;
     private Context context;
     AttendanceAdapter.ItemClickListener itemClickListener;
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference ref = db.getReference("Attendance");
+    DatabaseReference empRef = db.getReference("Employees");
 
     public void setItemClickListener(AttendanceAdapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -55,32 +59,37 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull AttendanceAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Attendance item = listAttend.get(position);
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("Attendance");
-        DatabaseReference empRef = db.getReference("Employees");
 
         String currentMoth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
-        ref.child(currentMoth).child(item.getKey()).addValueEventListener(new ValueEventListener() {
+        ref.child(currentMoth).child(item.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Attendance attendance = snapshot.getValue(Attendance.class);
-                empRef.child(attendance.getEmployeeID()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot1) {
-                        Employee item = snapshot1.getValue(Employee.class);
-                        holder.im_item.setImageURI(Uri.parse(item.getImage()));
-                        holder.tv_name.setText(item.getName());
-                        holder.tv_manv.setText(snapshot1.getKey());
-                        holder.tv_chucvu.setText(item.getPosition());
+                if (snapshot.exists()) {
+                    Attendance attendance = snapshot.getValue(Attendance.class);
+                    empRef.child(attendance.getEmployeeID()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                            if(snapshot.exists()) {
+                                Employee item = snapshot1.getValue(Employee.class);
+                                holder.im_item.setImageURI(Uri.parse(item.getImage()));
+                                holder.tv_name.setText(item.getName());
+                                holder.tv_manv.setText(snapshot1.getKey());
+                                holder.tv_chucvu.setText(item.getPosition());
 
-                        Picasso.get().load(item.getImage()).fit().into(holder.im_item);
-                    }
+                                Picasso.get().load(item.getImage()).fit().into(holder.im_item);
+                            }
+                            else {
+                                ref.child(currentMoth).child(item.getKey()).removeValue();
+                                notifyDataSetChanged();
+                            }
+                        }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
 
             @Override
@@ -88,23 +97,19 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
 
             }
         });
-        if(item.getStatus() == -1){
-            holder.bt_vang.setBackgroundColor(context.getColor(R.color.gray));
+        if (item.getStatus() == -1) {
+            holder.bt_vang.setBackground(context.getDrawable(R.drawable.button_confirm));
             holder.bt_vang.setClickable(false);
-        }
-        else {
+        } else {
             holder.bt_vang.setBackground(context.getDrawable(R.drawable.button_login));
             holder.bt_vang.setClickable(true);
         }
 
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    itemClickListener.makeAbsent(item);
-                } else {
-                    return;
-                }
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                itemClickListener.makeAbsent(item);
+            } else {
+                return;
             }
         };
     }
@@ -113,7 +118,6 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
     public int getItemCount() {
         return listAttend.size();
     }
-
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

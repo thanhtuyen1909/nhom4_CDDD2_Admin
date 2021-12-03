@@ -1,6 +1,9 @@
 package vn.edu.tdc.cddd2.data_models;
 
-public class Employee {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Employee implements Parcelable {
     private String id;
     private String accountID;
     private String address;
@@ -12,6 +15,52 @@ public class Employee {
     private String name;
     private String position;
     private int salary;
+
+    protected Employee(Parcel in) {
+        id = in.readString();
+        accountID = in.readString();
+        address = in.readString();
+        allowance = in.readInt();
+        birthday = in.readString();
+        created_at = in.readString();
+        gender = in.readString();
+        image = in.readString();
+        name = in.readString();
+        position = in.readString();
+        salary = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(accountID);
+        dest.writeString(address);
+        dest.writeInt(allowance);
+        dest.writeString(birthday);
+        dest.writeString(created_at);
+        dest.writeString(gender);
+        dest.writeString(image);
+        dest.writeString(name);
+        dest.writeString(position);
+        dest.writeInt(salary);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Employee> CREATOR = new Creator<Employee>() {
+        @Override
+        public Employee createFromParcel(Parcel in) {
+            return new Employee(in);
+        }
+
+        @Override
+        public Employee[] newArray(int size) {
+            return new Employee[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -101,7 +150,7 @@ public class Employee {
         this.salary = salary;
     }
 
-    public Employee( String accountID, String address, int allowance, String birthday, String created_at, String gender, String image, String name, String position, int salary) {
+    public Employee(String accountID, String address, int allowance, String birthday, String created_at, String gender, String image, String name, String position, int salary) {
 
         this.accountID = accountID;
         this.address = address;

@@ -11,16 +11,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +30,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.github.ybq.android.spinkit.style.FoldingCube;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,34 +37,40 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.data_models.Employees;
+import vn.edu.tdc.cddd2.adapters.AreaAdapter;
+import vn.edu.tdc.cddd2.data_models.Area;
+import vn.edu.tdc.cddd2.data_models.Employee;
 
-public class DetailEmployeeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DetailEmployeeActivity extends AppCompatActivity {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar, btnXemBangLuong, btnCancel;
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar, btnXemBangLuong, btnCancel;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
     private Intent intent;
     private ImageView empImage;
-    private Spinner empPosition, empGender;
+    private Spinner empPosition, empGender, empShipArea;
     private EditText empName, empID, empAddress, empSalary, empAllowance, empSeniority, empDOB, empCreated_at;
+    AreaAdapter areaAdapter;
+    ArrayList<Area> listArea;
     Uri imageUri;
     ProgressBar bar;
     String type = "add", date = "";
-    Employees item ;
-    DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employeess");
+    Employee item;
+    DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
+    DatabaseReference shipAreaRef = FirebaseDatabase.getInstance().getReference("Ship_area");
+    DatabaseReference areaRef = FirebaseDatabase.getInstance().getReference("Area");
+
     static int SELECT_IMAGE_CODE = 1;
     boolean check = true;
 
@@ -76,7 +79,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_employee);
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null){
+        if (bundle != null) {
             type = bundle.getString("type");
             item = bundle.getParcelable("item");
         }
@@ -84,7 +87,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
-        subtitleAppbar.setText("Thông tin nhân viên");
+        subtitleAppbar.setText(R.string.titleTTNV);
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
@@ -105,124 +108,104 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
         empSalary = findViewById(R.id.edtLCB);
         empAllowance = findViewById(R.id.edtPC);
         empImage = findViewById(R.id.imageView);
-        bar =findViewById(R.id.progess1);
+        empShipArea = findViewById(R.id.spinner_khuvucship);
+        bar = findViewById(R.id.progess1);
         bar.setIndeterminateDrawable(new FoldingCube());
+        listArea = new ArrayList<>();
+        areaAdapter = new AreaAdapter(this, listArea);
+        empShipArea.setAdapter(areaAdapter);
 
         data();
-        empDOB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(v);
-            }
+        empDOB.setOnClickListener(this::showDatePickerDialog);
+        empCreated_at.setOnClickListener(this::showDatePickerDialog);
+        empImage.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Title"), SELECT_IMAGE_CODE);
         });
-        empCreated_at.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(v);
-            }
-        });
-        empImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Title"), SELECT_IMAGE_CODE);
-            }
-        });
+
         // Xử lý sự kiện click button "Huỷ":
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        btnCancel.setOnClickListener(v -> finish());
 
         // Xử lý sự kiện click button "Lưu":
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkTrungID();
-                if (checkError() == 1) {
-                    if(type.equals("add")){
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (check == true) {
-                                    Log.d("TAG", "onClick: a");
-                                    saveEmployees();
-                                }
-                            }
-                        },200);
+        btnSave.setOnClickListener(v -> {
+            checkTrungID();
+            if (checkError() == 1) {
+                if (type.equals("add")) {
+                    new Handler().postDelayed(() -> {
+                        if (check) {
+                            saveEmployees();
+                        }
+                    }, 200);
 
-                    }
-                    else if(type.equals("edit")){
-                        saveEmployees();
-                    }
+                } else if (type.equals("edit")) {
+                    saveEmployees();
                 }
             }
         });
 
         // Xử lý sự kiện click button "Xem bảng lương":
-        btnXemBangLuong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(DetailEmployeeActivity.this,DetailSalaryActivity.class);
-                intent.putExtra("key",empID.getText()+"");
-                startActivity(intent);
-            }
+        btnXemBangLuong.setOnClickListener(v -> {
+            intent = new Intent(DetailEmployeeActivity.this, DetailSalaryActivity.class);
+            intent.putExtra("key", empID.getText() + "");
+            startActivity(intent);
         });
 
-        //NavigationView
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-    }
-    private void saveEmployees(){
-        Employees Employees = new Employees();
+        empPosition.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(empPosition.getSelectedItem().equals("Nhân viên giao hàng")) {
+                    empShipArea.setVisibility(View.VISIBLE);
+                } else empShipArea.setVisibility(View.GONE);
+            }
 
-        Employees.setAccountID("");
-        Employees.setAddress(empAddress.getText() + "");
-        if(!String.valueOf(empAllowance.getText()).equals("")){
-            Employees.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void saveEmployees() {
+        Employee employees = new Employee();
+
+        employees.setAccountID("");
+        employees.setAddress(empAddress.getText() + "");
+        if (!String.valueOf(empAllowance.getText()).equals("")) {
+            employees.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
         }
-        Employees.setBirthday(empDOB.getText() + "");
-        Employees.setCreated_at(empCreated_at.getText() + "");
-        Employees.setGender((String) empGender.getSelectedItem());
-        Employees.setName(empName.getText() + "");
-        Employees.setPosition((String) empPosition.getSelectedItem());
-        Employees.setSalary(Integer.parseInt(empSalary.getText() + ""));
+        employees.setBirthday(empDOB.getText() + "");
+        employees.setCreated_at(empCreated_at.getText() + "");
+        employees.setGender((String) empGender.getSelectedItem());
+        employees.setName(empName.getText() + "");
+        employees.setPosition((String) empPosition.getSelectedItem());
+        employees.setSalary(Integer.parseInt(empSalary.getText() + ""));
         //get image
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/Employeess/" + Employees.getName() + ".jpg");
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference("images/Employeess/" + employees.getName() + ".jpg");
         Bitmap bitmap = ((BitmapDrawable) empImage.getDrawable()).getBitmap();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(DetailEmployeeActivity.this.getContentResolver(), bitmap, "Title", null);
         imageUri = Uri.parse(path);
         bar.setVisibility(View.VISIBLE);
-        imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        imageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Employees.setImage(uri.toString());
-                        empRef.child(empID.getText() + "").setValue(Employees).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                bar.setVisibility(View.INVISIBLE);
-                                if(type.equals("add")){
-                                    showSuccesDialog("Thêm nhân viên thành công !");
-                                }else{
-                                    showSuccesDialog("Cập nhật nhân viên thành công !");
-                                }
-
-                            }
-                        });
+            public void onSuccess(Uri uri) {
+                employees.setImage(uri.toString());
+                empRef.child(empID.getText() + "").setValue(employees).addOnSuccessListener(unused -> {
+                    bar.setVisibility(View.INVISIBLE);
+                    if (type.equals("add")) {
+                        showSuccesDialog("Thêm nhân viên thành công !");
+                    } else {
+                        showSuccesDialog("Cập nhật nhân viên thành công !");
                     }
+
                 });
             }
-        });
+        }));
     }
+
     private int checkError() {
         if (type.equals("add")) {
             if (imageUri == null) {
@@ -275,7 +258,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
 
     private void data() {
         if (type.equals("edit")) {
-            empID.setText(item.getKeyEmployees());
+            empID.setText(item.getId());
             for (int i = 0; i < empPosition.getCount(); i++) {
                 String position = (String) empPosition.getItemAtPosition(i);
                 if (position.equals(item.getPosition())) {
@@ -298,6 +281,21 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
             empAllowance.setText("" + item.getAllowance());
             Picasso.get().load(item.getImage()).fit().into(empImage);
         }
+        areaRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot node : snapshot.getChildren()) {
+                    Area area = new Area(node.getKey(), node.child("area").getValue(String.class));
+                    listArea.add(area);
+                }
+                areaAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private String getSeniority(String create_at) {
@@ -333,25 +331,6 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.nav_qlnv:
-                break;
-            case R.id.nav_dd:
-                intent = new Intent(DetailEmployeeActivity.this, AttendanceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                break;
-            default:
-                Toast.makeText(DetailEmployeeActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -377,7 +356,7 @@ public class DetailEmployeeActivity extends AppCompatActivity implements Navigat
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
-            Intent itent = new Intent(DetailEmployeeActivity.this,ListEmployeeActivity.class);
+            Intent itent = new Intent(DetailEmployeeActivity.this, ListEmployeeActivity.class);
             startActivity(itent);
             finish();
         });
