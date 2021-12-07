@@ -51,7 +51,7 @@ import vn.edu.tdc.cddd2.data_models.Employee;
 public class AttendanceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar, title;
+    TextView btnBack, subtitleAppbar, title,txtFilter;
     EditText edtĐiemDanh, spinerDate;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -77,6 +77,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
+        txtFilter = findViewById(R.id.tvManageEmployeesTotal);
         subtitleAppbar.setText("Điểm danh");
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
@@ -115,22 +116,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
 
 
         spinerDate.setText(currentDate);
-        spinerDate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         spinerDate.setOnClickListener(v -> {
             // calender class's instance and get current date , month and year from calender
             final Calendar c = Calendar.getInstance();
@@ -141,7 +127,12 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
             datePickerDialog = new DatePickerDialog(AttendanceActivity.this,
                     (view, year, monthOfYear, dayOfMonth) -> {
                         // set day of month , month and year value in the edit text
-                        String day = dayOfMonth + "/"
+                        String tempDay = "";
+                        tempDay = dayOfMonth+"";
+                        if(dayOfMonth < 10){
+                            tempDay = "0"+dayOfMonth;
+                        }
+                        String day = tempDay + "/"
                                 + (monthOfYear + 1) + "/" + year;
                         spinerDate.setText(day);
                     }, mYear, mMonth, mDay);
@@ -247,8 +238,9 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                                 }
                             }
                         }
-
+                        txtFilter.setText(listAttend.size()+" trên "+listEmployee.size()+" nhân viên");
                         adapter.notifyDataSetChanged();
+
                     }
 
                     @Override
@@ -296,7 +288,10 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                         listAttend.add(attendance);
                     }
                 }
+                txtFilter.setText(listAttend.size()+" trên "+listEmployee.size()+" nhân viên");
                 adapter.notifyDataSetChanged();
+
+
             }
 
             @Override

@@ -36,7 +36,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/black"
-        android:text="Nhập kho:"
+        android:text="Hành vi:"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/txt_date" />
 
@@ -48,7 +48,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/black"
-        android:text="Số lượng:"
+        android:text="Chi tiết:"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/txt1" />
 

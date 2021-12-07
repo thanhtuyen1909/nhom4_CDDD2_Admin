@@ -41,7 +41,7 @@
             android:layout_toLeftOf="@+id/btnDelete"
             android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_edit_24"
+            android:src="@drawable/baseline_edit_black_24"
             android:text="" />
 
         <ImageView
@@ -50,7 +50,7 @@
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_delete_24"
+            android:src="@drawable/baseline_delete_black_24"
             android:text="" />
 
     </RelativeLayout>

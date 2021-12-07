@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:foreground="?android:attr/selectableItemBackground"
     android:clickable="true"
@@ -20,7 +21,8 @@
             android:id="@+id/img"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:contentDescription="TODO" />
+            android:contentDescription="TODO"
+            tools:srcCompat="@drawable/ic_baseline_account_circle_24" />
 
         <TextView
             android:id="@+id/txt_username"
@@ -47,13 +49,23 @@
             android:textStyle="italic" />
 
         <ImageView
+            android:id="@+id/btnRepass"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/btnLock"
+            android:src="@drawable/baseline_key_black_24"
+            android:text="" />
+
+        <ImageView
             android:id="@+id/btnLock"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:layout_toLeftOf="@+id/btnHistory"
-            android:src="@drawable/baseline_lock_24"
+            android:src="@drawable/baseline_lock_open_black_36"
             android:text="" />
 
         <ImageView
@@ -62,7 +74,7 @@
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_view_list_24"
+            android:src="@drawable/baseline_view_list_black_24"
             android:text="" />
 
     </RelativeLayout>

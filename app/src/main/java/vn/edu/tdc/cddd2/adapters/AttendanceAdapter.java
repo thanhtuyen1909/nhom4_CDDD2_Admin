@@ -59,8 +59,30 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull AttendanceAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Attendance item = listAttend.get(position);
+        String month = item.getDate().replace("/","-").substring(3,item.getDate().length());
 
+        empRef.child(item.getEmployeeID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()){
+                    DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
+                    attendRef.child(month).child(item.getKey()).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         String currentMoth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+        if(item.getDate().equals(currentDate)){
+            holder.bt_vang.setEnabled(true);
+        }else
+        {
+            holder.bt_vang.setEnabled(false);
+        }
         ref.child(currentMoth).child(item.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

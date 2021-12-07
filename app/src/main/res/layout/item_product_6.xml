@@ -76,7 +76,7 @@
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/baseline_delete_24"
+            android:src="@drawable/baseline_delete_black_24"
             android:text="" />
 
     </RelativeLayout>

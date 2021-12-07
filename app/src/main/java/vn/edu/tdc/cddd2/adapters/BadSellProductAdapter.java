@@ -23,8 +23,6 @@ public class BadSellProductAdapter extends RecyclerView.Adapter<BadSellProductAd
     ArrayList<Product> listProducts, list;
     Context context;
 
-
-
     public BadSellProductAdapter(ArrayList<Product> listProducts, Context context) {
         this.listProducts = listProducts;
         this.context = context;
@@ -68,7 +66,5 @@ public class BadSellProductAdapter extends RecyclerView.Adapter<BadSellProductAd
             tv_name = itemView.findViewById(R.id.txt_name);
             tv_sold = itemView.findViewById(R.id.txt_sold);
         }
-
-
     }
 }

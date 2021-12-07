@@ -41,7 +41,7 @@ public class ManageEmployeesAdapter extends RecyclerView.Adapter<ManageEmployees
     @NonNull
     @Override
     public ManageEmployeesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_manage_employees, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_employee_1, parent, false);
         return new ManageEmployeesViewHolder(view);
     }
 
