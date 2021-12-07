@@ -51,7 +51,7 @@ import vn.edu.tdc.cddd2.data_models.Employee;
 public class AttendanceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar, title,txtFilter;
+    TextView btnBack, subtitleAppbar, title, txtFilter;
     EditText edtĐiemDanh, spinerDate;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -128,9 +128,9 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                     (view, year, monthOfYear, dayOfMonth) -> {
                         // set day of month , month and year value in the edit text
                         String tempDay = "";
-                        tempDay = dayOfMonth+"";
-                        if(dayOfMonth < 10){
-                            tempDay = "0"+dayOfMonth;
+                        tempDay = dayOfMonth + "";
+                        if (dayOfMonth < 10) {
+                            tempDay = "0" + dayOfMonth;
                         }
                         String day = tempDay + "/"
                                 + (monthOfYear + 1) + "/" + year;
@@ -225,20 +225,20 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                         }
 
                         for (Attendance attendance : temp) {
-                            if(attendance.getEmployeeID().trim().toLowerCase().contains(query.trim().toLowerCase())){
+                            if (attendance.getEmployeeID().trim().toLowerCase().contains(query.trim().toLowerCase())) {
                                 listAttend.add(attendance);
                                 continue;
                             }
 
-                            for(Employee emp : listEmployee){
-                                if(attendance.getEmployeeID().equals(emp.getId())){
-                                    if(emp.getName().trim().toLowerCase().contains(query.trim().toLowerCase())){
+                            for (Employee emp : listEmployee) {
+                                if (attendance.getEmployeeID().equals(emp.getId())) {
+                                    if (emp.getName().trim().toLowerCase().contains(query.trim().toLowerCase())) {
                                         listAttend.add(attendance);
                                     }
                                 }
                             }
                         }
-                        txtFilter.setText(listAttend.size()+" trên "+listEmployee.size()+" nhân viên");
+                        txtFilter.setText(listAttend.size() + " trên " + listEmployee.size() + " nhân viên");
                         adapter.notifyDataSetChanged();
 
                     }
@@ -251,11 +251,12 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
             }
         }
     }
-    private void getListEmployee(){
+
+    private void getListEmployee() {
         empRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot node : snapshot.getChildren()){
+                for (DataSnapshot node : snapshot.getChildren()) {
                     Employee employee = node.getValue(Employee.class);
                     employee.setId(node.getKey());
                     listEmployee.add(employee);
@@ -288,7 +289,7 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
                         listAttend.add(attendance);
                     }
                 }
-                txtFilter.setText(listAttend.size()+" trên "+listEmployee.size()+" nhân viên");
+                txtFilter.setText(listAttend.size() + " trên " + listEmployee.size() + " nhân viên");
                 adapter.notifyDataSetChanged();
 
 
