@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AreaAdapter;
@@ -72,7 +74,7 @@ public class DetailEmployeeActivity extends AppCompatActivity {
     DatabaseReference areaRef = FirebaseDatabase.getInstance().getReference("Area");
 
     static int SELECT_IMAGE_CODE = 1;
-    boolean check = true;
+    boolean check = true,check1 = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +100,9 @@ public class DetailEmployeeActivity extends AppCompatActivity {
         btnCancel = findViewById(R.id.txtCancel);
         btnXemBangLuong = findViewById(R.id.btnXBL);
         empID = findViewById(R.id.edtMNV);
+        if(type.equals("edit")){
+            empID.setFocusable(false);
+        }
         empPosition = findViewById(R.id.spinner_chucvu);
         empName = findViewById(R.id.edtTNV);
         empAddress = findViewById(R.id.edtDC);
@@ -105,6 +110,7 @@ public class DetailEmployeeActivity extends AppCompatActivity {
         empGender = findViewById(R.id.spinner_gioitinh);
         empCreated_at = findViewById(R.id.dtp_ngayvao);
         empSeniority = findViewById(R.id.edtTGLV);
+        empSeniority.setFocusable(false);
         empSalary = findViewById(R.id.edtLCB);
         empAllowance = findViewById(R.id.edtPC);
         empImage = findViewById(R.id.imageView);
@@ -130,17 +136,23 @@ public class DetailEmployeeActivity extends AppCompatActivity {
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(v -> {
-            checkTrungID();
+            Log.d("TAG",type);
+            checkTTV();
             if (checkError() == 1) {
                 if (type.equals("add")) {
+                    checkTrungID();
                     new Handler().postDelayed(() -> {
-                        if (check) {
+                        if (check && check1) {
                             saveEmployees();
                         }
                     }, 200);
 
                 } else if (type.equals("edit")) {
-                    saveEmployees();
+                    new Handler().postDelayed(() -> {
+                        if (check1) {
+                            saveEmployees();
+                        }
+                    }, 200);
                 }
             }
         });
@@ -204,9 +216,42 @@ public class DetailEmployeeActivity extends AppCompatActivity {
                 });
             }
         }));
+
+        if(empPosition.getSelectedItem().toString().equals("Nhân viên giao hàng")){
+            Area area = (Area) empShipArea.getSelectedItem();
+
+            shipAreaRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean checkz = true;
+                    String key = "";
+                    for(DataSnapshot node : snapshot.getChildren()){
+                        String id = node.child("employeeID").getValue(String.class);
+                        if(id.equals(empID.getText()+"")){
+                            checkz = false;
+                            key = node.getKey();
+                        }
+                    }
+                    if(checkz){
+                        HashMap map =  new HashMap();
+                        map.put("areaID",area.getKey());
+                        map.put("employeeID",empID.getText()+"");
+                        shipAreaRef.push().setValue(map);
+                    }else{
+                        shipAreaRef.child(key).child("areaID").setValue(area.getKey());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
     }
 
     private int checkError() {
+
         if (type.equals("add")) {
             if (imageUri == null) {
                 showWarningDialog("Vui lòng chọn ảnh cho nhân viên");
@@ -254,6 +299,34 @@ public class DetailEmployeeActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private void checkTTV(){
+        if(empPosition.getSelectedItem().toString().equals("Tư vấn viên")){
+            empRef.orderByChild("position").equalTo("Tư vấn viên").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    check1 = true;
+                    for(DataSnapshot node : snapshot.getChildren()){
+                        if(node.exists()){
+                            if(!node.getKey().equals(empID.getText()+"")){
+                                Log.d("TAG",node.getKey());
+                                check1 = false;
+                            }
+
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+        if(check1 == false){
+            showWarningDialog("Đã có tư vấn viên trong cửa hàng");
+        }
     }
 
     private void data() {
@@ -303,7 +376,8 @@ public class DetailEmployeeActivity extends AppCompatActivity {
         Date create = sdf.parse(create_at, new ParsePosition(0));
         Date now = new Date();
         long diff = now.getTime() - create.getTime();
-        int year = (int) (diff / (1000 * 60 * 60 * 24) % 365);
+        Log.d("TAG",diff+"");
+        int year = (int) (diff / 1000 / 60 / 60 / 24 / 365);
         if (year < 1) {
             return "Dưới 1 năm";
         } else {
@@ -314,9 +388,15 @@ public class DetailEmployeeActivity extends AppCompatActivity {
     private void showDatePickerDialog(View v) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
             date = dayOfMonth + "/" + (month + 1) + "/" + year;
+            if(dayOfMonth < 10){
+                date = "0"+date;
+            }
             if (v.getId() == R.id.dtp_ngay_sinh) {
                 empDOB.setText(date);
-            } else empCreated_at.setText(date);
+            } else {
+                empCreated_at.setText(date);
+                empSeniority.setText(getSeniority(date));
+            }
         },
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
@@ -356,8 +436,6 @@ public class DetailEmployeeActivity extends AppCompatActivity {
 
         view.findViewById(R.id.buttonAction).setOnClickListener(v -> {
             alertDialog.dismiss();
-            Intent itent = new Intent(DetailEmployeeActivity.this, ListEmployeeActivity.class);
-            startActivity(itent);
             finish();
         });
 

@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +56,7 @@ import java.util.Locale;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.ManageEmployeesAdapter;
+import vn.edu.tdc.cddd2.adapters.ManuAdapter;
 import vn.edu.tdc.cddd2.data_models.Attendance;
 import vn.edu.tdc.cddd2.data_models.Employee;
 import vn.edu.tdc.cddd2.data_models.Payroll;
@@ -152,6 +154,57 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         });
 
     }
+    private final ManageEmployeesAdapter.ItemClickListener itemClickListener = (keyEmployees, accountID) -> {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ListEmployeeActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListEmployeeActivity.this).inflate(
+                R.layout.layout_error_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        TextView title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        TextView mess = view.findViewById(R.id.textMessage);
+        mess.setText("Xác nhận xoá nhân viên?");
+        ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
+        ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
+            alertDialog.dismiss();
+            FirebaseDatabase.getInstance().getReference().child("Employees")
+                    .child(keyEmployees).removeValue();
+            //Remove data in account
+            if(!accountID.equals("")) {
+                FirebaseDatabase.getInstance().getReference().child("Account")
+                        .child(accountID).removeValue();
+                FirebaseDatabase.getInstance().getReference().child("Ship_area").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot node : snapshot.getChildren()) {
+                            String empID = node.child("employeeID").getValue(String.class);
+                            if (empID.equals(keyEmployees)) {
+                                FirebaseDatabase.getInstance().getReference().child("Ship_area").child(node.getKey()).removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
+
+        view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+
+    };
 
     private void showChooseMonthDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListEmployeeActivity.this, R.style.AlertDialogTheme);
@@ -205,7 +258,6 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
 
     private void exportExcel(String month) {
         HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFCellStyle style = workbook.createCellStyle();
 
         HSSFSheet sheet = workbook.createSheet("Bảng lương tháng 10");
         sheet.setColumnWidth(6, 4000);
@@ -363,8 +415,9 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
     private void setRcvManageEmployees() {
         rcvManageEmployees.setLayoutManager(new LinearLayoutManager(this));
         employeesAdapter = new ManageEmployeesAdapter(ListEmployeeActivity.this
-                , arrEmployeesFilter, ListEmployeeActivity.this);
+                , arrEmployeesFilter);
         rcvManageEmployees.setAdapter(employeesAdapter);
+        employeesAdapter.setItemClickListener(itemClickListener);
     }
 
     private void loadDataManageEmployees() {
@@ -426,70 +479,84 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
     }
 
     private void createPayroll() {
-        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
         String currentMonth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
+
         int month = Integer.parseInt(currentMonth.split("-")[0]);
         month--;
         String lastMonth = month + "-" + currentMonth.split("-")[1];
-        int date = Integer.parseInt(currentDate.split("/")[0]);
-        if (date == 1) {
-            DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
-            empRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot node : dataSnapshot.getChildren()) {
+        payrollRef.child(currentMonth).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()){
+                    Log.d("TAG", "onDataChange: "+snapshot.getKey());
+                    DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
+                    empRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot node : dataSnapshot.getChildren()) {
 
-                        Employee employee = node.getValue(Employee.class);
-                        attendRef.child(lastMonth).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    HashMap<String, Object> map = new HashMap<>();
-                                    count = 0;
-                                    count1 = 0;
-                                    for (DataSnapshot node1 : snapshot.getChildren()) {
-                                        Attendance attendance = node1.getValue(Attendance.class);
-                                        if (attendance.getEmployeeID().equals(node.getKey())) {
-                                            if (attendance.getStatus() == -1) {
-                                                count++;
-                                                if (attendance.getNote().equals("")) {
-                                                    count1++;
+                                Employee employee = node.getValue(Employee.class);
+                                attendRef.child(lastMonth).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                                        if (snapshot1.exists()) {
+                                            HashMap<String, Object> map = new HashMap<>();
+                                            count = 0;
+                                            count1 = 0;
+                                            for (DataSnapshot node1 : snapshot1.getChildren()) {
+                                                Attendance attendance = node1.getValue(Attendance.class);
+                                                if (attendance.getEmployeeID().equals(node.getKey())) {
+                                                    if (attendance.getStatus() == -1) {
+                                                        count++;
+                                                        if (attendance.getNote().equals("")) {
+                                                            count1++;
+                                                        }
+                                                    }
                                                 }
                                             }
+
+                                            map.put("absent", count);
+                                            map.put("allowance", employee.getAllowance());
+                                            map.put("salary", employee.getSalary());
+                                            map.put("workday", 30 - count);
+                                            int bonus = 0;
+                                            if (30 - count >= 26 && count1 == 0) {
+                                                map.put("bonus", 200000);
+                                                bonus = 200000;
+                                            } else {
+                                                map.put("bonus", 0);
+                                            }
+                                            map.put("fine", 50000 * count1);
+                                            map.put("total", employee.getSalary() + employee.getAllowance() + bonus - 50000 * count1);
+                                            Log.d("TAG",map.toString());
+                                            payrollRef.child(lastMonth).child(node.getKey()).setValue(map);
                                         }
                                     }
 
-                                    map.put("absent", count);
-                                    map.put("allowance", employee.getAllowance());
-                                    map.put("salary", employee.getSalary());
-                                    map.put("workday", 30 - count);
-                                    int bonus = 0;
-                                    if (30 - count >= 26 && count1 == 0) {
-                                        map.put("bonus", 200000);
-                                        bonus = 200000;
-                                    } else {
-                                        map.put("bonus", 0);
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                                     }
-                                    map.put("fine", 50000 * count1);
-                                    map.put("total", employee.getSalary() + employee.getAllowance() + bonus - 50000 * count1);
-                                    payrollRef.child(lastMonth).child(node.getKey()).setValue(map);
-                                }
+                                });
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
-        }
+            }
+        });
+
+
+
     }
 
     private void requestPermission(String[] permission, int requestCode) {
