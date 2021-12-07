@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -89,11 +91,20 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
     int count = 0, count1 = 0, firstIndex = 4;
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference payrollRef = FirebaseDatabase.getInstance().getReference("Payroll");
+    String accountID = "", username = "", name = "", role = "", img = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_employee);
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
+
         requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
 
         setControl();
@@ -147,7 +158,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         btnManageEmployeesAdd.setOnClickListener(v -> {
             intent = new Intent(ListEmployeeActivity.this, DetailEmployeeActivity.class);
             intent.putExtra("type", "add");
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("accountID", accountID);
             startActivity(intent);
         });
 
@@ -486,7 +497,6 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(!snapshot.exists()){
-                    Log.d("TAG", "onDataChange: "+snapshot.getKey());
                     DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
                     empRef.addValueEventListener(new ValueEventListener() {
                         @Override
@@ -512,7 +522,6 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                                                     }
                                                 }
                                             }
-
                                             map.put("absent", count);
                                             map.put("allowance", employee.getAllowance());
                                             map.put("salary", employee.getSalary());
@@ -618,9 +627,16 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        TextView txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
+
         // Ẩn button "Trở lại":
         btnBack.setVisibility(View.GONE);
         btnManageEmployeesAdd = findViewById(R.id.btnManageEmployeesAdd);
@@ -645,8 +661,23 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                 break;
             case R.id.nav_dd:
                 intent = new Intent(ListEmployeeActivity.this, AttendanceActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
+                break;
+            case R.id.nav_dmk:
+                intent = new Intent(ListEmployeeActivity.this, ChangePasswordActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
+                break;
+            case R.id.nav_dx:
+                intent = new Intent(ListEmployeeActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListEmployeeActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

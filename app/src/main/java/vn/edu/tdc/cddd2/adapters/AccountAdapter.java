@@ -144,25 +144,22 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         } else {
             holder.im_lock.setBackground(context.getDrawable(R.drawable.baseline_lock_open_24));
         }
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    if (v.getId() == R.id.btnHistory) {
-                        itemClickListener.getLayoutHistory();
-                    } else if(v.getId() == R.id.btnLock){
-                        if (item.getStatus().equals("lock")) {
-                            itemClickListener.lockAccount(item, "unlock");
-                        } else {
-                            itemClickListener.lockAccount(item, "lock");
-                        }
-
-                    }else {
-                        itemClickListener.resetPass(item);
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                if (v.getId() == R.id.btnHistory) {
+                    itemClickListener.getLayoutHistory(item.getKey());
+                } else if(v.getId() == R.id.btnLock){
+                    if (item.getStatus().equals("lock")) {
+                        itemClickListener.lockAccount(item, "unlock");
+                    } else {
+                        itemClickListener.lockAccount(item, "lock");
                     }
-                } else {
-                    return;
+
+                }else {
+                    itemClickListener.resetPass(item);
                 }
+            } else {
+                return;
             }
         };
     }
@@ -201,7 +198,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     public interface ItemClickListener {
         void lockAccount(Account item, String status);
         void resetPass(Account item);
-        void getLayoutHistory();
+        void getLayoutHistory(String key);
     }
 
 }

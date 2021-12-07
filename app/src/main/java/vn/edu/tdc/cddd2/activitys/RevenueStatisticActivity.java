@@ -1,15 +1,15 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,21 +25,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -60,16 +58,21 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
     private BarChart chart;
     BestSellProductAdapter adapter;
     BadSellProductAdapter adapter1;
-    RecyclerView recyclerView,recyclerView1;
-    ArrayList<Product> list,list1;
+    RecyclerView recyclerView, recyclerView1;
+    ArrayList<Product> list, list1;
     private Spinner spinMonth, spinYear;
-    private TextView txtTotalSuccess, txtSuccessOrder, txtTotalCanceled, txtCanceledOrder, txtInventory, txtTotalOrder,txtCountOrder,txtCountInventory;
+    private TextView txtTotalSuccess, txtSuccessOrder, txtTotalCanceled, txtCanceledOrder, txtInventory, txtTotalOrder, txtCountOrder, txtCountInventory;
+
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
     DatabaseReference proRef = FirebaseDatabase.getInstance().getReference("Products");
+
     ArrayList<BarEntry> revenue = new ArrayList<>();
-    int totalRevenue = 0,month = 0,year = 0,totalSuccess = 0,totalCancel = 0,countOrder = 0,countSuccess = 0,countCancel = 0,countInvetory = 0;
+    int totalRevenue = 0, month = 0, year = 0, totalSuccess = 0, totalCancel = 0, countOrder = 0, countSuccess = 0, countCancel = 0, countInvetory = 0;
     long totalInventory = 0;
-    int isFirst = 0,isFirst1 = 0;
+    int isFirst = 0, isFirst1 = 0;
+    String accountID = "", username = "", name = "", role = "", img = "";
+    Intent intent;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,17 +80,17 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         UIinit();
         setEvent();
     }
-    private void setEvent(){
+
+    private void setEvent() {
         spinYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                year = Integer.parseInt((String)spinYear.getItemAtPosition(position));
-                if(isFirst == 0){
+                year = Integer.parseInt((String) spinYear.getItemAtPosition(position));
+                if (isFirst == 0) {
                     isFirst++;
-                }
-                else {
-                    chartData((int)spinMonth.getSelectedItemId(),year);
+                } else {
+                    chartData((int) spinMonth.getSelectedItemId(), year);
                 }
 
             }
@@ -103,10 +106,10 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 month = position;
-                if(isFirst1 == 0){
+                if (isFirst1 == 0) {
                     isFirst1++;
-                }else {
-                    chartData(month,Integer.parseInt(""+spinYear.getSelectedItem()) );
+                } else {
+                    chartData(month, Integer.parseInt("" + spinYear.getSelectedItem()));
                 }
 
             }
@@ -118,7 +121,16 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         });
 
     }
+
     private void UIinit() {
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
+
         //Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -132,6 +144,12 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         //NavigationView
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        TextView txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         chart = findViewById(R.id.chartStatistics);
         spinMonth = findViewById(R.id.spinner_month);
@@ -150,8 +168,8 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         recyclerView1.setHasFixedSize(true);
         list = new ArrayList<>();
         list1 = new ArrayList<>();
-        adapter = new BestSellProductAdapter(list,this);
-        adapter1 = new BadSellProductAdapter(list1,this);
+        adapter = new BestSellProductAdapter(list, this);
+        adapter1 = new BadSellProductAdapter(list1, this);
         recyclerView.setAdapter(adapter);
         recyclerView1.setAdapter(adapter1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -160,25 +178,24 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         Date now = new Date();
         String[] list = now.toString().split(" ");
         int yearNow = Integer.parseInt(list[list.length - 1]);
-        for(int i = 2020;i<=yearNow;i++){
-            years.add(""+i);
+        for (int i = 2020; i <= yearNow; i++) {
+            years.add("" + i);
         }
 
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,years);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, years);
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinYear.setAdapter(yearAdapter);
         spinMonth.setSelection(0);
-        spinYear.setSelection(spinYear.getCount()-1);
-        chartData(month,Integer.parseInt((String)spinYear.getSelectedItem()));
+        spinYear.setSelection(spinYear.getCount() - 1);
+        chartData(month, Integer.parseInt((String) spinYear.getSelectedItem()));
     }
 
     private void chartData(int month, int year) {
-        Log.d("TAG", "chartData: "+month+"/"+year);
-        if(month != 0){
-            int countDay = countDayInMonth(month,year);
+        if (month != 0) {
+            int countDay = countDayInMonth(month, year);
             revenue.clear();
-            for(int i = 1;i<=countDay;i++){
-                BarEntry entry = new BarEntry(i,0);
+            for (int i = 1; i <= countDay; i++) {
+                BarEntry entry = new BarEntry(i, 0);
                 revenue.add(entry);
             }
             setChartData();
@@ -192,38 +209,38 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
                     countOrder = 0;
                     countSuccess = 0;
                     countCancel = 0;
-                    for(DataSnapshot node :dataSnapshot.getChildren()){
+                    for (DataSnapshot node : dataSnapshot.getChildren()) {
                         Order order = node.getValue(Order.class);
-                        Date create_at = sdf.parse(order.getCreated_at(),new ParsePosition(0));
+                        Date create_at = sdf.parse(order.getCreated_at(), new ParsePosition(0));
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(create_at);
-                        if(calendar.get(Calendar.MONTH) + 1 == month && calendar.get(Calendar.YEAR) == year){
+                        if (calendar.get(Calendar.MONTH) + 1 == month && calendar.get(Calendar.YEAR) == year) {
                             //set chart data
-                            if(order.getStatus() == 8){
+                            if (order.getStatus() == 8) {
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
-                                float oldRevenue = revenue.get(day-1).getY();
-                                revenue.get(day-1).setY(oldRevenue+((float) order.getTotal())/1000000);
+                                float oldRevenue = revenue.get(day - 1).getY();
+                                revenue.get(day - 1).setY(oldRevenue + ((float) order.getTotal()) / 1000000);
                                 setChartData();
                                 //count success
                                 countSuccess++;
-                                totalSuccess+= order.getTotal();
+                                totalSuccess += order.getTotal();
                             }
                             //count total
                             countOrder++;
-                            totalRevenue+= order.getTotal();
-                            if(order.getStatus() == 0){
+                            totalRevenue += order.getTotal();
+                            if (order.getStatus() == 0) {
                                 countCancel++;
                                 totalCancel += order.getTotal();
                             }
 
                         }
                     }
-                    txtTotalSuccess.setText((double)totalSuccess/1000000 +"");
-                    txtSuccessOrder.setText(countSuccess+" đơn hàng");
-                    txtTotalCanceled.setText((double)totalCancel/1000000+"");
-                    txtCanceledOrder.setText(countCancel+" huỷ đơn");
-                    txtTotalOrder.setText("Đặt hàng: "+formatPrice(totalRevenue));
-                    txtCountOrder.setText(countOrder+" phiếu đặt");
+                    txtTotalSuccess.setText((double) totalSuccess / 1000000 + "");
+                    txtSuccessOrder.setText(countSuccess + " đơn hàng");
+                    txtTotalCanceled.setText((double) totalCancel / 1000000 + "");
+                    txtCanceledOrder.setText(countCancel + " huỷ đơn");
+                    txtTotalOrder.setText("Đặt hàng: " + formatPrice(totalRevenue));
+                    txtCountOrder.setText(countOrder + " phiếu đặt");
 
                 }
 
@@ -232,11 +249,10 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
 
                 }
             });
-        }
-        else {
+        } else {
             revenue.clear();
-            for(int i = 1;i<=12;i++){
-                BarEntry entry = new BarEntry(i,0);
+            for (int i = 1; i <= 12; i++) {
+                BarEntry entry = new BarEntry(i, 0);
                 revenue.add(entry);
             }
             setChartData();
@@ -250,26 +266,26 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
                     countOrder = 0;
                     countSuccess = 0;
                     countCancel = 0;
-                    for(DataSnapshot node :dataSnapshot.getChildren()){
+                    for (DataSnapshot node : dataSnapshot.getChildren()) {
                         Order order = node.getValue(Order.class);
-                        Date create_at = sdf.parse(order.getCreated_at(),new ParsePosition(0));
+                        Date create_at = sdf.parse(order.getCreated_at(), new ParsePosition(0));
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(create_at);
-                        if(calendar.get(Calendar.YEAR) == year){
+                        if (calendar.get(Calendar.YEAR) == year) {
                             //set chart data
-                            if(order.getStatus() == 8){
-                                int month = calendar.get(Calendar.MONTH)+1;
-                                float oldRevenue = revenue.get(month-1).getY();
-                                revenue.get(month-1).setY(oldRevenue+((float) order.getTotal())/1000000);
+                            if (order.getStatus() == 8) {
+                                int month = calendar.get(Calendar.MONTH) + 1;
+                                float oldRevenue = revenue.get(month - 1).getY();
+                                revenue.get(month - 1).setY(oldRevenue + ((float) order.getTotal()) / 1000000);
                                 setChartData();
                                 //count success
                                 countSuccess++;
-                                totalSuccess+= order.getTotal();
+                                totalSuccess += order.getTotal();
                             }
                             //count total
                             countOrder++;
-                            totalRevenue+= order.getTotal();
-                            if(order.getStatus() == 0){
+                            totalRevenue += order.getTotal();
+                            if (order.getStatus() == 0) {
                                 countCancel++;
                                 totalCancel += order.getTotal();
                             }
@@ -277,12 +293,12 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
                         }
                     }
 
-                    txtTotalSuccess.setText((double)totalSuccess/1000000 +"");
-                    txtSuccessOrder.setText(countSuccess+" đơn hàng");
-                    txtTotalCanceled.setText((double)totalCancel/1000000+"");
-                    txtCanceledOrder.setText(countCancel+" huỷ đơn");
-                    txtTotalOrder.setText("Đặt hàng: "+formatPrice(totalRevenue));
-                    txtCountOrder.setText(countOrder+" phiếu đặt");
+                    txtTotalSuccess.setText((double) totalSuccess / 1000000 + "");
+                    txtSuccessOrder.setText(countSuccess + " đơn hàng");
+                    txtTotalCanceled.setText((double) totalCancel / 1000000 + "");
+                    txtCanceledOrder.setText(countCancel + " huỷ đơn");
+                    txtTotalOrder.setText("Đặt hàng: " + formatPrice(totalRevenue));
+                    txtCountOrder.setText(countOrder + " phiếu đặt");
                 }
 
                 @Override
@@ -296,15 +312,15 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         proRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot node : dataSnapshot.getChildren()){
+                for (DataSnapshot node : dataSnapshot.getChildren()) {
                     Product product = node.getValue(Product.class);
-                    if(product.getStatus() != -1){
-                        countInvetory+= product.getQuantity();
-                        totalInventory+= product.getImport_price()*product.getQuantity();
+                    if (product.getStatus() != -1) {
+                        countInvetory += product.getQuantity();
+                        totalInventory += product.getImport_price() * product.getQuantity();
                     }
                 }
-                txtInventory.setText("Giá trị tồn kho : "+formatPrice(totalInventory));
-                txtCountInventory.setText(countInvetory+" sản phẩm");
+                txtInventory.setText("Giá trị tồn kho : " + formatPrice(totalInventory));
+                txtCountInventory.setText(countInvetory + " sản phẩm");
             }
 
             @Override
@@ -312,13 +328,13 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
 
             }
         });
-        Query query =  proRef.orderByChild("sold").limitToLast(5);
+        Query query = proRef.orderByChild("sold").limitToLast(5);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 list.clear();
-                for(DataSnapshot node :dataSnapshot.getChildren()){
-                    list.add(0,node.getValue(Product.class));
+                for (DataSnapshot node : dataSnapshot.getChildren()) {
+                    list.add(0, node.getValue(Product.class));
 
                 }
                 adapter.notifyDataSetChanged();
@@ -330,12 +346,12 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
 
             }
         });
-        query =  proRef.orderByChild("sold").limitToFirst(5);
+        query = proRef.orderByChild("sold").limitToFirst(5);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 list1.clear();
-                for(DataSnapshot node :dataSnapshot.getChildren()){
+                for (DataSnapshot node : dataSnapshot.getChildren()) {
                     list1.add(node.getValue(Product.class));
 
                 }
@@ -349,7 +365,8 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
             }
         });
     }
-    private void setChartData(){
+
+    private void setChartData() {
         BarDataSet barDataSet = new BarDataSet(revenue, "Doanh thu");
         barDataSet.setColors(new int[]{getResources().getColor(R.color.colorChart)});
         barDataSet.setValueTextColor(Color.BLACK);
@@ -376,6 +393,7 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         });
 
     }
+
     private int countDayInMonth(int month, int year) {
 
         switch (month) {
@@ -401,6 +419,7 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         }
         return -1;
     }
+
     private String formatPrice(long price) {
         String stmp = String.valueOf(price);
         int amount;
@@ -412,41 +431,59 @@ public class RevenueStatisticActivity extends AppCompatActivity implements Navig
         }
         return stmp + " ₫";
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_qltk:
-                Intent intent = new Intent(RevenueStatisticActivity.this, ListAccountActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent = new Intent(RevenueStatisticActivity.this, ListAccountActivity.class);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_lsdh:
                 intent = new Intent(RevenueStatisticActivity.this, OrderHistoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_tk:
                 break;
             case R.id.nav_qlbl:
                 intent = new Intent(RevenueStatisticActivity.this, ListRatingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(RevenueStatisticActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(RevenueStatisticActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(RevenueStatisticActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

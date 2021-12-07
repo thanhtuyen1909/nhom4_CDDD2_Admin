@@ -43,20 +43,20 @@ import vn.edu.tdc.cddd2.fragments.FragmentWillOrderOH;
 
 public class OrderProcessActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến:
-    private BottomNavigationView bottomNavigationView;
+    BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
-    private Toolbar toolbar;
-    private TextView btnSave, subtitleAppbar, title, mess, txtName, txtRole;
+    Toolbar toolbar;
+    TextView btnSave, subtitleAppbar, title, mess, txtName, txtRole;
     ImageView iv_user;
     private String tag = "ListOrderOH";
     String accountID = "", username = "", name = "", role = "", img = "";
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
+    NavigationView navigationView;
     private Intent intent;
-    private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Order");
-    private DatabaseReference cusRef = FirebaseDatabase.getInstance().getReference("Customer");
+    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Order");
+    DatabaseReference cusRef = FirebaseDatabase.getInstance().getReference("Customer");
     private ArrayList<Order> listOrder;
 
 
@@ -172,22 +172,19 @@ public class OrderProcessActivity extends AppCompatActivity implements Navigatio
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentListOrderOH(), tag).commit();
 
         // Xử lý sự kiện cho thanh bottomnavigationview
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() == R.id.odering) {
-                    selectedFragment = new FragmentListOrderOH();
-                    tag = "ListOrderOH";
-                } else if (item.getItemId() == R.id.willorder) {
-                    selectedFragment = new FragmentWillOrderOH();
-                    tag = "WillOrderOH";
-                } else {
-                    selectedFragment = new FragmentCancelOrderOH();
-                    tag = "CancelOrderOH";
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment, tag).commit();
-                return true;
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.odering) {
+                selectedFragment = new FragmentListOrderOH();
+                tag = "ListOrderOH";
+            } else if (item.getItemId() == R.id.willorder) {
+                selectedFragment = new FragmentWillOrderOH();
+                tag = "WillOrderOH";
+            } else {
+                selectedFragment = new FragmentCancelOrderOH();
+                tag = "CancelOrderOH";
             }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment, tag).commit();
+            return true;
         });
     }
 

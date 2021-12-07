@@ -440,6 +440,7 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
         }
     };
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -484,6 +485,7 @@ public class ListRatingActivity extends AppCompatActivity implements NavigationV
             case R.id.nav_dx:
                 intent = new Intent(ListRatingActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListRatingActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

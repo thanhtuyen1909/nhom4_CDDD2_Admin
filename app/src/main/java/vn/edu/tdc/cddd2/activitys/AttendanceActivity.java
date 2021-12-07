@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,12 +69,20 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
     ArrayList<Employee> listEmployee = new ArrayList<>();
+    String accountID = "", username = "", name = "", role = "", img = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_attendance);
         getListEmployee();
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -168,6 +178,12 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        TextView txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         //search
         searchView = findViewById(R.id.searchManageEmployees);
@@ -207,7 +223,6 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
     private void filter(String date, String query) {
         if (!date.equals("")) {
             if (query.equals("")) {
-
                 data(date);
             } else {
                 String month = date.split("/")[1] + "-" + date.split("/")[2];
@@ -311,10 +326,25 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         switch (id) {
             case R.id.nav_qlnv:
                 intent = new Intent(AttendanceActivity.this, ListEmployeeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("username", username);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dd:
+                break;
+            case R.id.nav_dmk:
+                intent = new Intent(AttendanceActivity.this, ChangePasswordActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
+                break;
+            case R.id.nav_dx:
+                intent = new Intent(AttendanceActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(AttendanceActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();

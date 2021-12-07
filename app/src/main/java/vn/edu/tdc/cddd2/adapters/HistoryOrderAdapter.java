@@ -47,20 +47,23 @@ public class HistoryOrderAdapter extends RecyclerView.Adapter<HistoryOrderAdapte
        holder.tvCardHistoryOrderDate.setText(order.getCreated_at());
        holder.imgCardHistoryOrder.setImageResource(R.drawable.order);
 
-       holder.CardHistoryOrder.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-              Intent intent = new Intent(mContext, DetailOrderActivity.class);
-               intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-               intent.putExtra("item", (Parcelable) order);
-               mContext.startActivity(intent);
-           }
+       holder.CardHistoryOrder.setOnClickListener(view -> {
+           Intent intent = new Intent(mContext, DetailOrderActivity.class);
+           intent.putExtra("item", (Parcelable) order);
+           mContext.startActivity(intent);
        });
     }
 
     private String formatPrice(int price) {
-        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
-                .format(price);
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 
     @Override

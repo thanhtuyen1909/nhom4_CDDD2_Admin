@@ -61,6 +61,7 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btnQLTK:
                 intent = new Intent(MainADMActivity.this, ListAccountActivity.class);
                 intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 intent.putExtra("image", img);
@@ -70,6 +71,7 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btnLSDH:
                 intent = new Intent(MainADMActivity.this, OrderHistoryActivity.class);
                 intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 intent.putExtra("image", img);
@@ -79,6 +81,7 @@ public class MainADMActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btnTK:
                 intent = new Intent(MainADMActivity.this, RevenueStatisticActivity.class);
                 intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
                 intent.putExtra("name", name);
                 intent.putExtra("role", role);
                 intent.putExtra("image", img);

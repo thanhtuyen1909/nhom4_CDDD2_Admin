@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,6 +34,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -70,6 +73,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private Intent intent;
+    String accountID = "", username = "", name = "", role = "", img = "";
 
     //New data
     Spinner spHistoryCart;
@@ -117,7 +121,6 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         sheet = wb.createSheet("HOÁ ĐƠN");
 
         //Query get data
-
         queryByOrder = FirebaseDatabase.getInstance().getReference().
                 child("Order").orderByChild("created_at");
         queryStatus = FirebaseDatabase.getInstance().getReference().
@@ -132,91 +135,83 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         filterOrderBySpinner();
 
         //Picker date to
-        tvHistoryCartPickerTo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isFilter=false;
-                showDateDialog(tvHistoryCartPickerTo);
-            }
+        tvHistoryCartPickerTo.setOnClickListener(view -> {
+            isFilter=false;
+            showDateDialog(tvHistoryCartPickerTo);
         });
         //Picker date from
-        tvHistoryCartPickerFrom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isFilter=false;
-                showDateDialog(tvHistoryCartPickerFrom);
-            }
+        tvHistoryCartPickerFrom.setOnClickListener(view -> {
+            isFilter=false;
+            showDateDialog(tvHistoryCartPickerFrom);
         });
         //Filter by time
-        btnHistoryCartSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isFilter=true;
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                Date dateTo;
-                Date dateFrom;
-                Date dateOrder;
-                try {
-                    dateTo = simpleDateFormat.parse(tvHistoryCartPickerTo.getText().toString());
-                    dateFrom = simpleDateFormat.parse(tvHistoryCartPickerFrom.getText().toString());
-                    if (dateTo.after(dateFrom)) {
-                        showDialog("Thời gian không phù hợp");
-                    } else {
-                        arrOrderFilter.clear();
-                        for (int i = 0; i < arrOrderFilterSpinner.size(); i++) {
-                            dateOrder = simpleDateFormat.parse(arrOrderFilterSpinner.get(i).getCreated_at().substring(0, 10));
-                            if (dateTo.before(dateOrder) && dateFrom.after(dateOrder)
-                                    || dateTo.equals(dateOrder)
-                                    || dateFrom.equals(dateOrder)) {
-                                arrOrderFilter.add(arrOrderFilterSpinner.get(i));
-                            }
+        btnHistoryCartSubmit.setOnClickListener(view -> {
+            isFilter=true;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            Date dateTo;
+            Date dateFrom;
+            Date dateOrder;
+            try {
+                dateTo = simpleDateFormat.parse(tvHistoryCartPickerTo.getText().toString());
+                dateFrom = simpleDateFormat.parse(tvHistoryCartPickerFrom.getText().toString());
+                if (dateTo.after(dateFrom)) {
+                    showDialog("Thời gian không phù hợp");
+                } else {
+                    arrOrderFilter.clear();
+                    for (int i = 0; i < arrOrderFilterSpinner.size(); i++) {
+                        dateOrder = simpleDateFormat.parse(arrOrderFilterSpinner.get(i).getCreated_at().substring(0, 10));
+                        if (dateTo.before(dateOrder) && dateFrom.after(dateOrder)
+                                || dateTo.equals(dateOrder)
+                                || dateFrom.equals(dateOrder)) {
+                            arrOrderFilter.add(arrOrderFilterSpinner.get(i));
                         }
-                        historyOrderAdapter.notifyDataSetChanged();
-                        printTotalNumberCountOrder();
                     }
-                } catch (ParseException ex) {
-                    showDialog("Thời gian không được để trống");
+                    historyOrderAdapter.notifyDataSetChanged();
+                    printTotalNumberCountOrder();
                 }
-
+            } catch (ParseException ex) {
+                showDialog("Thời gian không được để trống");
             }
+
         });
 
         //Search by id order
         searchHistoryCart.setOnQueryTextListener(this);
 
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        btnBack.setOnClickListener(v -> {
+            intent = new Intent(OrderHistoryActivity.this, MainADMActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            intent.putExtra("image", img);
+            startActivity(intent);
+            finish();
         });
 
         // Xử lý sự kiện click button "Xuất thống kê":
-        tvHistoryCartRender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //If user isn't selected fliter
-
-                   if(isFilter){
-                       //Data not null
-                       if(arrOrderFilter.size()==0){
-                           showDialog("Dữ liệu rỗng in thất bại");
-                       }else{
-                           renderDataExcel();
-                           wb = new HSSFWorkbook();
-                           fontTitle = wb.createFont();
-                           fontTitleMain = wb.createFont();
-                           styleFont();
-                           styleCell();
-                           sheet = wb.createSheet("HOÁ ĐƠN");
-                       }
+        tvHistoryCartRender.setOnClickListener(v -> {
+            //If user isn't selected fliter
+               if(isFilter){
+                   //Data not null
+                   if(arrOrderFilter.size()==0){
+                       showDialog("Dữ liệu rỗng in thất bại");
                    }else{
-                       showDialog("Bạn chưa chọn lọc theo thời gian này");
+                       renderDataExcel();
+                       wb = new HSSFWorkbook();
+                       fontTitle = wb.createFont();
+                       fontTitleMain = wb.createFont();
+                       styleFont();
+                       styleCell();
+                       sheet = wb.createSheet("HOÁ ĐƠN");
                    }
-            }
+               }else{
+                   showDialog("Bạn chưa chọn lọc theo thời gian này");
+               }
         });
     }
+
     private void renderDataExcel(){
         //Handle name path
         String strPathName= "BaoCao";
@@ -269,26 +264,19 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
     private void showDialog(String title) {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(title);
-        b.setNegativeButton("Xác nhận", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        b.setNegativeButton("Xác nhận", (dialog, id) -> dialog.cancel());
         AlertDialog al = b.create();
         al.show();
     }
 
     private void showDateDialog(TextView tvData) {
         Calendar calendar = Calendar.getInstance();
-        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                calendar.set(Calendar.YEAR, i);
-                calendar.set(Calendar.MONTH, i1);
-                calendar.set(Calendar.DAY_OF_MONTH, i2);
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                tvData.setText(simpleDateFormat.format(calendar.getTime()));
-            }
+        DatePickerDialog.OnDateSetListener dateSetListener = (datePicker, i, i1, i2) -> {
+            calendar.set(Calendar.YEAR, i);
+            calendar.set(Calendar.MONTH, i1);
+            calendar.set(Calendar.DAY_OF_MONTH, i2);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            tvData.setText(simpleDateFormat.format(calendar.getTime()));
         };
         new DatePickerDialog(OrderHistoryActivity.this, dateSetListener,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
@@ -432,6 +420,13 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
     }
 
     private void setControl() {
+
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
+
         spHistoryCart = findViewById(R.id.spHistoryCart);
         rcvHistoryCart = findViewById(R.id.rcvHistoryCart);
         searchHistoryCart = findViewById(R.id.searchHistoryCart);
@@ -453,9 +448,16 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
+
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        TextView txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
     }
 
     @Override
@@ -802,35 +804,52 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         return str;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_qltk:
                 intent = new Intent(OrderHistoryActivity.this, ListAccountActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_lsdh:
                 break;
             case R.id.nav_tk:
                 intent = new Intent(OrderHistoryActivity.this, RevenueStatisticActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlbl:
                 intent = new Intent(OrderHistoryActivity.this, ListRatingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(OrderHistoryActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(OrderHistoryActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(OrderHistoryActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
@@ -849,7 +868,14 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
         }
     }
     private String formatPrice(int price) {
-        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN"))
-                .format(price);
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 }

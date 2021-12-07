@@ -49,16 +49,13 @@ public class DetailSalaryActivity extends AppCompatActivity {
     private TextView subtitleAppbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
-    private Intent intent;
     private TextView empID, empName, empPosition, empCreated_at, txtAbsent, empSalary, txtWorkDay, empAllowance, txtBonus, txtTotalSalary, txtFine;
     private Spinner spinMonth, spinYear;
     private String month, year;
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference payrollRef = FirebaseDatabase.getInstance().getReference("Payroll");
     String id = "E1", key = "";
-    int count = 0, count1 = 0, REQUEST_CODE = 1;
-    int firstIndex = 4;
+    int REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -1,19 +1,17 @@
 package vn.edu.tdc.cddd2.activitys;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,33 +27,31 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 
-import vn.edu.tdc.cddd2.DAO.DAOProduct;
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AccountAdapter;
-import vn.edu.tdc.cddd2.adapters.PromoCodeAdapter;
 import vn.edu.tdc.cddd2.data_models.Account;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.Employee;
-import vn.edu.tdc.cddd2.data_models.Product;
-import vn.edu.tdc.cddd2.data_models.PromoCode;
 import vn.edu.tdc.cddd2.data_models.Role;
 
 public class ListAccountActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
-    private Toolbar toolbar;
-    private TextView btnBack, subtitleAppbar;
-    private Button btnAdd;
+    Toolbar toolbar;
+    TextView btnBack, subtitleAppbar, txtName, txtRole;
+    Button btnAdd;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private RecyclerView recyclerView;
@@ -66,6 +62,8 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     private Intent intent;
     Spinner spinPosition;
     SearchView searchView;
+    String accountID = "", username = "", name = "", role = "", img = "";
+
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference accountRef = db.getReference("Account");
     DatabaseReference roleRef = db.getReference("Role");
@@ -76,6 +74,13 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_list_account);
+
+        intent = getIntent();
+        username = intent.getStringExtra("username");
+        accountID = intent.getStringExtra("accountID");
+        name = intent.getStringExtra("name");
+        role = intent.getStringExtra("role");
+        img = intent.getStringExtra("image");
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -122,20 +127,19 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
             }
         });
         // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        btnBack.setOnClickListener(v -> {
+            intent = new Intent(ListAccountActivity.this, MainADMActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("accountID", accountID);
+            intent.putExtra("name", name);
+            intent.putExtra("role", role);
+            intent.putExtra("image", img);
+            startActivity(intent);
+            finish();
         });
 
         // Xử lý sự kiện click button "+":
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addAccount();
-            }
-        });
+        btnAdd.setOnClickListener(v -> addAccount());
 
         //RecycleView
         recyclerView = findViewById(R.id.listAccount);
@@ -150,6 +154,12 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         //NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
+        txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
+        txtName.setText(name);
+        txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
     }
 
     @Override
@@ -197,8 +207,6 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                                     if (listCustomer.size() > 0) {
                                         for (Customer customer : listCustomer) {
                                             if (customer.getAccountID().equals(node.getKey())) {
-                                                Log.d("TAG", "onDataChange: " + customer.getName().toLowerCase().trim());
-                                                Log.d("TAG", "name: " + name.toLowerCase().trim());
                                                 if (customer.getName().toLowerCase().trim().contains(name.toLowerCase().trim())) {
                                                     listAccount.add(account);
                                                 }
@@ -327,35 +335,35 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     private AccountAdapter.ItemClickListener itemClickListener = new AccountAdapter.ItemClickListener() {
         @Override
         public void lockAccount(Account item, String status) {
-            if (status.equals("lock")) {
-                showWarningDialog(item, status);
+            if(item.getKey().equals(accountID)) {
+                showErrorDialog("Không thể sử dụng thao tác này trên tài khoản đang được đăng nhập!");
             } else {
-                item.setStatus(status);
-                accountRef.child(item.getKey()).setValue(item);
-                accountAdapter.notifyDataSetChanged();
+                if (item.getStatus().equals("unlock")) {
+                    showWarningDialog(item, "lock");
+                } else {
+                    accountRef.child(item.getKey()).child("status").setValue("unlock");
+                    showSuccesDialog("Mở khóa tài khoản thành công!");
+                    pushAccountHistory("Mở khóa tài khoản", "Tên đăng nhập " + item.getUsername());
+                }
             }
         }
 
         @Override
         public void resetPass(Account item) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("username", item.getUsername());
-            map.put("password", item.getUsername());
-            map.put("status", item.getStatus());
-            map.put("role_id", item.getRole_id());
-            accountRef.child(item.getKey()).setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
+            if(item.getKey().equals(accountID)) {
+                showErrorDialog("Không thể sử dụng thao tác này trên tài khoản đang được đăng nhập!");
+            } else {
+                accountRef.child(item.getKey()).child("password").setValue(item.getUsername()).addOnSuccessListener(unused -> {
                     showSuccesDialog("Đặt lại mật khẩu thành công!");
-                }
-            });
-            accountAdapter.notifyDataSetChanged();
+                    pushAccountHistory("Đặt lại mật khẩu cho tài khoản", "Tên đăng nhập " + item.getUsername());
+                });
+            }
         }
 
         @Override
-        public void getLayoutHistory() {
+        public void getLayoutHistory(String key) {
             intent = new Intent(ListAccountActivity.this, ListHistoryActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("key", key);
             startActivity(intent);
         }
     };
@@ -369,27 +377,43 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                 break;
             case R.id.nav_lsdh:
                 intent = new Intent(ListAccountActivity.this, OrderHistoryActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qlmgg:
                 intent = new Intent(ListAccountActivity.this, RevenueStatisticActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_qllsp:
                 intent = new Intent(ListAccountActivity.this, ListRatingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
+                intent.putExtra("accountID", accountID);
+                intent.putExtra("name", name);
+                intent.putExtra("role", role);
+                intent.putExtra("image", img);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.nav_dmk:
                 intent = new Intent(ListAccountActivity.this, ChangePasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
             case R.id.nav_dx:
                 intent = new Intent(ListAccountActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             default:
                 Toast.makeText(ListAccountActivity.this, "Vui lòng chọn chức năng khác", Toast.LENGTH_SHORT).show();
@@ -408,6 +432,30 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         }
     }
 
+    private void showErrorDialog(String notify) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ListAccountActivity.this, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from(ListAccountActivity.this).inflate(
+                R.layout.layout_warning_dialog,
+                findViewById(R.id.layoutDialogContainer)
+        );
+        builder.setView(view);
+        TextView title = view.findViewById(R.id.textTitle);
+        title.setText(R.string.title);
+        TextView mess = view.findViewById(R.id.textMessage);
+        mess.setText(notify);
+        ((TextView) view.findViewById(R.id.buttonAction)).setText(getResources().getString(R.string.yes));
+
+        final android.app.AlertDialog alertDialog = builder.create();
+
+        view.findViewById(R.id.buttonAction).setOnClickListener(v -> alertDialog.dismiss());
+
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        alertDialog.show();
+    }
+
     private void showWarningDialog(Account item, String status) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListAccountActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListAccountActivity.this).inflate(
@@ -418,7 +466,7 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         TextView title = view.findViewById(R.id.textTitle);
         title.setText(R.string.title);
         TextView mess = view.findViewById(R.id.textMessage);
-        mess.setText("Xác nhận khoá tài khoản?");
+        mess.setText("Xác nhận khoá tài khoản " + item.getUsername() + "?");
         ((TextView) view.findViewById(R.id.buttonYes)).setText(getResources().getString(R.string.yes));
         ((TextView) view.findViewById(R.id.buttonNo)).setText(getResources().getString(R.string.no));
 
@@ -427,11 +475,9 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         view.findViewById(R.id.buttonYes).setOnClickListener(v -> {
             alertDialog.dismiss();
             item.setStatus(status);
-            accountRef.child(item.getKey()).setValue(item).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    showSuccesDialog("Khoá tài khoản thành công !");
-                }
+            accountRef.child(item.getKey()).setValue(item).addOnSuccessListener(unused -> {
+                showSuccesDialog("Khoá tài khoản thành công !");
+                pushAccountHistory("Khoá tài khoản", "Tên đăng nhập " + item.getUsername());
             });
             accountAdapter.notifyDataSetChanged();
         });
@@ -508,11 +554,9 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                         if (role.getName().equals(employee.getPosition())) {
                             account.setRole_id(role.getId());
                             String key = accountRef.push().getKey();
-                            accountRef.child(key).setValue(account).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    showSuccesDialog("Thêm tài khoản thành công !");
-                                }
+                            accountRef.child(key).setValue(account).addOnSuccessListener(unused -> {
+                                showSuccesDialog("Thêm tài khoản thành công!");
+                                pushAccountHistory("Thêm tài khoản", "Tên đăng nhập " + account.getUsername());
                             });
                             empRef.child(employee.getId()).child("accountID").setValue(key);
                             accountAdapter.notifyDataSetChanged();
@@ -558,5 +602,16 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         alertDialog.show();
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
     }
 }

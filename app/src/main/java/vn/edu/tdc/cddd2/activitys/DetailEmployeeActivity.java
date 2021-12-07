@@ -50,6 +50,7 @@ import java.util.HashMap;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.AreaAdapter;
+import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Area;
 import vn.edu.tdc.cddd2.data_models.Employee;
 
@@ -67,7 +68,7 @@ public class DetailEmployeeActivity extends AppCompatActivity {
     ArrayList<Area> listArea;
     Uri imageUri;
     ProgressBar bar;
-    String type = "add", date = "";
+    String type = "add", date = "", accountID = "";
     Employee item;
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference shipAreaRef = FirebaseDatabase.getInstance().getReference("Ship_area");
@@ -80,6 +81,7 @@ public class DetailEmployeeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_detail_employee);
+        accountID = getIntent().getStringExtra("accountID");
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             type = bundle.getString("type");
@@ -136,7 +138,6 @@ public class DetailEmployeeActivity extends AppCompatActivity {
 
         // Xử lý sự kiện click button "Lưu":
         btnSave.setOnClickListener(v -> {
-            Log.d("TAG",type);
             checkTTV();
             if (checkError() == 1) {
                 if (type.equals("add")) {
@@ -182,7 +183,7 @@ public class DetailEmployeeActivity extends AppCompatActivity {
     private void saveEmployees() {
         Employee employees = new Employee();
 
-        employees.setAccountID("");
+        if(type.equals("add")) employees.setAccountID("");
         employees.setAddress(empAddress.getText() + "");
         if (!String.valueOf(empAllowance.getText()).equals("")) {
             employees.setAllowance(Integer.parseInt(empAllowance.getText() + ""));
@@ -208,11 +209,12 @@ public class DetailEmployeeActivity extends AppCompatActivity {
                 empRef.child(empID.getText() + "").setValue(employees).addOnSuccessListener(unused -> {
                     bar.setVisibility(View.INVISIBLE);
                     if (type.equals("add")) {
-                        showSuccesDialog("Thêm nhân viên thành công !");
+                        showSuccesDialog("Thêm nhân viên thành công!");
+                        pushAccountHistory("Thêm nhân viên", "Mã NV: " + employees.getId() + "\nHọ tên NV: " + employees.getName());
                     } else {
-                        showSuccesDialog("Cập nhật nhân viên thành công !");
+                        showSuccesDialog("Cập nhật nhân viên thành công!");
+                        pushAccountHistory("Cập nhật nhân viên", "Mã NV: " + employees.getId() + "\nHọ tên NV: " + employees.getName());
                     }
-
                 });
             }
         }));
@@ -475,5 +477,16 @@ public class DetailEmployeeActivity extends AppCompatActivity {
             imageUri = data.getData();
             empImage.setImageURI(imageUri);
         }
+    }
+
+    public void pushAccountHistory(String action, String detail) {
+        // Thêm vào "Lịch sử hoạt động"
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        AccountHistory accountHistory = new AccountHistory();
+        accountHistory.setAccountID(accountID);
+        accountHistory.setAction(action);
+        accountHistory.setDetail(detail);
+        accountHistory.setDate(sdf.format(new Date()));
+        FirebaseDatabase.getInstance().getReference("AccountHistory").push().setValue(accountHistory);
     }
 }
