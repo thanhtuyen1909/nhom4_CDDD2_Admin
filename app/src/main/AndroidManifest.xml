@@ -28,7 +28,7 @@
             android:screenOrientation="portrait" />
 
         <!-- Warehouse Management -->
-        <activity android:name=".activitys.MainQLKActivity"></activity>
+        <activity android:name=".activitys.MainQLKActivity" />
         <activity
             android:name=".activitys.ListProductActivity"
             android:screenOrientation="portrait" />
@@ -62,6 +62,9 @@
         <activity
             android:name=".activitys.OrderCoordinationActivity"
             android:screenOrientation="portrait" />
+
+
+
         <!-- Salesman -->
         <activity
             android:name=".activitys.ListProductSMActivity"
@@ -72,14 +75,23 @@
         <activity
             android:name=".activitys.CreateOrderActivity"
             android:screenOrientation="portrait" />
+
+
+
         <!-- Order Handler -->
         <activity
             android:name=".activitys.OrderProcessActivity"
             android:screenOrientation="portrait" />
+
+
+
         <!-- Shipper -->
         <activity
             android:name=".activitys.ShipProcessActivity"
             android:screenOrientation="portrait" />
+
+
+
         <!-- Administrators -->
         <activity
             android:name=".activitys.MainADMActivity"
@@ -107,6 +119,9 @@
             android:name=".activitys.DetailRatingActivity"
             android:screenOrientation="portrait">
         </activity>
+
+
+
         <!-- HR -->
         <activity
             android:name=".activitys.AttendanceActivity"
@@ -120,6 +135,9 @@
         <activity
             android:name=".activitys.DetailSalaryActivity"
             android:screenOrientation="portrait" />
+
+
+
         <!-- Counselor -->
         <activity
             android:name=".activitys.ListMessageActivity"

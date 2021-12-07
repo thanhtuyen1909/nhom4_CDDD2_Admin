@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -125,8 +127,10 @@ public class ListManuActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
         txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
         txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
         txtName.setText(name);
         txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         // Xử lý sự kiện thay đổi dữ liệu searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

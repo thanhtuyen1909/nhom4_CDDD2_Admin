@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                             temp.setKey(node.getKey());
                             if (account.getUsername().equals(temp.getUsername()) && account.getPassword().equals(temp.getPassword()) &&
                                     temp.getStatus().equals("unlock")) {
-                                emRef.addValueEventListener(new ValueEventListener() {
+                                emRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot1) {
                                         for (DataSnapshot node1 : snapshot1.getChildren()) {

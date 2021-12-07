@@ -18,9 +18,9 @@
 
         <SearchView
             android:id="@+id/editSearch"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
+            android:layout_margin="5dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:iconifiedByDefault="false"
             android:queryHint="Mã giảm giá"
             android:background="@drawable/rounded_border_edittext"

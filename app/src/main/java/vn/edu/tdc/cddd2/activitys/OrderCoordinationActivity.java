@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,8 +104,10 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
         navigationView.setNavigationItemSelectedListener(this);
         txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
         txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
         txtName.setText(name);
         txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         // Khởi tạo biến
         btnSave = findViewById(R.id.txtSave);
@@ -308,6 +311,56 @@ public class OrderCoordinationActivity extends AppCompatActivity implements Navi
                 if (order.getStatus() == 2 && !order.getShipperID().equals("null")) {
                     order.setStatus(3);
                     orderRef.child(order.getOrderID()).setValue(order);
+                }
+                else if (order.getStatus() == 0) {
+                    orderRef.orderByChild("accountID").equalTo(order.getAccountID()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int sum = 0;
+                            for (DataSnapshot node : snapshot.getChildren()) {
+                                Order order1 = node.getValue(Order.class);
+                                if(order1.getStatus() == 0) {
+                                    sum++;
+                                }
+                            }
+                            if(sum >= 10) {
+                                cusRef.orderByChild("accountID").equalTo(order.getAccountID()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                            Customer customer = snapshot1.getValue(Customer.class);
+                                            customer.setStatus("black");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            } else {
+                                cusRef.orderByChild("accountID").equalTo(order.getAccountID()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                            Customer customer = snapshot1.getValue(Customer.class);
+                                            customer.setStatus("green");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
                 else {
                     orderRef.child(order.getOrderID()).setValue(order);

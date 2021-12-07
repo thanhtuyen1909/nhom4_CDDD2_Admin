@@ -47,6 +47,7 @@
 
         <SearchView
             android:id="@+id/editSearch"
+            android:layout_margin="5dp"
             style="@style/CustomSearchView"
             android:background="@drawable/rounded_border_edittext"
             android:queryHint="Tên sản phẩm hoặc mã sản phẩm"

@@ -1,5 +1,6 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -405,6 +406,7 @@ public class ListProductSMActivity extends AppCompatActivity implements Navigati
         });
     };
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

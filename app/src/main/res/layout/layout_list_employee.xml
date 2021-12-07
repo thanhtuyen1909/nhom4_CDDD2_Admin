@@ -20,10 +20,8 @@
             android:id="@+id/spManageEmployees"
             style="@style/CustomSpinner"
             android:layout_width="match_parent"
-            android:layout_margin="4dp"
+            android:layout_margin="5dp"
             android:background="@drawable/bg_spinner"
-
-
             app:layout_constraintTop_toBottomOf="@+id/include"
             tools:layout_editor_absoluteX="4dp" />
 
@@ -36,7 +34,7 @@
 
         <SearchView
            android:id="@+id/searchManageEmployees"
-            android:layout_marginTop="5dp"
+            android:layout_margin="5dp"
             style="@style/CustomSearchView"
             android:background="@drawable/rounded_border_edittext"
             android:queryHint="Mã nhân viên"

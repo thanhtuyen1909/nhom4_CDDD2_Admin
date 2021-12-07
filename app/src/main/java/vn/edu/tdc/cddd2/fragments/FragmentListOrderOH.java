@@ -1,12 +1,11 @@
 package vn.edu.tdc.cddd2.fragments;
 
-import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,15 +20,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 
 import vn.edu.tdc.cddd2.R;
-import vn.edu.tdc.cddd2.adapters.Order1Adapter;
+import vn.edu.tdc.cddd2.activitys.DetailOrderActivity;
 import vn.edu.tdc.cddd2.adapters.Order2Adapter;
-import vn.edu.tdc.cddd2.adapters.OrderAdapter;
+import vn.edu.tdc.cddd2.adapters.Order5Adapter;
 import vn.edu.tdc.cddd2.data_models.Account;
 import vn.edu.tdc.cddd2.data_models.Order;
 
@@ -37,8 +33,10 @@ public class FragmentListOrderOH extends Fragment {
     // Khai báo biến:
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
-    private Order2Adapter orderAdapter;
-    private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+    private Order5Adapter orderAdapter;
+    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Order");
+    DatabaseReference accRef = FirebaseDatabase.getInstance().getReference("Account");
+    Intent intent;
 
     @Nullable
     @Override
@@ -50,34 +48,27 @@ public class FragmentListOrderOH extends Fragment {
         recyclerView = view.findViewById(R.id.listOrder);
         recyclerView.setHasFixedSize(true);
         data();
-        orderAdapter = new Order2Adapter(listOrder, getActivity());
+        orderAdapter = new Order5Adapter(listOrder, getActivity());
         orderAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(orderAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
 
-    private Order2Adapter.ItemClickListener itemClickListener = new Order2Adapter.ItemClickListener() {
-        @Override
-        public void getInfor(Order item) {
-            Toast.makeText(getActivity(), item.toString(), Toast.LENGTH_SHORT).show();
-        }
+    private Order5Adapter.ItemClickListener itemClickListener = item -> {
+        intent = new Intent(getActivity(), DetailOrderActivity.class);
+        intent.putExtra("item", (Parcelable) item);
+        startActivity(intent);
     };
 
     private void data() {
-        //listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "12/10/2021"));
-        //listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "12/10/2021"));
-        //listOrder.add(new Order("DH003", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
-        //listOrder.add(new Order("DH004", 16000000, "53, Võ Văn Ngân", "12/10/2021"));
-        //listOrder.add(new Order("DH005", 12000000, "53, Võ Văn Ngân", "12/10/2021"));
-        myRef.child("Account").addValueEventListener(new ValueEventListener() {
+        accRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot node : dataSnapshot.getChildren()) {
                     Account account = node.getValue(Account.class);
                     account.setKey(node.getKey());
-                    myRef.child("Order").addValueEventListener(new ValueEventListener() {
-
+                    myRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             listOrder.clear();
@@ -90,7 +81,6 @@ public class FragmentListOrderOH extends Fragment {
                                     for (int i = 0; i < listOrder.size(); i++) {
                                         for (int j = i+1; j < listOrder.size(); j++) {
                                             if (a > 3) {
-                                                Log.d("TAG", "onDataChange: " + j);
                                                Collections.swap(listOrder,i,j);
                                             }
                                         }

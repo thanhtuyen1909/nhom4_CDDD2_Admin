@@ -1,6 +1,8 @@
 package vn.edu.tdc.cddd2.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import vn.edu.tdc.cddd2.R;
+import vn.edu.tdc.cddd2.activitys.DetailOrderActivity;
 import vn.edu.tdc.cddd2.adapters.Order3Adapter;
 import vn.edu.tdc.cddd2.data_models.Order;
 
@@ -29,7 +32,8 @@ public class FragmentCancelOrderOH extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
     private Order3Adapter orderAdapter;
-    private final DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Order");
+    Intent intent;
 
     @Nullable
     @Override
@@ -48,12 +52,13 @@ public class FragmentCancelOrderOH extends Fragment {
         return view;
     }
 
+    private Order3Adapter.ItemClickListener itemClickListener = item -> {
+        intent = new Intent(getActivity(), DetailOrderActivity.class);
+        intent.putExtra("item", (Parcelable) item);
+        startActivity(intent);
+    };
 
-
-    private void data(){
-       // listOrder.add(new Order("DH001", 15000000, "53, Võ Văn Ngân", "09/10/2021"));
-       // listOrder.add(new Order("DH002", 14000000, "53, Võ Văn Ngân", "10/10/2021"));
-
+    private void data() {
         myRef.child("Order").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -75,7 +80,8 @@ public class FragmentCancelOrderOH extends Fragment {
             }
         });
     }
-    public ArrayList<Order> getListOrder(){
+
+    public ArrayList<Order> getListOrder() {
         return listOrder;
     }
 }

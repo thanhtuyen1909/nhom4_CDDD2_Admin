@@ -142,8 +142,6 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
             }
         });
 
-        // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(v -> finish());
         tvManageEmployeesRenderSalary.setOnClickListener(v -> showChooseMonthDialog());
         // Xử lý sự kiện click button "+":
         btnManageEmployeesAdd.setOnClickListener(v -> {
@@ -623,6 +621,8 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
+        // Ẩn button "Trở lại":
+        btnBack.setVisibility(View.GONE);
         btnManageEmployeesAdd = findViewById(R.id.btnManageEmployeesAdd);
         tvManageEmployeesRenderSalary = findViewById(R.id.tvManageEmployeesRenderSalary);
         searchManageEmployees = findViewById(R.id.searchManageEmployees);

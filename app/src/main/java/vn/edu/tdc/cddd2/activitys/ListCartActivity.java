@@ -1,11 +1,10 @@
 package vn.edu.tdc.cddd2.activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +36,6 @@ import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.CartDetailAdapter;
 import vn.edu.tdc.cddd2.data_models.Cart;
 import vn.edu.tdc.cddd2.data_models.CartDetail;
-import vn.edu.tdc.cddd2.data_models.Product;
 import vn.edu.tdc.cddd2.helper.RecyclerItemTouchHelper;
 
 public class ListCartActivity extends AppCompatActivity
@@ -190,30 +187,20 @@ public class ListCartActivity extends AppCompatActivity
         });
     }
 
-    private CartDetailAdapter.ItemClickListener itemClickListener = new CartDetailAdapter.ItemClickListener() {
+    private CartDetailAdapter.ItemClickListener itemClickListener = (key, value) -> detailRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
         @Override
-        public void changeQuantity(String key, int value) {
-            detailRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            CartDetail cartDetail = snapshot.getValue(CartDetail.class);
+            int amount = cartDetail.getAmount();
+            detailRef.child(key).child("amount").setValue(value);
+            ref.child(cartDetail.getCartID()).child("total").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    CartDetail cartDetail = snapshot.getValue(CartDetail.class);
-                    int amount = cartDetail.getAmount();
-                    detailRef.child(key).child("amount").setValue(value);
-                    ref.child(cartDetail.getCartID()).child("total").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (amount >= value) {
-                                ref.child(cartDetail.getCartID()).child("total").setValue(snapshot.getValue(Integer.class) - cartDetail.getPrice());
-                            } else {
-                                ref.child(cartDetail.getCartID()).child("total").setValue(snapshot.getValue(Integer.class) + cartDetail.getPrice());
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
+                    if (amount >= value) {
+                        ref.child(cartDetail.getCartID()).child("total").setValue(snapshot.getValue(Integer.class) - cartDetail.getPrice());
+                    } else {
+                        ref.child(cartDetail.getCartID()).child("total").setValue(snapshot.getValue(Integer.class) + cartDetail.getPrice());
+                    }
                 }
 
                 @Override
@@ -222,8 +209,14 @@ public class ListCartActivity extends AppCompatActivity
                 }
             });
         }
-    };
 
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    });
+
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

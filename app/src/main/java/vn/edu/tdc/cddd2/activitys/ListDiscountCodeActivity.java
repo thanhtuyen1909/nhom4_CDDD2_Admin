@@ -10,13 +10,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SearchView;
@@ -45,6 +45,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.ParsePosition;
@@ -55,7 +56,6 @@ import java.util.Date;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.adapters.DiscountCodeAdapter;
-import vn.edu.tdc.cddd2.data_models.Account;
 import vn.edu.tdc.cddd2.data_models.AccountHistory;
 import vn.edu.tdc.cddd2.data_models.Customer;
 import vn.edu.tdc.cddd2.data_models.DiscountCode;
@@ -82,6 +82,9 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     boolean check = true;
     private final static FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference codeRef = db.getReference("DiscountCode");
+    DatabaseReference notiRef = db.getReference("Notification");
+    DatabaseReference cusRef = db.getReference("Customer");
+    DatabaseReference ref = db.getReference("DiscountCode_Customer");
     String username = "", name = "", role = "", img = "", accountID = "";
 
     @Override
@@ -111,8 +114,10 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
         navigationView.setNavigationItemSelectedListener(this);
         txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
         txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
         txtName.setText(name);
         txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
@@ -145,7 +150,6 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
             @Override
             public boolean onQueryTextChange(String newText) {
                 listDiscountCode.clear();
-                DatabaseReference codeRef = db.getReference("DiscountCode");
                 codeRef.addChildEventListener(new ChildEventListener() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
@@ -198,8 +202,6 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     }
 
     private void pushNotification(String code, String accountID) {
-        DatabaseReference notiRef = FirebaseDatabase.getInstance().getReference("Notification");
-        Log.d("TAG", "pushNotification: " + code);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         if (!code.equals("")) {
             Notification noti = new Notification();
@@ -229,9 +231,6 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     }
 
     private void createCodeCustomer(String code, String event) {
-        DatabaseReference cusRef = db.getReference("Customer");
-        DatabaseReference ref = db.getReference("DiscountCode_Customer");
-
         switch (event) {
             case "Tất cả":
                 cusRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -384,7 +383,6 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
 
     private void data() {
         listDiscountCode = new ArrayList<>();
-        DatabaseReference codeRef = db.getReference("DiscountCode");
         codeRef.addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -453,8 +451,7 @@ public class ListDiscountCodeActivity extends AppCompatActivity implements Navig
     private void checkTrungID(String code) {
         check = true;
         //Check trùng mã sản phẩm
-        DatabaseReference ref = db.getReference("DiscountCode");
-        ref.addValueEventListener(new ValueEventListener() {
+        codeRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 check = true;

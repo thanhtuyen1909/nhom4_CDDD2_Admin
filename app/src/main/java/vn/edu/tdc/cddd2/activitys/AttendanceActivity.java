@@ -73,16 +73,21 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_attendance);
         getListEmployee();
+
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         subtitleAppbar = findViewById(R.id.subtitleAppbar);
         txtFilter = findViewById(R.id.tvManageEmployeesTotal);
         subtitleAppbar.setText("Điểm danh");
+
+
         drawerLayout = findViewById(R.id.activity_main_drawer);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
+
+
         spinerDate = findViewById(R.id.spManageEmployees);
         String[] temp = currentDate.split("/");
         String key = temp[1] + "-" + temp[2];
@@ -143,13 +148,8 @@ public class AttendanceActivity extends AppCompatActivity implements NavigationV
         // Khởi tạo biến
         btnBack = findViewById(R.id.txtBack);
 
-        // Xử lý sự kiện click button "Trở lại":
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        // Ẩn button "Trở lại":
+        btnBack.setVisibility(View.GONE);
 
         //RecycleView
         recyclerView = findViewById(R.id.rcvManageEmployees);

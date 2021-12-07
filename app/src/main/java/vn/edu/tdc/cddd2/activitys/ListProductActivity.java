@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -170,8 +172,10 @@ public class ListProductActivity extends AppCompatActivity implements Navigation
         navigationView.setNavigationItemSelectedListener(this);
         txtName = navigationView.getHeaderView(0).findViewById(R.id.txt_username);
         txtRole = navigationView.getHeaderView(0).findViewById(R.id.txt_chucvu);
+        ImageView iv_user = navigationView.getHeaderView(0).findViewById(R.id.iv_user);
         txtName.setText(name);
         txtRole.setText(role);
+        Picasso.get().load(img).fit().into(iv_user);
 
 
         // Sự kiện searchview:

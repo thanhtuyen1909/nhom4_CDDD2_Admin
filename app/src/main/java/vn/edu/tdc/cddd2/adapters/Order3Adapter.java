@@ -54,22 +54,14 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
         holder.tv_maDH.setText(item.getName());
         holder.tv_tong.setText("Tổng: " + item.getTotal());
         holder.tv_ngaydat.setText("Địa chỉ: " + item.getShipperID());
-        holder.onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    itemClickListener.getInfor(item);
-                } else {
-                    return;
-                }
+        holder.onClickListener = v -> {
+            if (itemClickListener != null) {
+                itemClickListener.getInfor(item);
+            } else {
+                return;
             }
         };
-        holder.cb_hoantac.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               item.setStatus(1);
-            }
-        });
+        holder.cb_hoantac.setOnClickListener(v -> item.setStatus(1));
     }
 
     @Override

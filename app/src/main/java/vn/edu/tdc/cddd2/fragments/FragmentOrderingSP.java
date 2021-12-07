@@ -79,7 +79,6 @@ public class FragmentOrderingSP extends Fragment {
         @Override
         public void getInfor(Order item) {
             intent = new Intent(getActivity(), DetailOrderActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("item", (Parcelable) item);
             startActivity(intent);
         }
