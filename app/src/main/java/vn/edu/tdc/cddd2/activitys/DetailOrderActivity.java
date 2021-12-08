@@ -87,6 +87,8 @@ public class DetailOrderActivity extends AppCompatActivity {
         canvas = myPage1.getCanvas();
         endXPosition = myPageInfo1.getPageWidth() - 10;
 
+        arrOrderDetail = new ArrayList<>();
+
         queryOrderDetail = FirebaseDatabase.getInstance().getReference()
                 .child("Order_Details").orderByChild("orderID").equalTo(item.getOrderID());
         loadDataOrderDetail();

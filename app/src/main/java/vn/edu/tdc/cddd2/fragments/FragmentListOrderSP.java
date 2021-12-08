@@ -41,6 +41,10 @@ public class FragmentListOrderSP extends Fragment {
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
 
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

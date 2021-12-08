@@ -46,6 +46,7 @@ public class FragmentCancelOrderOH extends Fragment {
         recyclerView.setHasFixedSize(true);
         data();
         orderAdapter = new Order3Adapter(listOrder, getActivity());
+        orderAdapter.setItemClickListener(itemClickListener);
 
         recyclerView.setAdapter(orderAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

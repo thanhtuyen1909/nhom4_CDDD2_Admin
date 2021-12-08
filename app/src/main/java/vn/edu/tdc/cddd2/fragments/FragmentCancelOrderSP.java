@@ -36,9 +36,13 @@ public class FragmentCancelOrderSP extends Fragment {
     ArrayList<Order> listOrder;
     Order7Adapter orderAdapter;
     Intent intent;
-    String accountID = "a";
+    String accountID = "";
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Order");
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
 
     @Nullable
     @Override
@@ -56,7 +60,6 @@ public class FragmentCancelOrderSP extends Fragment {
         orderAdapter.setItemClickListener(itemClickListener);
         recyclerView.setAdapter(orderAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
 
         // Xử lý sự kiện thay đổi dữ liệu searchview:
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

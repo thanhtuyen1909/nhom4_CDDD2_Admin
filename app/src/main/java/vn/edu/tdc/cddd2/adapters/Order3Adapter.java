@@ -70,7 +70,6 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
                 return;
             }
         };
-        holder.cb_hoantac.setOnClickListener(v -> item.setStatus(1));
     }
 
     private String formatPrice(int price) {

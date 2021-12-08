@@ -49,7 +49,7 @@ import vn.edu.tdc.cddd2.fragments.FragmentWillOrderWHM;
 public class ShipProcessActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến:
     BottomNavigationView bottomNavigationView;
-    private Fragment selectedFragment = null;
+    Fragment selectedFragment = null;
     Toolbar toolbar;
     TextView btnSave, subtitleAppbar, title, mess, txtName, txtRole;
     private DrawerLayout drawerLayout;
@@ -102,26 +102,27 @@ public class ShipProcessActivity extends AppCompatActivity implements Navigation
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentListOrderSP(), tagA).commit();
 
         // Xử lý sự kiện cho thanh bottomnavigationview
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.odering) {
-                    selectedFragment = new FragmentListOrderSP();
-                    tagA = "ListOrderSP";
-                } else if (id == R.id.delivering) {
-                    selectedFragment = new FragmentOrderingSP();
-                    tagA = "OrderingSP";
-                } else if (id == R.id.delivered) {
-                    selectedFragment = new FragmentOrderDeliveredSP();
-                    tagA = "OrderDeliveredSP";
-                } else {
-                    selectedFragment = new FragmentCancelOrderSP();
-                    tagA = "CancelOrderSP";
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment, tagA).commit();
-                return true;
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.odering) {
+                selectedFragment = new FragmentListOrderSP();
+                ((FragmentListOrderSP) selectedFragment).setAccountID(accountID);
+                tagA = "ListOrderSP";
+            } else if (id == R.id.delivering) {
+                selectedFragment = new FragmentOrderingSP();
+                ((FragmentOrderingSP) selectedFragment).setAccountID(accountID);
+                tagA = "OrderingSP";
+            } else if (id == R.id.delivered) {
+                selectedFragment = new FragmentOrderDeliveredSP();
+                ((FragmentOrderDeliveredSP) selectedFragment).setAccountID(accountID);
+                tagA = "OrderDeliveredSP";
+            } else {
+                selectedFragment = new FragmentCancelOrderSP();
+                ((FragmentCancelOrderSP) selectedFragment).setAccountID(accountID);
+                tagA = "CancelOrderSP";
             }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment, tagA).commit();
+            return true;
         });
 
         // Xử lý sự kiện click button "Lưu":
