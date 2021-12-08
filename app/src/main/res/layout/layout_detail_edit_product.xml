@@ -80,6 +80,20 @@
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent="0.5" />
 
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.4" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.8" />
+
                 <Spinner
                     android:id="@+id/spinner_manu"
                     style="@style/CustomSpinner"
@@ -112,9 +126,10 @@
                     android:id="@+id/spinner_color"
                     style="@style/CustomSpinner"
                     android:layout_margin="5dp"
-                    android:paddingStart="5dp"
                     android:background="@drawable/bg_spinner"
                     android:focusable="true"
+                    android:paddingStart="5dp"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/edtMT" />
 
@@ -123,9 +138,10 @@
                     style="@style/CustomSpinner"
                     android:layout_margin="5dp"
                     android:layout_marginTop="4dp"
-                    android:paddingStart="5dp"
                     android:background="@drawable/bg_spinner"
                     android:focusable="true"
+                    android:paddingStart="5dp"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
                     app:layout_constraintStart_toEndOf="@+id/spinner_color"
                     app:layout_constraintTop_toBottomOf="@+id/edtMT" />
 
@@ -146,7 +162,7 @@
 
                 <EditText
                     android:id="@+id/edtGN"
-                    android:layout_width="170dp"
+                    android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_margin="5dp"
                     android:background="@drawable/rounded_border_edittext"
@@ -158,13 +174,14 @@
 
                 <EditText
                     android:id="@+id/edtGB"
-                    android:layout_width="170dp"
+                    android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_margin="5dp"
                     android:background="@drawable/rounded_border_edittext"
                     android:ems="10"
                     android:hint="@string/giaban"
                     android:padding="4dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/edtGN"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_size" />
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -421,6 +421,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements SearchVie
 
     private void setControl() {
 
+        intent = getIntent();
         username = intent.getStringExtra("username");
         accountID = intent.getStringExtra("accountID");
         name = intent.getStringExtra("name");

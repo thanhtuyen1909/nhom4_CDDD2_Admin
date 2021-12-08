@@ -204,6 +204,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                     }
                 });
             }
+            employeesAdapter.notifyDataSetChanged();
         });
 
         view.findViewById(R.id.buttonNo).setOnClickListener(v -> alertDialog.dismiss());

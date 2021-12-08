@@ -60,7 +60,7 @@ public class FragmentWillOrderOH extends Fragment {
     };
 
     private void data(){
-        myRef.child("Order").addValueEventListener(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listOrder.clear();

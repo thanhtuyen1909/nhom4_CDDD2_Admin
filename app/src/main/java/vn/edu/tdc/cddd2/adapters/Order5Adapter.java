@@ -61,14 +61,14 @@ public class Order5Adapter extends RecyclerView.Adapter<Order5Adapter.ViewHolder
                 else if(v == holder.cb_dagiao) {
                     holder.cb_huy.setChecked(false);
                     if (((CheckBox) v).isChecked()) {
-                        item.setStatus(6);
+                        item.setStatus(2);
                     } else {
                         item.setStatus(stt);
                     }
                 } else {
                     holder.cb_dagiao.setChecked(false);
                     if (((CheckBox) v).isChecked()) {
-                        item.setStatus(9);
+                        item.setStatus(0);
                     } else {
                         item.setStatus(stt);
                     }

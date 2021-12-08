@@ -28,7 +28,6 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
     private ArrayList<Order> listOrder;
     private Context context;
     private Order3Adapter.ItemClickListener itemClickListener;
-    private DatabaseReference myRef= FirebaseDatabase.getInstance().getReference();
 
     public void setItemClickListener(Order3Adapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -51,17 +50,39 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull Order3Adapter.ViewHolder holder, int position) {
         Order item = listOrder.get(position);
-        holder.tv_maDH.setText(item.getName());
-        holder.tv_tong.setText("Tổng: " + item.getTotal());
-        holder.tv_ngaydat.setText("Địa chỉ: " + item.getShipperID());
+        holder.tv_maDH.setText(item.getOrderID());
+        holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
+        holder.tv_ngaydat.setText("Ngày đặt: " + item.getCreated_at());
+        holder.tv_diachi.setText("Địa chỉ: " + item.getAddress());
+        int stt = item.getStatus();
         holder.onClickListener = v -> {
             if (itemClickListener != null) {
-                itemClickListener.getInfor(item);
+                if(v == holder.im_detail) itemClickListener.getInfor(item);
+                else {
+                    holder.cb_hoantac.setChecked(false);
+                    if (((CheckBox) v).isChecked()) {
+                        item.setStatus(1);
+                    } else {
+                        item.setStatus(stt);
+                    }
+                }
             } else {
                 return;
             }
         };
         holder.cb_hoantac.setOnClickListener(v -> item.setStatus(1));
+    }
+
+    private String formatPrice(int price) {
+        String stmp = String.valueOf(price);
+        int amount;
+        amount = (int) (stmp.length() / 3);
+        if (stmp.length() % 3 == 0)
+            amount--;
+        for (int i = 1; i <= amount; i++) {
+            stmp = new StringBuilder(stmp).insert(stmp.length() - (i * 3) - (i - 1), ",").toString();
+        }
+        return stmp + " ₫";
     }
 
     @Override
@@ -71,7 +92,7 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView im_detail;
-        TextView tv_maDH, tv_tong, tv_ngaydat;
+        TextView tv_maDH, tv_tong, tv_ngaydat, tv_diachi;
         CheckBox cb_hoantac;
         View.OnClickListener onClickListener;
 
@@ -80,6 +101,7 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
             tv_maDH = itemView.findViewById(R.id.txt_madonhang);
             tv_tong = itemView.findViewById(R.id.txt_tongtien);
             tv_ngaydat = itemView.findViewById(R.id.txt_ngaydat);
+            tv_diachi = itemView.findViewById(R.id.txt_diachi);
             im_detail = itemView.findViewById(R.id.btnDetail);
             cb_hoantac = itemView.findViewById(R.id.checkhoantac);
             im_detail.setOnClickListener(this);

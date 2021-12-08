@@ -110,7 +110,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activitys.RevenueStatisticActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
             android:name=".activitys.ListRatingActivity"
             android:screenOrientation="portrait">

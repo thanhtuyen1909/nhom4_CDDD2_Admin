@@ -59,7 +59,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/totalProduct"
+            app:layout_constraintBottom_toTopOf="@+id/txtFilter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2"
@@ -68,7 +68,7 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
-            android:id="@+id/totalProduct"
+            android:id="@+id/txtFilter"
             style="@style/CustomTextViewQuantity"
             android:text="@string/amountSP"
             app:layout_constraintBottom_toBottomOf="parent"

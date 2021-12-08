@@ -50,7 +50,7 @@ import vn.edu.tdc.cddd2.data_models.Role;
 public class ListAccountActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Khai báo biến
     Toolbar toolbar;
-    TextView btnBack, subtitleAppbar, txtName, txtRole;
+    TextView btnBack, subtitleAppbar, txtName, txtRole,txtFilter;
     Button btnAdd;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -63,7 +63,7 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
     Spinner spinPosition;
     SearchView searchView;
     String accountID = "", username = "", name = "", role = "", img = "";
-
+    int total = 0;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference accountRef = db.getReference("Account");
     DatabaseReference roleRef = db.getReference("Role");
@@ -93,6 +93,7 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
         drawerToggle.syncState();
 
         // Khởi tạo biến
+        txtFilter = findViewById(R.id.txtFilter);
         btnBack = findViewById(R.id.txtBack);
         btnAdd = findViewById(R.id.btnAdd);
         searchView = findViewById(R.id.editSearch);
@@ -180,7 +181,9 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                             account.setKey(node.getKey());
                             listAccount.add(account);
                         }
+                        total = listAccount.size();
                         accountAdapter.notifyDataSetChanged();
+                        txtFilter.setText(listAccount.size()+" trên "+total+" tài khoản");
                     }
 
                     @Override
@@ -217,6 +220,7 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                             }
                         }
                         accountAdapter.notifyDataSetChanged();
+                        txtFilter.setText(listAccount.size()+" trên "+total+" tài khoản");
                     }
 
                     @Override
@@ -242,6 +246,7 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                             }
                         }
                         accountAdapter.notifyDataSetChanged();
+                        txtFilter.setText(listAccount.size()+" trên "+total+" tài khoản");
                     }
 
                     @Override
@@ -279,6 +284,7 @@ public class ListAccountActivity extends AppCompatActivity implements Navigation
                             }
                         }
                         accountAdapter.notifyDataSetChanged();
+                        txtFilter.setText(listAccount.size()+" trên "+total+" tài khoản");
                     }
 
                     @Override

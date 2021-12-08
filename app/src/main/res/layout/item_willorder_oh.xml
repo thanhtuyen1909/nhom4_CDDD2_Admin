@@ -23,6 +23,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/btnDetail"
+            android:ellipsize="end"
+            android:lines="1"
             android:text="Title"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -34,6 +38,8 @@
             android:layout_below="@+id/txt_madonhang"
             android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="5dp"
             android:text="Title"
             android:textSize="16sp" />
 
@@ -42,8 +48,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_tongtien"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="3dp"
+            android:text="Title"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txt_diachi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_ngaydat"
             android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_toStartOf="@+id/btnDetail"
+            android:ellipsize="end"
+            android:lines="1"
             android:text="Title"
             android:textSize="16sp" />
 
@@ -51,9 +72,7 @@
             android:id="@+id/btnDetail"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:layout_toStartOf="@+id/checkhoantac"
+            android:layout_alignParentEnd="true"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/baseline_info_24"

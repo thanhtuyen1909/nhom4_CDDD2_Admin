@@ -77,9 +77,9 @@ public class DetailOrderActivity extends AppCompatActivity {
         from = getIntent().getStringExtra("from");
         accountID = getIntent().getStringExtra("accountID");
         username = getIntent().getStringExtra("username");
-        name = intent.getStringExtra("name");
-        role = intent.getStringExtra("role");
-        img = intent.getStringExtra("image");
+        name = getIntent().getStringExtra("name");
+        role = getIntent().getStringExtra("role");
+        img = getIntent().getStringExtra("image");
 
         myPageInfo1 = new PdfDocument.
                 PageInfo.Builder(250, 500, 1).create();
