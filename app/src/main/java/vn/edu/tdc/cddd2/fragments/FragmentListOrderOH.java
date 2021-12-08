@@ -2,6 +2,7 @@ package vn.edu.tdc.cddd2.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,22 +21,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import vn.edu.tdc.cddd2.R;
 import vn.edu.tdc.cddd2.activitys.DetailOrderActivity;
-import vn.edu.tdc.cddd2.adapters.Order2Adapter;
 import vn.edu.tdc.cddd2.adapters.Order5Adapter;
-import vn.edu.tdc.cddd2.data_models.Account;
 import vn.edu.tdc.cddd2.data_models.Order;
 
 public class FragmentListOrderOH extends Fragment {
     // Khai báo biến:
+    Handler handler = new Handler();
     private RecyclerView recyclerView;
     private ArrayList<Order> listOrder;
     private Order5Adapter orderAdapter;
     DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Order");
-    DatabaseReference accRef = FirebaseDatabase.getInstance().getReference("Account");
+    DatabaseReference cusRef = FirebaseDatabase.getInstance().getReference("Customer");
     Intent intent;
 
     @Nullable
@@ -62,44 +61,40 @@ public class FragmentListOrderOH extends Fragment {
     };
 
     private void data() {
-        accRef.addValueEventListener(new ValueEventListener() {
+        myRef.orderByChild("created_at").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot node : dataSnapshot.getChildren()) {
-                    Account account = node.getValue(Account.class);
-                    account.setKey(node.getKey());
-                    myRef.addValueEventListener(new ValueEventListener() {
+                listOrder.clear();
+                ArrayList<Order> listBlack = new ArrayList<>();
+                listBlack.clear();
+                for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
+                    Order order = DSOrder.getValue(Order.class);
+                    order.setOrderID(DSOrder.getKey());
+                    cusRef.orderByChild("accountID").equalTo(order.getAccountID()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            listOrder.clear();
-                            int a = 0;
-                            for (DataSnapshot DSOrder : dataSnapshot.getChildren()) {
-                                Order order = DSOrder.getValue(Order.class);
-                                order.setOrderID(DSOrder.getKey());
-                                if (order.getStatus() == 0 && order.getAccountID().equals(account.getKey())) {
-                                    a += 1;
-                                    for (int i = 0; i < listOrder.size(); i++) {
-                                        for (int j = i+1; j < listOrder.size(); j++) {
-                                            if (a > 3) {
-                                               Collections.swap(listOrder,i,j);
-                                            }
-                                        }
-                                    }
-                                }
-                                if (order.getStatus() == 1) {
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                if(snapshot1.child("status").equals("black")) {
+                                    listBlack.add(order);
+                                } else {
                                     listOrder.add(order);
                                 }
-
                             }
-                            orderAdapter.notifyDataSetChanged();
                         }
 
                         @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        public void onCancelled(@NonNull DatabaseError error) {
 
                         }
                     });
                 }
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        listOrder.addAll(listBlack);
+                    }
+                }, 200);
+                orderAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -107,7 +102,6 @@ public class FragmentListOrderOH extends Fragment {
 
             }
         });
-
     }
 
     public ArrayList<Order> getListOrder() {

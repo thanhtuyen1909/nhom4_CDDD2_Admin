@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,6 +117,8 @@ public class DetailEmployeeActivity extends AppCompatActivity {
         empSeniority.setFocusable(false);
         empSalary = findViewById(R.id.edtLCB);
         empAllowance = findViewById(R.id.edtPC);
+        empAllowance.setText(""+0);
+        empAllowance.setFocusable(false);
         empImage = findViewById(R.id.imageView);
         empShipArea = findViewById(R.id.spinner_khuvucship);
         bar = findViewById(R.id.progess1);
@@ -133,6 +137,32 @@ public class DetailEmployeeActivity extends AppCompatActivity {
             startActivityForResult(Intent.createChooser(intent, "Title"), SELECT_IMAGE_CODE);
         });
 
+        empSalary.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(String.valueOf(s).length() == 0){
+                    s = "0";
+                }
+                int salary = Integer.parseInt(s+"");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                Date create = sdf.parse(empCreated_at.getText()+"", new ParsePosition(0));
+                Date now = new Date();
+                long diff = now.getTime() - create.getTime();
+                int year = (int) (diff / 1000 / 60 / 60 / 24 / 365);
+                int allowance = salary*20/100 + year*100000;
+                empAllowance.setText(allowance+"");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         // Xử lý sự kiện click button "Huỷ":
         btnCancel.setOnClickListener(v -> finish());
 

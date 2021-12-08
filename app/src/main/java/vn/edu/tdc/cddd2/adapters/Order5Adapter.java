@@ -1,6 +1,7 @@
 package vn.edu.tdc.cddd2.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -22,6 +30,7 @@ public class Order5Adapter extends RecyclerView.Adapter<Order5Adapter.ViewHolder
     ArrayList<Order> listOrder, listOrderFilter, list;
     Context context;
     Order5Adapter.ItemClickListener itemClickListener;
+    DatabaseReference cusRef = FirebaseDatabase.getInstance().getReference("Customer");
 
     public void setItemClickListener(Order5Adapter.ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -49,6 +58,24 @@ public class Order5Adapter extends RecyclerView.Adapter<Order5Adapter.ViewHolder
         holder.cb_huy.setEnabled(true);
         holder.cb_huy.setChecked(false);
         holder.cb_dagiao.setChecked(false);
+
+        cusRef.orderByChild("accountID").equalTo(item.getAccountID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    if(snapshot1.child("status").equals("black")) {
+                        holder.cardView.setCardBackgroundColor(Color.GRAY);
+                    } else {
+                        holder.cardView.setCardBackgroundColor(Color.WHITE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         holder.tv_maDH.setText(item.getOrderID());
         holder.tv_tong.setText("Cần thanh toán: " + formatPrice(item.getRemain()));
@@ -119,6 +146,7 @@ public class Order5Adapter extends RecyclerView.Adapter<Order5Adapter.ViewHolder
         TextView tv_maDH, tv_tong, tv_ngaydat, tv_diachi;
         CheckBox cb_dagiao, cb_huy;
         View.OnClickListener onClickListener;
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,6 +156,7 @@ public class Order5Adapter extends RecyclerView.Adapter<Order5Adapter.ViewHolder
             tv_diachi = itemView.findViewById(R.id.txt_diachi);
             im_detail = itemView.findViewById(R.id.btnDetail);
             cb_dagiao = itemView.findViewById(R.id.checksedat);
+            cardView = itemView.findViewById(R.id.card);
 
             cb_huy = itemView.findViewById(R.id.checkhuy);
 

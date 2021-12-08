@@ -92,6 +92,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
     DatabaseReference empRef = FirebaseDatabase.getInstance().getReference("Employees");
     DatabaseReference payrollRef = FirebaseDatabase.getInstance().getReference("Payroll");
     String accountID = "", username = "", name = "", role = "", img = "";
+    int index = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +164,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         });
 
     }
+
     private final ManageEmployeesAdapter.ItemClickListener itemClickListener = (keyEmployees, accountID) -> {
         AlertDialog.Builder builder = new AlertDialog.Builder(ListEmployeeActivity.this, R.style.AlertDialogTheme);
         View view = LayoutInflater.from(ListEmployeeActivity.this).inflate(
@@ -184,7 +186,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
             FirebaseDatabase.getInstance().getReference().child("Employees")
                     .child(keyEmployees).removeValue();
             //Remove data in account
-            if(!accountID.equals("")) {
+            if (!accountID.equals("")) {
                 FirebaseDatabase.getInstance().getReference().child("Account")
                         .child(accountID).removeValue();
                 FirebaseDatabase.getInstance().getReference().child("Ship_area").addValueEventListener(new ValueEventListener() {
@@ -316,7 +318,9 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                 for (DataSnapshot node : dataSnapshot.getChildren()) {
                     Payroll payroll = node.getValue(Payroll.class);
                     HSSFRow row1 = sheet.createRow(firstIndex + 1);
-
+                    HSSFRow row3 = sheet.createRow(firstIndex + 2);
+                    HSSFRow rowName = sheet.createRow(firstIndex + 3);
+                    HSSFRow row2 = sheet.createRow(firstIndex + 4);
                     firstIndex++;
                     empRef.child(node.getKey()).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -356,8 +360,30 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                                 HSSFCell cell10 = row1.createCell(10);
                                 cell10.setCellValue(payroll.getTotal());
 
-                                //
-                                File filePath = new File(Environment.getExternalStorageDirectory() + "/Demo.xls");
+                                HSSFCell temp1 = row3.createCell(4);
+                                temp1.setCellValue("");
+                                HSSFCell temp2 = row3.createCell(6);
+                                temp2.setCellValue("");
+                                HSSFCell temp3 = row3.createCell(8);
+                                temp3.setCellValue("");
+
+
+                                HSSFCell cellGD = rowName.createCell(4);
+                                cellGD.setCellValue("Giám đốc");
+                                HSSFCell cellHR = rowName.createCell(6);
+                                cellHR.setCellValue("HR");
+                                HSSFCell cellKT = rowName.createCell(8);
+                                cellKT.setCellValue("Kế toán");
+
+                                HSSFCell cellGDs = row2.createCell(4);
+                                cellGDs.setCellValue("Ký và ghi rõ họ tên");
+                                HSSFCell cellHRs = row2.createCell(6);
+                                cellHRs.setCellValue("Ký và ghi rõ họ tên");
+                                HSSFCell cellKTs = row2.createCell(8);
+                                cellKTs.setCellValue("Ký và ghi rõ họ tên");
+
+
+                                File filePath = new File(Environment.getExternalStorageDirectory() + "/Bảng lương tháng " + month + ".xls");
 
                                 try {
                                     if (!filePath.exists()) {
@@ -381,6 +407,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                         }
                     });
                 }
+
             }
 
             @Override
@@ -451,6 +478,10 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
 
             }
         });
+//        String currentMonth = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
+//        int month = Integer.parseInt(currentMonth.split("-")[0])-1;
+//        String lastMonth = month+"-"+currentMonth.split("-")[1];
+//        DatabaseReference
     }
 
     private void loadDataSpinner() {
@@ -497,7 +528,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
         payrollRef.child(currentMonth).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.exists()){
+                if (!snapshot.exists()) {
                     DatabaseReference attendRef = FirebaseDatabase.getInstance().getReference("Attendance");
                     empRef.addValueEventListener(new ValueEventListener() {
                         @Override
@@ -536,7 +567,7 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
                                             }
                                             map.put("fine", 50000 * count1);
                                             map.put("total", employee.getSalary() + employee.getAllowance() + bonus - 50000 * count1);
-                                            Log.d("TAG",map.toString());
+                                            Log.d("TAG", map.toString());
                                             payrollRef.child(lastMonth).child(node.getKey()).setValue(map);
                                         }
                                     }
@@ -562,7 +593,6 @@ public class ListEmployeeActivity extends AppCompatActivity implements Navigatio
 
             }
         });
-
 
 
     }

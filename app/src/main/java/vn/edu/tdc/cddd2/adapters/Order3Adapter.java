@@ -59,7 +59,6 @@ public class Order3Adapter extends RecyclerView.Adapter<Order3Adapter.ViewHolder
             if (itemClickListener != null) {
                 if(v == holder.im_detail) itemClickListener.getInfor(item);
                 else {
-                    holder.cb_hoantac.setChecked(false);
                     if (((CheckBox) v).isChecked()) {
                         item.setStatus(1);
                     } else {

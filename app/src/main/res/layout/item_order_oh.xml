@@ -8,6 +8,7 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
+    android:id="@+id/card"
     card_view:cardCornerRadius="15dp"
     card_view:cardUseCompatPadding="true">
 
